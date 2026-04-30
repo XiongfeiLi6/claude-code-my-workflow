@@ -290,6 +290,98 @@ git rebase main
 git push origin my-customizations --force-with-lease
 ```
 
+> **If `git push` is rejected after the rebase, DO NOT run `git pull`.** A rejected push is normal after a rebase (your local history was rewritten, so it no longer matches the remote). `git pull` will *merge* the old remote history back in and create a duplicate-commits mess. The correct fix is `git push --force-with-lease` (the command above already uses it).
+
+### When other skills' authors update their skills
+
+Your `my-customizations` branch carries skills authored by third parties (not Pedro). These **do not auto-update** when you sync with Pedro's upstream — you have to refresh them by hand.
+
+**Step 0: Record the source repos** (fill in URLs once, keep current):
+
+| Skill family | Author | Source repo URL | Path inside that repo |
+|---|---|---|---|
+| `review-paper-full`, `review-paper-light`, `review-paper-code`, `review-pap`, `review-grant` | Backman | `<TODO: paste URL>` | `<TODO: e.g. .claude/skills/>` |
+| `stata` (incl. `packages/` + `references/`) | Moore | `<TODO: paste URL>` | `<TODO: path>` |
+| `codex` | — | `<TODO: paste URL or "no upstream">` | `<TODO: path>` |
+
+**Step 1: Pull the latest version of one skill**
+
+Run from the workflow repo, always on the `my-customizations` branch:
+
+```bash
+cd ~/Documents/GitHub/claude-code-my-workflow
+git checkout my-customizations
+
+# (a) Add the author's repo as a temporary remote (only needed once)
+git remote add backman <BACKMAN_URL>
+git fetch backman
+
+# (b) See what they changed since you last pulled
+git log --oneline -10 backman/main -- <path-inside-their-repo>/review-paper-full/
+
+# (c) Overwrite your local copy with their latest version
+git checkout backman/main -- <path-inside-their-repo>/review-paper-full/
+
+# (d) If their internal path differs from yours, move the files into place:
+#     e.g., if they keep skills at  skills/review-paper-full/  but you keep
+#     them at .claude/skills/review-paper-full/ , then:
+# mv skills/review-paper-full/* .claude/skills/review-paper-full/
+# rmdir skills/review-paper-full skills 2>/dev/null
+```
+
+**Step 2: Review the diff before committing**
+
+This is the most important step. Third-party skills can drift in directions you don't want — new flags, changed defaults, new dependencies, renamed agents.
+
+```bash
+git diff --staged .claude/skills/review-paper-full/
+```
+
+If anything looks wrong, abort the refresh:
+```bash
+git checkout HEAD -- .claude/skills/review-paper-full/   # restore your version
+```
+
+**Step 3: Commit with the source commit hash**
+
+Record exactly which version you pulled in, so future-you knows what's already incorporated:
+
+```bash
+# Get the source commit hash you pulled from
+git log -1 --format=%H backman/main
+
+# Commit with that hash in the message
+git commit -m "Refresh review-paper-full from Backman <paste-hash-here>"
+git push origin my-customizations
+```
+
+**Step 4 (optional): Clean up the temporary remote**
+
+```bash
+git remote remove backman
+```
+
+You can re-add it next time. Or leave it — having `backman` and `moore` as permanent remotes is fine.
+
+**If you've made local edits to a third-party skill**
+
+`git checkout backman/main -- <file>` will overwrite your edits silently. Two options:
+
+- **Accept theirs, redo your edits** — let the refresh happen, then re-apply your local changes on top.
+- **Keep yours, cherry-pick just their fix** — instead of `git checkout`, do:
+  ```bash
+  git diff HEAD backman/main -- <path>/review-paper-full/SKILL.md
+  ```
+  and manually copy in the parts you want.
+
+When in doubt, the backup tag pattern works here too — tag your current state before refreshing:
+```bash
+git tag backup/pre-skill-refresh-$(date +%Y-%m-%d)
+git push origin backup/pre-skill-refresh-$(date +%Y-%m-%d)
+```
+
+**Existing project repos do NOT auto-update from refreshed skills** — see the next section.
+
 ### When to update existing projects
 
 Existing project repos are **independent copies** — they don't auto-update when the template changes. To bring in a new skill to an existing project:
