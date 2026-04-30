@@ -296,88 +296,174 @@ git push origin my-customizations --force-with-lease
 
 Your `my-customizations` branch carries skills authored by third parties (not Pedro). These **do not auto-update** when you sync with Pedro's upstream — you have to refresh them by hand.
 
-**Step 0: Record the source repos** (fill in URLs once, keep current):
+**Step 0: Source registry**
 
-| Skill family | Author | Source repo URL | Path inside that repo |
-|---|---|---|---|
-| `review-paper-full`, `review-paper-light`, `review-paper-code`, `review-pap`, `review-grant` | Backman | `<TODO: paste URL>` | `<TODO: e.g. .claude/skills/>` |
-| `stata` (incl. `packages/` + `references/`) | Moore | `<TODO: paste URL>` | `<TODO: path>` |
-| `codex` | — | `<TODO: paste URL or "no upstream">` | `<TODO: path>` |
+Each third-party author uses a different layout in their repo. Here are the three sources and how their files map to ours:
 
-**Step 1: Pull the latest version of one skill**
+| Skill family | Author | Source repo | Layout in source | Layout in your fork |
+|---|---|---|---|---|
+| `review-paper-full`, `review-paper-light`, `review-paper-code`, `review-pap`, `review-grant` | Backman | https://github.com/claesbackman/AI-research-feedback | flat `Skills/<name>.md` (one file per skill) | `.claude/skills/<name>/SKILL.md` (each wrapped in a directory) |
+| `stata` (incl. `packages/` + `references/`) | Moore | https://github.com/dylantmoore/stata-skill | `plugins/stata/skills/stata/...` (plugin layout) | `.claude/skills/stata/...` |
+| `codex` | oil-oil | https://github.com/oil-oil/codex | `SKILL.md` + `scripts/` at repo root | `.claude/skills/codex/SKILL.md` + `.claude/skills/codex/scripts/` |
 
-Run from the workflow repo, always on the `my-customizations` branch:
+**Important — the `review-paper` rename.** Backman ships his flagship skill as `review-paper`. Pedro's upstream also ships a skill called `review-paper` (different content, same name). To avoid the collision we renamed Backman's copy to `review-paper-full` in our fork. **Refreshing this one skill needs a special procedure** (below) — the simple `git checkout backman/main -- ...` pattern would overwrite Pedro's `review-paper` instead.
+
+**Baseline as of 2026-04-30** (so you can tell what's already in):
+
+| Skill family | Source commit | Status |
+|---|---|---|
+| Backman skills (all 5) | `b2a42c3` | ✅ in sync |
+| Moore stata | `33a7efc` | ✅ in sync |
+| Codex | `0b9f1d0` | ⚠️ local has divergence (we copied an older version with edits — refresh later if you want oil-oil's newer wording, including a Windows PowerShell variant we currently don't ship) |
+
+Update this table whenever you do a refresh.
+
+**Step 1: Add source remotes once**
+
+You only need to do this the first time:
 
 ```bash
 cd ~/Documents/GitHub/claude-code-my-workflow
 git checkout my-customizations
 
-# (a) Add the author's repo as a temporary remote (only needed once)
-git remote add backman <BACKMAN_URL>
+git remote add backman   https://github.com/claesbackman/AI-research-feedback.git
+git remote add moore     https://github.com/dylantmoore/stata-skill.git
+git remote add codex-src https://github.com/oil-oil/codex.git
+```
+
+These remotes stay in your repo permanently; they don't conflict with anything.
+
+**Step 2: Refresh recipes — pick the one for the skill you're updating**
+
+Always start each refresh with:
+```bash
+cd ~/Documents/GitHub/claude-code-my-workflow
+git checkout my-customizations
+git tag backup/pre-skill-refresh-$(date +%Y-%m-%d)   # safety net
+```
+
+#### Recipe A — Backman skills (the renamed `review-paper-full`)
+
+Backman's `Skills/review-paper.md` lives in our repo as `.claude/skills/review-paper-full/SKILL.md`. We use `git show ... > destination` (NOT `git checkout`) to dump his file content into our renamed location without touching Pedro's `review-paper`:
+
+```bash
 git fetch backman
 
-# (b) See what they changed since you last pulled
-git log --oneline -10 backman/main -- <path-inside-their-repo>/review-paper-full/
+# See what Backman changed
+git log --oneline -10 backman/main -- Skills/review-paper.md
 
-# (c) Overwrite your local copy with their latest version
-git checkout backman/main -- <path-inside-their-repo>/review-paper-full/
+# Overwrite OUR review-paper-full/SKILL.md with HIS review-paper.md content
+git show backman/main:Skills/review-paper.md > .claude/skills/review-paper-full/SKILL.md
 
-# (d) If their internal path differs from yours, move the files into place:
-#     e.g., if they keep skills at  skills/review-paper-full/  but you keep
-#     them at .claude/skills/review-paper-full/ , then:
-# mv skills/review-paper-full/* .claude/skills/review-paper-full/
-# rmdir skills/review-paper-full skills 2>/dev/null
-```
+# Review BEFORE committing — Backman may have changed flags, defaults, agent counts
+git diff .claude/skills/review-paper-full/SKILL.md
 
-**Step 2: Review the diff before committing**
+# If something looks wrong, abort:
+# git checkout HEAD -- .claude/skills/review-paper-full/SKILL.md
 
-This is the most important step. Third-party skills can drift in directions you don't want — new flags, changed defaults, new dependencies, renamed agents.
-
-```bash
-git diff --staged .claude/skills/review-paper-full/
-```
-
-If anything looks wrong, abort the refresh:
-```bash
-git checkout HEAD -- .claude/skills/review-paper-full/   # restore your version
-```
-
-**Step 3: Commit with the source commit hash**
-
-Record exactly which version you pulled in, so future-you knows what's already incorporated:
-
-```bash
-# Get the source commit hash you pulled from
-git log -1 --format=%H backman/main
-
-# Commit with that hash in the message
-git commit -m "Refresh review-paper-full from Backman <paste-hash-here>"
+# Otherwise, commit with his commit hash
+HASH=$(git log -1 --format=%h backman/main)
+git add .claude/skills/review-paper-full/SKILL.md
+git commit -m "Refresh review-paper-full from Backman ${HASH}"
 git push origin my-customizations
 ```
 
-**Step 4 (optional): Clean up the temporary remote**
+#### Recipe B — Backman skills (NOT renamed: `review-paper-light`, `review-paper-code`, `review-pap`, `review-grant`)
+
+For these the names match, so the simple pattern works. Pick the skill name and run:
 
 ```bash
-git remote remove backman
+SKILL=review-paper-light    # or review-paper-code, review-pap, review-grant
+
+git fetch backman
+
+# See what changed
+git log --oneline -10 backman/main -- "Skills/${SKILL}.md"
+
+# Pull his version into our directory layout
+git show "backman/main:Skills/${SKILL}.md" > ".claude/skills/${SKILL}/SKILL.md"
+
+git diff ".claude/skills/${SKILL}/SKILL.md"
+
+HASH=$(git log -1 --format=%h backman/main)
+git add ".claude/skills/${SKILL}/SKILL.md"
+git commit -m "Refresh ${SKILL} from Backman ${HASH}"
+git push origin my-customizations
 ```
 
-You can re-add it next time. Or leave it — having `backman` and `moore` as permanent remotes is fine.
+#### Recipe C — Moore stata (multi-file, plugin → flat path translation)
+
+Moore keeps his skill at `plugins/stata/skills/stata/` but we keep ours at `.claude/skills/stata/`. Refresh the whole tree at once:
+
+```bash
+git fetch moore
+
+# See what changed
+git log --oneline -10 moore/main -- plugins/stata/skills/stata/
+
+# Pull his entire stata tree into a temp dir, then move into place
+git checkout moore/main -- plugins/stata/skills/stata/
+rm -rf .claude/skills/stata
+mkdir -p .claude/skills
+mv plugins/stata/skills/stata .claude/skills/stata
+rm -rf plugins                      # clean up the leftover plugin scaffold
+
+# Review — this will be a big diff (50+ files); skim package/reference changes
+git diff .claude/skills/stata/
+
+HASH=$(git log -1 --format=%h moore/main)
+git add .claude/skills/stata/ plugins
+git commit -m "Refresh stata skill from Moore ${HASH}"
+git push origin my-customizations
+```
+
+> Moore also ships `stata-c-plugins` and `stata-skill-contributor` plugins in his repo. We don't carry those — ignore unless you decide to add them.
+
+#### Recipe D — Codex (small, root-level layout)
+
+Codex's repo IS the skill — `SKILL.md` and `scripts/` sit at the repo root. We place them under `.claude/skills/codex/`:
+
+```bash
+git fetch codex-src
+
+# See what changed
+git log --oneline -10 codex-src/main
+
+# Pull SKILL.md and scripts into our location
+git show codex-src/main:SKILL.md > .claude/skills/codex/SKILL.md
+git show codex-src/main:scripts/ask_codex.sh > .claude/skills/codex/scripts/ask_codex.sh
+chmod +x .claude/skills/codex/scripts/ask_codex.sh
+
+# (Optional) the upstream now ships a Windows PowerShell variant — pull it too if you want it
+# git show codex-src/main:scripts/ask_codex.ps1 > .claude/skills/codex/scripts/ask_codex.ps1
+
+git diff .claude/skills/codex/
+
+HASH=$(git log -1 --format=%h codex-src/main)
+git add .claude/skills/codex/
+git commit -m "Refresh codex skill from oil-oil ${HASH}"
+git push origin my-customizations
+```
+
+⚠️ Our local `codex/SKILL.md` currently has divergence from upstream (older base + your edits). Running Recipe D will overwrite both. If you want to keep your local edits, use the cherry-pick pattern below instead.
 
 **If you've made local edits to a third-party skill**
 
-`git checkout backman/main -- <file>` will overwrite your edits silently. Two options:
+The `git show ... > destination` pattern in the recipes above will overwrite your edits silently. Two options:
 
-- **Accept theirs, redo your edits** — let the refresh happen, then re-apply your local changes on top.
-- **Keep yours, cherry-pick just their fix** — instead of `git checkout`, do:
+- **Accept theirs, redo your edits** — run the recipe, then re-apply your local changes by hand.
+- **Keep yours, cherry-pick just their fix** — view the diff first and copy in only what you want:
   ```bash
-  git diff HEAD backman/main -- <path>/review-paper-full/SKILL.md
+  diff <(git show backman/main:Skills/review-paper.md) .claude/skills/review-paper-full/SKILL.md
   ```
-  and manually copy in the parts you want.
+  Edit `.claude/skills/review-paper-full/SKILL.md` manually with the parts you want.
 
-When in doubt, the backup tag pattern works here too — tag your current state before refreshing:
+**If something goes wrong after a refresh**
+
+The `backup/pre-skill-refresh-YYYY-MM-DD` tag from Step 2 is your escape hatch:
 ```bash
-git tag backup/pre-skill-refresh-$(date +%Y-%m-%d)
-git push origin backup/pre-skill-refresh-$(date +%Y-%m-%d)
+git reset --hard backup/pre-skill-refresh-2026-04-30
+git push --force-with-lease origin my-customizations
 ```
 
 **Existing project repos do NOT auto-update from refreshed skills** — see the next section.
