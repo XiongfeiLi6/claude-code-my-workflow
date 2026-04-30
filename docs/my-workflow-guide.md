@@ -41,72 +41,79 @@ gh repo create my-new-project --private --source=. --remote=origin --push
 
 This gives you a clean repo with all the infrastructure but no fork relationship to maintain.
 
-### Step 1 (Variant): Existing folder with data/code/manuscript already in place
+### Step 1 (Variant): Subdirectory inside a larger project tree
 
-Use this variant when you're adding Claude Code to a project that **already exists** — for example, a paper repository with `data/`, `code/`, and `manuscript/` folders already populated.
+This is the layout you actually use for research projects: the data, analysis code, and manuscript already live in a parent folder (often Dropbox-synced and shared with co-authors), and you want a writable Claude Code workspace as a *subdirectory* inside that tree. The data/code/manuscript folders are siblings of the workspace, not children — so the workspace itself is empty when you start.
 
-**Why not use the regular Step 1?** The regular Step 1 uses `git checkout -b main template/my-customizations`, which replaces the working directory with the template's tree. For an existing folder, that would either fail (untracked files present) or risk overwriting your work. Instead, we **copy infrastructure paths only** from a local clone of the template.
+**Layout this variant assumes:**
 
-```bash
-cd ~/Documents/my-existing-project
-
-# 1. Initialize git IF NOT already a repo (no-op if already initialized)
-git init
-
-# 2. Snapshot existing work first (so template copy can't silently damage it)
-git add -A
-git commit -m "Snapshot existing project state before adding workflow" || true
-
-# 3. Check for collisions BEFORE copying anything
-for path in .claude CLAUDE.md MEMORY.md templates quality_reports; do
-  if [ -e "$path" ]; then
-    echo "COLLISION: $path already exists — review before overwriting"
-  fi
-done
-
-# 4. Make sure your local template clone is on my-customizations and up to date
-TEMPLATE=~/Documents/GitHub/claude-code-my-workflow
-(cd $TEMPLATE && git checkout my-customizations && git pull origin my-customizations)
-
-# 5. Copy ONLY the infrastructure — never data/, code/, manuscript/
-cp -r $TEMPLATE/.claude .
-cp $TEMPLATE/CLAUDE.md .
-[ -f $TEMPLATE/MEMORY.md ] && cp $TEMPLATE/MEMORY.md .
-[ -d $TEMPLATE/templates ] && cp -r $TEMPLATE/templates .
-[ -d $TEMPLATE/quality_reports ] && cp -r $TEMPLATE/quality_reports .
-
-# 6. Commit the workflow infrastructure as a separate labeled commit
-git add .claude CLAUDE.md MEMORY.md templates quality_reports 2>/dev/null
-git commit -m "Add Claude Code workflow infrastructure from my-customizations template"
-
-# 7. GitHub remote — ONLY if project doesn't already have one
-if ! git remote get-url origin &>/dev/null; then
-  gh repo create my-existing-project --private --source=. --remote=origin --push
-else
-  echo "Remote 'origin' already exists — push manually when ready"
-fi
+```
+~/path/to/your-research-project/    ← read-only or co-author-shared, NOT a git repo
+├── Data/                           ← read-only inputs
+├── Analysis/                       ← read-only inputs (legacy code)
+├── manuscript/                     ← read-only inputs (Overleaf-synced .tex)
+└── ClaudeCode/                     ← writable workspace — THIS is your git repo
+    └── (empty before you run the commands below)
 ```
 
-**Key differences from the fresh-folder Step 1:**
+CLAUDE.md will then carry a "Top Rule — Upstream Files Are READ-ONLY" section pointing at the parent's `Data/`, `Analysis/`, `manuscript/` paths.
 
-| Fresh folder (original Step 1) | Existing folder (this variant) |
-|---|---|
-| `mkdir` + `cd` | `cd` only |
-| `git init` on empty folder | `git init` + snapshot existing work first |
-| `git checkout -b main template/my-customizations` **replaces** working tree | `cp -r` **adds** specific infrastructure paths only |
-| `gh repo create --push` unconditionally | Conditional on no existing `origin` |
-| One commit | Two commits: (1) existing state snapshot, (2) infrastructure added |
+**Commands** (works for any empty subdirectory; no `mkdir` since the folder already exists):
 
-**Why copy instead of `git merge --allow-unrelated-histories`?** The merge approach would:
-- Pollute your project history with Pedro's + Backman's + Moore's template commits
-- Risk merge conflicts if any path collides (e.g., `data/`, `.gitignore`)
-- Make it harder to see "what did I add from the template" in a clean diff
+```bash
+cd ~/path/to/your-research-project/ClaudeCode    # workspace folder (must be empty)
+git init
 
-The copy approach gives you one clean, labeled commit — easy to revert, easy to audit.
+# Pull the template content (no GitHub fork relationship — git history IS preserved)
+git remote add template https://github.com/XiongfeiLi6/claude-code-my-workflow.git
+git fetch template my-customizations
+git checkout -b main template/my-customizations
+git remote remove template
 
-**Adjust Step 2's starter prompt for this variant.** Add this line to the prompt so Claude knows the state:
+# Create your own private GitHub repo and push
+gh repo create your-project-name --private --source=. --remote=origin --push
+```
 
-> "This is an **existing** project. I already have `data/`, `code/`, and `manuscript/` folders with content in them. Read CLAUDE.md and configure it for this existing structure — do NOT create new data/code/manuscript folders or assume empty state. Then tell me which skills to remove based on the project type."
+**What "without fork history" actually means.** The new repo is *not* a GitHub-level fork (so it's independent on GitHub — PRs and issues stay in your repo, not the template's). The full git commit history of `my-customizations` IS preserved — every commit from Pedro, Backman, Moore, and your own customizations comes along. That's a feature, not a bug: future `git log` calls show why a skill exists.
+
+**Pre-flight check** — before running these commands, make sure the workspace folder won't collide with the template:
+
+```bash
+cd ~/path/to/your-research-project/ClaudeCode
+ls -A    # should show nothing, or only files that don't appear in the template
+```
+
+If the folder is empty, you're safe. If it has files, check whether any name appears in the template's tree (e.g., `CLAUDE.md`, `.claude/`, `README.md`) — if so, `git checkout -b main template/my-customizations` will refuse with `"error: The following untracked working tree files would be overwritten by checkout"`. In that rare case, see the **fallback** below.
+
+**Fallback: existing folder with tracked files that collide with the template**
+
+If you really need to fold the template into a folder that already has `CLAUDE.md` or `.claude/` (e.g., you started ad-hoc and now want to formalize), don't fight `git checkout`. Snapshot the existing folder, then copy only the infrastructure paths from a local clone of the template:
+
+```bash
+cd ~/path/to/existing-folder
+
+# 1. Init + snapshot existing state in case anything goes wrong
+git init && git add -A && git commit -m "Snapshot before adding workflow" || true
+
+# 2. Copy infrastructure paths from a local clone of the template
+TEMPLATE=~/Documents/GitHub/claude-code-my-workflow
+(cd $TEMPLATE && git checkout my-customizations && git pull --ff-only)
+cp -r $TEMPLATE/.claude .
+cp    $TEMPLATE/CLAUDE.md .
+[ -f $TEMPLATE/MEMORY.md ]            && cp    $TEMPLATE/MEMORY.md .
+[ -d $TEMPLATE/templates ]            && cp -r $TEMPLATE/templates .
+[ -d $TEMPLATE/quality_reports ]      && cp -r $TEMPLATE/quality_reports .
+
+# 3. Commit infrastructure as one labeled commit
+git add .claude CLAUDE.md MEMORY.md templates quality_reports 2>/dev/null
+git commit -m "Add Claude Code workflow infrastructure from my-customizations"
+
+# 4. Push (only create remote if missing)
+git remote get-url origin &>/dev/null \
+  || gh repo create your-project-name --private --source=. --remote=origin --push
+```
+
+Tradeoff: the fallback gives you one clean infrastructure commit but does **not** preserve the template's commit history. Use the main subdirectory variant whenever you can.
 
 ### Step 2: Launch Claude Code and run the starter prompt
 
