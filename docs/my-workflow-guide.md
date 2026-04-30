@@ -118,36 +118,47 @@ Tradeoff: the fallback gives you one clean infrastructure commit but does **not*
 ### Step 2: Launch Claude Code and run the starter prompt
 
 ```bash
-cd ~/Documents/my-new-project
+cd ~/path/to/your-project/ClaudeCode
 claude
 ```
 
-Paste this prompt (fill in the brackets):
+**Canonical starter prompt** (this is a real prompt for the Trade Shock & IPV project — copy it and rewrite the project-specific paragraphs for whatever you're starting):
 
 ```
-I am starting to work on [PROJECT NAME] in this repo. [Describe your project
-in 2-3 sentences — e.g., "This is an applied micro paper studying the effect
-of X on Y using difference-in-differences with staggered treatment adoption.
-The data is from [source] covering [years]. We use Stata for all analysis."]
+I am starting to work on the research project titled "Trade Shock and IPV." In this project, we are trying to explore the effects of trade-shock-induced gender-specific income shocks on the dynamics of violence against women, in the context of the US-China trade war during the First Trump administration, and Mexican survey data. The main identification strategy is the shift-share method, and the main outcome measures are from the ENDIREH survey. More details on the data, methods, and context can be found in the documents. We can use either Stata or R for this project, and it is still in an early exploratory stage. This is an ongoing project with no formal analysis yet.
+
+The main project data, documents, and codes are in this folder: /Users/xiongfei/Library/CloudStorage/Dropbox/Projects/Trade_and_IPV. The very initial draft is in the manuscript folder, and the overleaf synced version is in /Users/xiongfei/Library/CloudStorage/Dropbox/应用/Overleaf/IPV Mexico
+
+Check the documents for more details. Please scan carefully to understand the big picture, structure, method, and roadmap for this project, and then let's work together to move it forward.
+
+The top rule is that you can read or copy files from the main project folder and/or the Overleaf version of the manuscript, but do not modify or delete any files there. If you need to make any changes to the manuscript, the code, or inputs, generate them in your own folder and ask me for approval before making any modifications.
 
 I've set up the Claude Code academic workflow from my template. Please:
 1. Read CLAUDE.md, MEMORY.md, and the rules in .claude/rules/
 2. Fill in the [BRACKETED PLACEHOLDERS] in CLAUDE.md with my project details
-3. Delete skills and agents I won't need for this project type
-4. Enter plan mode and show me what you've configured
+3. Enter plan mode and show me what you've configured
 ```
+
+**Anatomy of the prompt — what to swap when starting a new project:**
+
+| Paragraph | Adapt? | What it does |
+|---|---|---|
+| 1 — Project intro | **Rewrite** | Title, what you're studying, identification strategy, data, current stage. Claude uses this to populate `CLAUDE.md` and decide which skills are relevant. |
+| 2 — Folder pointers | **Rewrite paths** | Absolute paths to the main project folder and the Overleaf version (omit Overleaf if you don't use it). |
+| 3 — Reading instruction | Keep as-is | One-sentence ask to scan and synthesize. |
+| 4 — Top Rule | Keep as-is (adjust paths if no Overleaf) | The read-only-upstream contract. CLAUDE.md will codify this as a rule. |
+| 5 — Setup instructions (1, 2, 3) | Keep as-is | Reads infrastructure, fills bracketed placeholders, enters plan mode. |
 
 ### Step 3: Claude configures your project
 
 Claude will:
 - Fill in `CLAUDE.md` with your project name, institution, folder structure
-- Identify which skills to keep vs remove based on project type
 - Set up `MEMORY.md` with project-specific context
 - Present a plan for your approval
 
-**What to remove by project type:**
+**What about pruning skills?** The canonical prompt above does **not** ask Claude to delete skills — most projects keep all skills loaded in case they're useful later, and the cost of an unused skill is just a few KB of context only when it triggers. If you specifically want a slim project (e.g., a pure grant proposal that will never need slide tooling), add `"3. Delete skills and agents I won't need for this project type"` to the prompt. The table below shows what each project type typically uses:
 
-| Project Type | Keep | Remove |
+| Project Type | Typically uses | Rarely uses |
 |-------------|------|--------|
 | **Research paper** | review-paper-full, review-paper-light, review-paper-code, stata, lit-review, research-ideation, data-analysis, commit | compile-latex, create-lecture, pedagogy-review, slide-excellence, deploy, qa-quarto, translate-to-quarto, extract-tikz, visual-audit, devils-advocate |
 | **Course materials** | compile-latex, create-lecture, slide-excellence, pedagogy-review, visual-audit, proofread, stata, commit | review-paper-full, review-paper-light, review-paper-code, review-pap, review-grant, lit-review, research-ideation |
