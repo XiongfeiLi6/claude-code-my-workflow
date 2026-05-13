@@ -2,7 +2,7 @@
 
 **Author:** Xiongfei Li
 **Template branch:** `my-customizations` on `XiongfeiLi6/claude-code-my-workflow`
-**Last updated:** 2026-04-06
+**Last updated:** 2026-05-13
 
 ---
 
@@ -160,10 +160,11 @@ Claude will:
 
 | Project Type | Typically uses | Rarely uses |
 |-------------|------|--------|
-| **Research paper** | review-paper-full, review-paper-light, review-paper-code, stata, lit-review, research-ideation, data-analysis, commit | compile-latex, create-lecture, pedagogy-review, slide-excellence, deploy, qa-quarto, translate-to-quarto, extract-tikz, visual-audit, devils-advocate |
-| **Course materials** | compile-latex, create-lecture, slide-excellence, pedagogy-review, visual-audit, proofread, stata, commit | review-paper-full, review-paper-light, review-paper-code, review-pap, review-grant, lit-review, research-ideation |
-| **Grant proposal** | review-grant, review-paper-light, lit-review, research-ideation, commit | compile-latex, create-lecture, slide-excellence, deploy, qa-quarto, extract-tikz |
-| **Pre-analysis plan** | review-pap, research-ideation, stata, data-analysis, commit | compile-latex, create-lecture, slide-excellence, deploy |
+| **Research paper** | review-paper-full, review-paper-light, review-paper-code, stata, lit-review, research-ideation, data-analysis, **replicate-paper**, **audit-estimator**, **text-classify**, **question-quality**, commit | compile-latex, create-lecture, pedagogy-review, slide-excellence, deploy, qa-quarto, translate-to-quarto, extract-tikz, visual-audit, devils-advocate |
+| **Course materials** | compile-latex, create-lecture, slide-excellence, pedagogy-review, visual-audit, proofread, stata, commit | review-paper-full, review-paper-light, review-paper-code, review-pap, review-grant, lit-review, research-ideation, replicate-paper, audit-estimator, text-classify |
+| **Grant proposal** | review-grant, review-paper-light, lit-review, research-ideation, **question-quality**, commit | compile-latex, create-lecture, slide-excellence, deploy, qa-quarto, extract-tikz, text-classify |
+| **Pre-analysis plan** | review-pap, research-ideation, **question-quality**, stata, data-analysis, commit | compile-latex, create-lecture, slide-excellence, deploy |
+| **Referee report** | review-paper-full, **replicate-paper**, **question-quality**, **audit-estimator**, commit | compile-latex, create-lecture, slide-excellence, deploy |
 
 ### Step 4: Set up your .gitignore
 
@@ -230,6 +231,10 @@ Claude reads `CLAUDE.md` and `MEMORY.md` automatically. If resuming after a brea
 /review-paper-code                  # Check paper-code consistency
 /lit-review [topic]                 # Literature search + synthesis
 /research-ideation [topic]          # Generate research questions
+/question-quality [question]        # 6-criterion Gentzkow audit of a research question
+/replicate-paper [DOI or path]      # Reproduce an EXTERNAL paper's published numbers
+/audit-estimator [function + DGP]   # Builder/tester DGP-recovery test on your own estimator
+/text-classify [corpus]             # LLM-classify text at scale → variable for regression
 ```
 
 **For course materials:**
@@ -630,3 +635,73 @@ gh repo create micro-principles --private --source=. --remote=origin --push
 | qa-quarto | Sant'Anna | `/qa-quarto` | Adversarial Quarto QA |
 | translate-to-quarto | Sant'Anna | `/translate-to-quarto` | Beamer to Quarto |
 | extract-tikz | Sant'Anna | `/extract-tikz` | TikZ to SVG |
+| replicate-paper | Xiongfei | `/replicate-paper` | Reproduce an external paper's published numbers (Yiqing Xu 3-layer pattern) |
+| text-classify | Xiongfei | `/text-classify` | LLM-classify text at scale into a measured variable (Athey Level-1 pattern) |
+| audit-estimator | Xiongfei | `/audit-estimator` | Builder/tester DGP-recovery test for a custom estimator (Yiqing Xu 2-agent pattern) |
+| question-quality | Xiongfei | `/question-quality` | Six-criterion research-question audit (Gentzkow research-taste framework) |
+
+## Conference-Inspired Skills (May 2026)
+
+Four skills above (`replicate-paper`, `text-classify`, `audit-estimator`,
+`question-quality`) plus the rule `.claude/rules/skill-promotion-policy.md`
+are distilled from the **Stanford IRiSS panel** *Empirical Work in the
+Age of AI* (April 17, 2026). They occupy slots the existing repo did
+not cover:
+
+| New skill / rule | Closest existing artifact | Why a new file, not an extension |
+|---|---|---|
+| `replicate-paper` | `audit-reproducibility` | `audit-reproducibility` checks YOUR paper vs YOUR code; `replicate-paper` reproduces SOMEONE ELSE's paper from scratch. Different inputs, different gold standard. |
+| `text-classify` | none | No prior skill covers LLM-as-measurement-tool. New capability. |
+| `audit-estimator` | `methods-referee`, `claim-verifier` | `methods-referee` reviews someone else's paper; `claim-verifier` fact-checks claims. Neither runs a builder/tester DGP-recovery loop on YOUR OWN estimator. |
+| `question-quality` | `devils-advocate`, `research-ideation`, `interview-me` | `devils-advocate` critiques designs; `research-ideation` generates; `interview-me` formalizes. None apply Gentzkow's six-criterion research-taste lens to a formulated question. |
+| rule `skill-promotion-policy` | none | Codifies the "12 painful rounds before promoting" heuristic; read by `/learn` without modifying `/learn` itself (preserves zero merge conflict with Pedro upstream). |
+
+## Conflict Risk When Pedro's Upstream Updates
+
+| File added by my-customizations | Conflict risk on rebase | Why |
+|---|---|---|
+| `.claude/skills/replicate-paper/SKILL.md` | **None** | Filename is unique; Pedro has `audit-reproducibility` (different name). |
+| `.claude/skills/text-classify/SKILL.md` | **None** | No upstream skill with this name; Pedro is unlikely to ship one because the topic is field-specific. |
+| `.claude/skills/audit-estimator/SKILL.md` | **None** | Unique name. Pedro has `audit-reproducibility` (manuscript audit) but no estimator-DGP-recovery skill. |
+| `.claude/skills/question-quality/SKILL.md` | **None** | Unique name. Pedro has `devils-advocate` / `research-ideation` (different roles). |
+| `.claude/rules/skill-promotion-policy.md` | **None** | Unique name. Distinct from Pedro's `learn` skill body (which is not modified). |
+| `docs/my-workflow-guide.md` | **None** | This is your own file; not from Pedro's upstream. |
+
+**Key design choice for conflict avoidance:** `/learn` (Pedro's skill) is
+NOT edited. The new `skill-promotion-policy.md` rule is a sibling
+document that `/learn` consults at runtime — no diff against upstream.
+If you later want to harden the gate further, the rule is the place to
+do it; `/learn`'s body stays clean.
+
+**One residual risk to monitor:** if Pedro adds a new agent or skill
+whose internals reference `replication-protocol.md`, the dependency
+graph may shift. The new `replicate-paper` and `audit-estimator` skills
+both reference that rule. If Pedro changes the rule's tolerance contract,
+both new skills inherit the change automatically — usually what you
+want, but worth verifying on the first post-rebase test run.
+
+## Recipe E — Promoting drafts via the skill-promotion-policy
+
+The new `.claude/rules/skill-promotion-policy.md` defines a three-tier
+threshold (Tier 1: <5 occurrences → inline in `MEMORY.md`; Tier 2: 5–12
+→ draft in `quality_reports/draft-skills/`; Tier 3: 12+ stable → promote).
+When promoting a Tier-3 draft to a real skill:
+
+```bash
+cd ~/Documents/GitHub/claude-code-my-workflow
+git checkout my-customizations
+
+DRAFT=quality_reports/draft-skills/<candidate-name>.md
+NEW=.claude/skills/<candidate-name>/SKILL.md
+
+mkdir -p "$(dirname "$NEW")"
+mv "$DRAFT" "$NEW"
+
+git add "$NEW"
+git rm "$DRAFT" 2>/dev/null || true
+git commit -m "Promote <candidate-name>: <12+ occurrences, steps stable>"
+git push origin my-customizations
+```
+
+Then push the same file to any active project repos that should pick it up
+(see "When to update existing projects" above).
