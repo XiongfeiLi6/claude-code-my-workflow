@@ -235,6 +235,7 @@ Rules use path-scoped loading: **always-on** rules load every session (~100 line
 | `verification-protocol` | `.tex`, `.qmd`, `docs/` | Task completion checklist |
 | `single-source-of-truth` | `Figures/`, `.tex`, `.qmd` | No content duplication; Beamer is authoritative |
 | `quality-gates` | `.tex`, `.qmd`, `*.R` | 80/90/95 scoring + tolerance thresholds |
+| `manuscript-writing-style` | `.tex`, `.qmd`, `manuscript/`, `paper/`, `drafts/` | Declarative, not defensive; β/SE in tables not prose; per-SD magnitudes; no result pre-announcement in section openers |
 | `r-code-conventions` | `*.R` | R coding standards + math line-length exception |
 | `tikz-visual-quality` | `.tex` | TikZ diagram visual standards |
 | `beamer-quarto-sync` | `.tex`, `.qmd` | Auto-sync Beamer edits to Quarto |

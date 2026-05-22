@@ -6,6 +6,20 @@ If you have forked this template, see the **Upgrading** section at the bottom fo
 
 ---
 
+## v1.8.1 — 2026-05-22
+
+A **manuscript-writing convention** patch release. Adds one path-scoped rule that codifies a top-journal prose convention (declarative, not defensive; $\hat\beta$/SE in tables not prose; per-SD magnitudes; no result pre-announcement in section openers). Motivated by a real review cycle in which a defensive subsection opener was rewritten from 16 lines to 1, and the cleaner pattern was identified as belonging in the template, not just one project.
+
+### Added
+
+- **`.claude/rules/manuscript-writing-style.md`** — path-scoped rule loading on `.tex`, `.qmd`, and any path matching `manuscript/`, `paper/`, or `drafts/`. Core principle: **declarative, not defensive.** Forbids in body prose: result pre-announcement in section openers, defending dropped specifications, self-explaining the section architecture, hedge-stacking ("approximately roughly about"). Encourages: one-sentence subsection openers; interpreted magnitudes (per-SD %, elasticity, dollar effect) + table column reference in result paragraphs; inline $(\hat\beta, \text{SE})$ only when the coefficient itself is the argumentative object. References the AER and AEJ:Applied style guides for the in-prose-coefficient convention. Includes a "common targets for cleanup" checklist (subsection openers, redundant $(\hat\beta, \text{SE})$ parentheticals, restating-the-result "Interpretation" paragraphs, 3+ sentence footnotes, repeated "we find / we show / we document" phrases).
+
+### Changed
+
+- **`README.md`** path-scoped rules table now lists `manuscript-writing-style`.
+
+---
+
 ## v1.8.0 — 2026-04-27
 
 A **disciplinary breadth + audit-hardening + Apr 2026 incorporation** minor release. The cycle landed in two passes: (1) infrastructure-only audit-hardening (mechanical parity checks via `check-skill-integrity.py`, living pet-peeves catalogue, PreCompact blocking, Routines awareness) and (2) capability work (two new skills `/checkpoint` and `/preregister`, political-science breadth via three journal profiles + two paper types + a discipline-cards reference, and Apr 2026 documentation: auto mode promotion, protected-paths gate explainer, session-management commands, Computer Use sidebar, Monitor tool integration, `disable-model-invocation` discipline). No breaking changes; counts updated across all monitored surfaces.
