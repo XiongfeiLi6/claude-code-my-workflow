@@ -78,7 +78,7 @@ You describe a task. For complex or ambiguous requests, Claude first creates a r
 
 ### Specialized Agents
 
-Instead of one general-purpose reviewer, 14 focused agents each check one dimension. A representative sample:
+Instead of one general-purpose reviewer, 18 focused agents each check one dimension. A representative sample:
 
 - **proofreader** — grammar/typos
 - **slide-auditor** — visual layout
@@ -107,6 +107,17 @@ Every artifact gets a score (0–100). Scores below threshold halt the workflow 
 
 Plans, specifications, and session logs survive auto-compression and session boundaries. The PreCompact hook saves a context snapshot before Claude's auto-compression triggers, ensuring critical decisions are never lost. MEMORY.md accumulates learning across sessions, so patterns discovered in one session inform future work.
 
+For *forced* compression (long pipelines, mid-plan handoffs), `/compress-session` (v1.9.0) distils the conversation into a structured note — decisions, next actions, and **discarded-as-noise** — instead of letting auto-compaction truncate. `/promote-memory` (v1.9.0) periodically harvests generic learnings from gitignored personal-memory.md to committed MEMORY.md via a five-critic council.
+
+### Verification Discipline (v1.7.0+)
+
+Multiple complementary verification layers run before submission:
+
+- **`/verify-claims`** (v1.7.0) — Chain-of-Verification with a forked verifier that cannot self-confirm because it has never seen the draft. v1.9.0 adds HIGH/MED/LOW-WARN severity tiers; HIGH-WARN (fabricated citation, numerical contradiction) gate-refuses `/commit`.
+- **`/audit-reproducibility`** (v1.7.0; Stata coverage v1.9.0) — every numeric claim in the manuscript is cross-checked against the script output that produced it. v1.9.0 adds `passport.yaml` — a per-paper YAML state file with PASS/FAIL/STALE/UNVERIFIED status per claim.
+- **`/humanize`** (v1.9.0) — detect AI-voice tells (boilerplate transitions, hedging stacking, sycophancy) before submission. Read-only by design; auto-rewriting degrades quality.
+- **`/review-paper --variance N`** (v1.9.0) — runs N referees with sampled dispositions and reports a **decision distribution**, not a point estimate. Motivated by AgentReview (ACL 2024) finding 37% of decisions vary purely from disposition sampling.
+
 ---
 
 ## The Guide
@@ -126,12 +137,17 @@ It covers:
 
 The guide covers Claude Code's latest capabilities:
 
-- **Effort levels** — `/effort` command for cost vs. thoroughness tradeoffs (low/medium/high/max)
-- **Skill frontmatter** — `effort`, `context: fork`, `agent`, `hooks`, and dynamic content (`$ARGUMENTS`, `!command` syntax)
-- **Permission modes** — Normal, Auto-accept, Plan, Bypass for different workflows
-- **Hook handler types** — command, prompt, and HTTP handlers with 20+ hook events
-- **Advanced agent configuration** — model, maxTurns, isolation, tool restrictions
-- **Built-in skills** — `/batch` for parallel refactoring, `/simplify` for code review, `/remote-control` for browser bridge
+- **Model lineup** — **Opus 4.8** (`claude-opus-4-8`) is the newest model and the API default (GA 2026-05-28, $5/$25 per MTok, 1M context, defaults to `high` effort); Opus 4.7 is the prior generation. Sonnet 4.6 is the workhorse (1M context); Haiku 4.5 the fast tier. Sonnet 4 + original Opus 4 retire 2026-06-15 → migrate to Sonnet 4.6 / Opus 4.8. *(Verified against Anthropic docs 2026-05-31.)*
+- **Effort levels** — `/effort` sets cost vs. thoroughness (`low` / `medium` / `high` / `xhigh` / `max`). **Opus 4.8 defaults to `high`** — its `high` does roughly what 4.7's `xhigh` did for fewer tokens, so reserve `xhigh` for extended exploration and `ultracode` (xhigh + dynamic workflows) for the largest autonomous runs.
+- **`/goal <verifiable condition>`** (v1.9.0; Anthropic May 2026) — keep working across turns until a fast model confirms the condition holds. Pairs with `/commit` quality gates for verified-end-state runs.
+- **`claude agents` dashboard** (v1.9.0; Anthropic May 2026) — single screen for parallel review work (`/review-paper --peer`, `/slide-excellence`).
+- **Cost-Conscious Composition** — prompt-cache TTL (5-min default on API keys; **1-hour automatic on Claude subscriptions**), 70/20/10 model routing (Haiku/Sonnet/Opus), `/cost` + `/usage` monitoring, Agent SDK credit-pool split (2026-06-15).
+- **Skill frontmatter** — `effort`, `context: fork`, `agent`, `hooks`, `disable-model-invocation` (v1.8.0+), and dynamic content (`$ARGUMENTS`, `!command` syntax)
+- **Permission modes** — Normal, Auto-accept, Plan, Auto (classifier-gated; on Team / Enterprise / API and rolling out to Max; needs Opus 4.6+ or Sonnet 4.6), Bypass
+- **Hook handler types** — command, prompt, and HTTP handlers with 20+ hook events; hooks see `effort.level` and `$CLAUDE_EFFORT` (Apr 2026 Week 19)
+- **Advanced agent configuration** — model, maxTurns, isolation, tool restrictions; `model-routing.md` rule codifies per-agent tier (v1.9.0)
+- **Worktree base ref** (v1.9.0; Anthropic Apr 2026) — `worktree.baseRef` setting controls `fresh` (default; remote default-branch) vs `head` (local HEAD) for new worktrees
+- **Built-in skills** — `/fewer-permission-prompts`, `/team-onboarding`, `/autofix-pr`, `/powerup`, Ultraplan, `/loop` (self-pacing)
 - **Plugins** — `/discover-plugins` for third-party extensions
 
 ---
@@ -141,18 +157,28 @@ The guide covers Claude Code's latest capabilities:
 | Academic Task | How This Workflow Helps |
 |---------------|----------------------|
 | Lecture slides (Beamer/Quarto) | Full creation, translation, multi-agent review, deployment |
-| Research papers | Literature review, manuscript review, simulated peer review |
-| Data analysis | End-to-end R pipelines, replication verification, publication-ready output |
-| Replication packages | AEA-compliant packaging, reproducibility audit trails |
+| Research papers | Literature review, manuscript review, simulated peer review (`/review-paper --peer [journal]`), reviewer-disposition variance reporting (`--variance N`) |
+| Data analysis | End-to-end R pipelines (`/data-analysis`) or Stata pipelines via `stata-mcp` (`/stata-replication`, v1.9.0), replication verification, publication-ready output |
+| Monte Carlo simulations | Reproducible simulation studies (`/simulation-study`, v1.10.0) — parameterized DGP, estimator grid, bias/RMSE/coverage/size/power with Monte Carlo SEs, dedicated `sim-reviewer` review pass |
+| Package development | R package release gate (`/r-package-check`, v1.10.0) — `devtools::document()` + tests + `R CMD check --as-cran` + CRAN-policy triage + `r-package-reviewer` (Stata / Python checks on the roadmap) |
+| Replication packages | AEA-compliant packaging, reproducibility audit trails, `passport.yaml` claims provenance (v1.9.0) |
 | Presentations | Rhetoric of decks principles, visual audit, cognitive load review |
 | Research proposals | Structured drafting with adversarial critique |
+| Preregistration | OSF / AsPredicted / AEA RCT Registry-ready document (`/preregister --style`) — full workflow in Pattern 16 |
+| Manuscript submission discipline | `/humanize` (detect AI voice), `/verify-claims` HIGH-WARN gate (block fabricated citations), reviewer-disposition variance |
+
+**Disciplines preloaded:** Economics (top-5 journal profiles, R conventions) and Political Science (APSR / AJPS / JOP profiles, formal-theory + survey-experiment paper types, conjoint/`cjoint` conventions). Forkers extend for psych / sociology / public-health via journal profiles + paper types + discipline cards.
+
+### One repo, many project types
+
+This workflow is designed as a **single hub for an entire research program** — not one paper at a time. The same `CLAUDE.md`, rules, agents, and quality gates serve courses and lectures, papers and referee reports, data analysis and replication packages, **Monte Carlo simulation studies** (`/simulation-study` + `sim-reviewer`), and the **R package release gate** (`/r-package-check` + `r-package-reviewer`) — all new in v1.10.0. *On the roadmap:* Stata / Python package checks (SSC / PyPI) and personal-productivity workflows. See [`.claude/references/v2.0-backlog.md`](.claude/references/v2.0-backlog.md) for what's next.
 
 ---
 
 ## What's Included
 
 <details>
-<summary><strong>14 agents, 30 skills, 24 rules, 6 hooks</strong> (click to expand)</summary>
+<summary><strong>18 agents, 38 skills, 28 rules, 6 hooks</strong> (click to expand)</summary>
 
 ### Agents (`.claude/agents/`)
 
@@ -168,6 +194,14 @@ The guide covers Claude Code's latest capabilities:
 | `quarto-fixer` | Implements fixes from the critic agent |
 | `verifier` | End-to-end task completion verification |
 | `domain-reviewer` | **Template** for your field-specific substance reviewer |
+| `claim-verifier` (v1.7.0) | Chain-of-Verification fact-checker in a forked context |
+| `editor` (v1.5.0) | Journal editor for `/review-paper --peer` (desk review + referee selection + synthesis) |
+| `domain-referee` (v1.5.0) | Disposition-primed substance referee for `--peer` mode |
+| `methods-referee` (v1.5.0+) | Paper-type-aware methodology referee (6 paper types) |
+| `humanize-auditor` (v1.9.0) | Read-only AI-voice auditor invoked by `/humanize` |
+| `promote-memory-council` (v1.9.0) | Five-critic council for `[LEARN]` promotion to MEMORY.md |
+| `sim-reviewer` (v1.10.0) | Monte Carlo simulation reviewer — DGP/estimand match, Monte Carlo SE, coverage-vs-truth, claims↔tables parity |
+| `r-package-reviewer` (v1.10.0) | R package-source reviewer — DESCRIPTION/NAMESPACE hygiene, roxygen completeness, testthat coverage, CRAN-policy red flags |
 
 ### Skills (`.claude/skills/`)
 
@@ -202,6 +236,15 @@ The guide covers Claude Code's latest capabilities:
 | `/seven-pass-review` | Seven-pass adversarial manuscript review (parallel forked subagents) |
 | `/checkpoint` | Structured session-handoff snapshot (state + plan pointers + next actions). Companion to narrative session logs. |
 | `/preregister` | Generate a preregistration document (OSF / AsPredicted / AEA RCT Registry style) from a research spec |
+| `/verify-claims` (v1.7.0) | Chain-of-Verification fact-check (forked verifier, fresh context). HIGH/MED/LOW-WARN severity tiers (v1.9.0); HIGH-WARN gate-refuses `/commit`. |
+| `/humanize` (v1.9.0) | Detect AI-voice tells in academic prose (10 detection categories; read-only, no rewrite) |
+| `/prompt` (v1.9.0) | Reformat informal/dictated input into a structured six-section prompt, then execute (ported from Blattman with stripping) |
+| `/prompt-only` (v1.9.0) | Same formatting as `/prompt` but emits the prompt as a reusable artifact (no execution) |
+| `/compress-session` (v1.9.0) | Distil current session into structured notes (decisions, next actions, *discarded-as-noise*) before auto-compaction |
+| `/promote-memory` (v1.9.0) | Five-critic council that votes on which `[LEARN]` entries graduate from personal-memory.md to MEMORY.md |
+| `/stata-replication` (v1.9.0) | End-to-end Stata pipeline via the `stata-mcp` MCP server (mirrors `/data-analysis` for R-first projects) |
+| `/simulation-study` (v1.10.0) | Scaffold + run a reproducible Monte Carlo study — parameterized DGP, estimator grid, seeded replications, bias/RMSE/coverage/size/power with Monte Carlo SEs |
+| `/r-package-check` (v1.10.0) | R package release gate — `devtools::document()` + tests + `R CMD check --as-cran`, triage ERROR/WARNING/NOTE vs CRAN policy, `r-package-reviewer` pass |
 
 ### Research Workflow
 
@@ -247,6 +290,16 @@ Rules use path-scoped loading: **always-on** rules load every session (~100 line
 | `orchestrator-research` | `*.R`, `explorations/` | Simple orchestrator for research (no multi-round reviews) |
 | `exploration-folder-protocol` | `explorations/` | Structured sandbox for experimental work |
 | `exploration-fast-track` | `explorations/` | Lightweight exploration workflow (60/100 threshold) |
+| `tikz-prevention` (v1.4.x) | `Slides/**`, `Figures/**`, `Preambles/**` | TikZ pre-flight grep checks (P3/P4 collision avoidance) |
+| `tikz-measurement` (v1.5.x) | `Slides/**`, `Figures/**`, `Preambles/**`, `scripts/**` | Bézier curve depth math + 6-pass collision protocol (from MixtapeTools) |
+| `content-invariants` (v1.6.x) | `.tex`, `.qmd`, `Preambles/`, `scripts/R/**` | Pre-Flight Reports — proves inputs were read before work |
+| `cross-artifact-review` (v1.7.0) | `master_supporting_docs/`, `.tex`, `.qmd` | Paper ↔ code dependency graph; auto-invokes `/review-r` + `/audit-reproducibility` |
+| `post-flight-verification` (v1.7.0) | Skills generating factual claims | Chain-of-Verification protocol with forked verifier |
+| `summary-parity` (v1.8.x) | `CHANGELOG.md`, `README.md`, `.qmd`, skill/rule/agent `.md` | Anti-whack-a-mole: re-verify summaries against their bodies |
+| `model-routing` (v1.9.0) | `.claude/agents/**/*.md`, `.claude/skills/**/SKILL.md` | 70/20/10 architect/editor split (Haiku/Sonnet/Opus) |
+| `stata-code-conventions` (v1.9.0) | `**/*.do`, `scripts/stata/**` | Stata header scaffold, numbered pipeline, esttab, clustering discipline, AEA compliance |
+| `simulation-conventions` (v1.10.0) | `**/*simulation*.R`, `**/*_sim.R`, `explorations/**` | Monte Carlo discipline: DGP/estimand, L'Ecuyer seeding, Monte Carlo SE, coverage-vs-truth, raw-result storage |
+| `r-package-conventions` (v1.10.0) | `R/**`, `tests/**`, `DESCRIPTION`, `NAMESPACE`, `man/**` | R package-source standards: no `library()` in `R/`, roxygen NAMESPACE, Imports/Suggests, testthat 3e, CRAN policy |
 
 ### Templates (`templates/`)
 
@@ -259,6 +312,11 @@ Rules use path-scoped loading: **always-on** rules load every session (~100 line
 | `requirements-spec.md` | MUST/SHOULD/MAY requirements framework with clarity status |
 | `constitutional-governance.md` | Template for defining non-negotiable principles vs. preferences |
 | `skill-template.md` | Academic skill creation template with domain-specific examples |
+| `decision-record.md` | Architectural decision record (ADR) template |
+| `journal-profile-template.md` | Journal profile for `/review-paper --peer` editor calibration |
+| `preregistration-template.md` (v1.8.0) | Preregistration document scaffold (OSF / AsPredicted / AEA RCT) |
+| `passport-template.yaml` (v1.9.0) | Per-paper YAML passport for numeric-claim provenance (used by `/audit-reproducibility`) |
+| `response-to-referees.md` | R&R response document scaffold |
 
 </details>
 
@@ -330,7 +388,7 @@ See the [guide's ecosystem section](https://psantanna.com/claude-code-my-workflo
 
 - **What's new:** see [CHANGELOG.md](CHANGELOG.md). We follow loose semver — breaking changes get major bumps so you can decide when to pull updates.
 - **How to contribute:** see [.github/CONTRIBUTING.md](.github/CONTRIBUTING.md). PRs welcome for generalizable improvements; fork-specific work stays in your fork.
-- **Pin to a version:** `git checkout v1.8.0` (current as of 2026-04-27).
+- **Pin to a version:** `git checkout v1.10.0` (current as of 2026-05-31).
 
 ---
 

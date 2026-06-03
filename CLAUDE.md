@@ -116,6 +116,14 @@ Enforced by `/commit` (halts + asks for override); not enforced by a git pre-com
 | `/verify-claims [file]` | Chain-of-Verification fact-check (forked verifier, fresh context) |
 | `/checkpoint [topic]` | Save a structured state snapshot (active plan, decisions, file pointers, next actions) before stopping or handing off |
 | `/preregister [--style osf|aspredicted|aea-rct]` | Draft a preregistration document (OSF / AsPredicted / AEA RCT Registry) from a research spec |
+| `/humanize [file]` | Detect AI-voice tells in academic prose (read-only audit; no rewrite) |
+| `/prompt [text] [depth:light|standard|deep]` | Reformat informal input into a structured six-section prompt, then execute |
+| `/prompt-only [text] [depth] [--save path]` | Same formatting as `/prompt`, but emits the prompt as a reusable artifact (no execution) |
+| `/compress-session [slug]` | Distil current session into structured notes before auto-compaction (vs `/checkpoint` for natural stops) |
+| `/promote-memory [filter]` | Five-critic council that votes on which `[LEARN]` entries graduate from personal-memory.md to MEMORY.md |
+| `/stata-replication [paper-or-data]` | End-to-end Stata pipeline scaffold + execution via `stata-mcp` (mirrors `/data-analysis` for R) |
+| `/simulation-study [estimator+DGP]` | Reproducible Monte Carlo study: DGP, estimator grid, seeded reps, bias/RMSE/coverage/size/power + Monte Carlo SEs |
+| `/r-package-check [pkg path]` | R package release gate: `devtools::document()` + tests + `R CMD check --as-cran`, CRAN-policy triage, `r-package-reviewer` pass |
 
 ---
 
