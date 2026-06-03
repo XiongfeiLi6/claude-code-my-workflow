@@ -6,6 +6,79 @@ If you have forked this template, see the **Upgrading** section at the bottom fo
 
 ---
 
+## v1.9.1 — 2026-06-03
+
+A **balance correction** patch release. Restores the tactical audit
+checklist that v1.9.0 had compressed to a single 5-item high-level
+list. Positive templates (§§3–6) remain the primary constitutional
+framing; the tactical "what specifically not to write" content is now
+recorded as a subsidiary audit checklist under §7.2.
+
+User feedback after the v1.9.0 constitutional rewrite: the
+high-level failure-mode list (5 items) was correct in spirit but
+lost too much grep-able specificity. Writers need both the
+architectural framing (§§1–6) AND a tactical checklist that
+catalogs the specific phrases, punctuation, and inline conventions to
+audit before submission.
+
+### Added
+
+`manuscript-writing-style.md` §7 split into two sub-sections:
+
+- **§7.1 The five high-level failures** — unchanged from v1.9.0.
+- **§7.2 Specific patterns to grep and cut** — new tactical audit
+  checklist organized into eight categories:
+  - 7.2.1 Over-defensive expressions (we caution, it should be noted
+    that, this is suggestive evidence that, may/might/could stacks,
+    trailing repeated-caveat paragraphs).
+  - 7.2.2 Inline statistical reporting (p-values in parens, inline
+    β/SE duplicating the table, significance stars in prose,
+    inline t/F-statistics).
+  - 7.2.3 Punctuation overuse (em-dash overuse — three or more per
+    paragraph; parenthetical asides burying qualifications;
+    semicolon-comma chains; double parentheticals).
+  - 7.2.4 Restatement patterns (adjacent "we find/we show/we
+    document"; pre-announcing results in section openers;
+    restating the table column-by-column).
+  - 7.2.5 Empty intensifiers and transition words (clearly,
+    obviously, importantly, notably, very, quite, rather; sentence-
+    start Furthermore/Moreover/Additionally/In addition).
+  - 7.2.6 Verbose constructions (the fact that; in order to; due to
+    the fact that; at this point in time; a number of; is able to;
+    make use of; with respect to/with regard to).
+  - 7.2.7 Formatting and visual noise (parenthetical italicized
+    narrative labels; bold for emphasis in body prose; underline;
+    ALL CAPS; over-long footnotes).
+  - 7.2.8 Citation hygiene (citation clusters > 4–5 entries; citet
+    vs citep consistency; verifying bib keys; page numbers for
+    direct quotes).
+
+Each row of each sub-checklist has: the trigger (regex-friendly
+phrase or pattern), the rationale, and the recommended fix. The
+structure supports running a mechanical grep pass over the manuscript
+before submission.
+
+### Motivation
+
+User feedback: "I respect your idea on 'not Too much negative
+framing', and this rule should be more about positive templates, but
+we need to make sure the expression we definitely do not want is
+recorded, including but not limited to, over-defensive sentences,
+p-values in parethesis, too much unnecessary double dash, and so on.
+Find the balance."
+
+The balance: positive templates as the primary teaching content,
+tactical audit checklist as the subsidiary enforcement mechanism. Both
+visible; neither dominant. The §7.2 checklist is explicitly a
+"tactical audit" subsidiary to the §7.1 structural failure modes,
+preserving the constructive primary framing of v1.9.0.
+
+### Net effect
+
+Rule file: 412 → 501 lines. All v1.9.0 content retained.
+
+---
+
 ## v1.9.0 — 2026-06-03
 
 A **manuscript-writing constitutional rewrite** minor release.
