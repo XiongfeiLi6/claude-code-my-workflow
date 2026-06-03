@@ -32,6 +32,49 @@ A world-claim can be confident, declarative, and substantive. A reader-direction
 
 ## Positive templates
 
+### Introduction architecture: where numbers go
+
+Top-5 empirical intros follow a consistent arc. The numerical-content
+discipline is:
+
+| Paragraph | Role | Numerical content |
+|---|---|---|
+| 1–2 | Motivation + research question | None |
+| 3 | High-level finding | One headline magnitude (e.g., the central per-SD effect) and the qualitative shape of the result |
+| 4–5 | Why-not-obvious + identification | None |
+| 6–8 | Detailed results | Per-spec ranges, per-outcome magnitudes, comparisons to literature benchmarks |
+| 9+ | Policy + literature | Magnitudes where load-bearing |
+
+**The failure mode to avoid:** all headline numbers in P3, no numbers in
+P6–8. Referees skip number-free detail paragraphs as filler. The
+detailed paragraphs are precisely where specific magnitudes, per-spec
+ranges, and benchmark comparisons should live; if you cut them out of
+the detail paragraphs, the detail paragraphs read as restatement.
+
+**Test:** for each of P6, P7, P8, ask whether the paragraph contains at
+least one specific number that does not appear in P3. If no, the
+detail paragraph is doing no work.
+
+### Abstract: state the inferential step
+
+Policy claims in the abstract should unfold the logic from result to
+conclusion, not assert the conclusion alone. The reader of an abstract
+should be able to reconstruct the inferential chain without reading the
+policy section.
+
+- Asserts the conclusion (cut or rewrite): *"The asymmetry between
+  regulated-pollutant and CO₂ enforcement provides a precise rationale
+  for CBAM targeted at greenhouse gases rather than broad environmental
+  standards."*
+- Unfolds the bridge (use): *"Because Chinese enforcement already
+  closes much of the regulated-pollutant gap but leaves the CO₂ gap
+  open, a CBAM targeted narrowly at greenhouse gases (as the EU
+  mechanism is designed) is appropriately calibrated, while a CBAM
+  extended to broad environmental standards would over-correct."*
+
+The "Because X, Y" structure forces you to write the bridge. The
+"X provides a rationale for Y" structure lets you skip it.
+
 ### Subsection opener
 
 One paragraph that names what the subsection covers, in what order, and at what level of aggregation. Optionally one sentence of design context (why the comparison is structured a certain way). **Do not state the finding.**
@@ -60,6 +103,62 @@ The reader knows what "describe correlations rather than causal effects" means. 
 ### Transition between subsections
 
 A connecting sentence is fine when the next subsection genuinely depends on the previous one (*"Section 3.2 extends the pooled DD with cohort heterogeneity..."*). It is self-excusing when it just announces what you're about to do (*"In this subsection, we will document..."*). Test: does the sentence add information the reader couldn't infer from the section title? If yes, keep. If no, drop.
+
+### Robustness summary table
+
+A robustness-summary table reports the headline coefficient across
+alternative specifications in a single column. Standard layout:
+*Specification, Estimate, SE, N*. When alternative specifications
+produce raw coefficients on different scales (e.g., alternative
+weighting schemes whose underlying regressors have different units),
+the raw-coefficient column is misleading — a reader cannot compare
+β = 0.0077 to β = 2.92 even though both correspond to the same per-SD
+effect.
+
+**Fix:** add a *Per-SD (%)* column that translates each raw coefficient
+to a single interpretable scale (coefficient × regressor SD × 100).
+Mark off-scale rows with a footnote dagger pointing to the per-SD
+column as the apples-to-apples comparison.
+
+For specifications where the per-SD translation does not apply (e.g.,
+the regressor uses a different functional form, such as a Kanzig shock
+in units of EU policy surprise rather than a carbon-cost rate), enter
+*--* in the per-SD column and document the omission in the table note.
+
+### Policy claims acknowledge the policy's actual mechanism
+
+When making a policy claim in the abstract, introduction, or policy
+discussion about a specific instrument — a CBAM, an EITC, a Pigouvian
+tax, an emissions cap — the claim must address the mechanism's actual
+design. Examples of mechanism details to address:
+
+- *CBAM:* the credit-for-carbon-price-paid mechanism (no double
+  taxation when the destination has carbon pricing); the destination
+  country's existing carbon pricing (pilot ETS, national ETS, carbon
+  tax).
+- *EITC:* the phase-in and phase-out rates; the disincentive on the
+  intensive margin in the phase-out region.
+- *Pigouvian tax:* the difference between the tax base and the
+  externality scope.
+- *Emissions cap:* the allocation method (auctioning vs free
+  allocation); the cost-containment mechanism (price floor, ceiling).
+
+Policy claims that ignore the mechanism's actual design are fragile —
+any referee who knows the policy will reject the claim. State the
+mechanism, then state how your finding interacts with it.
+
+### Promised robustness checks must be delivered
+
+If §5 ("Identification and Validity") promises a robustness check
+("we verify robustness by excluding X cities"; "we control for Y at
+the sector-year level"; "we use alternative weights from Z"), the
+appendix must either deliver the table or the promise must come out of
+§5. Orphan promises hurt credibility because referees who search the
+appendix will catch the gap.
+
+**Audit pattern:** after each round of edits, grep §5 for "robustness,"
+"we verify," "we check," "we control for," and confirm each promised
+check has a corresponding appendix table.
 
 ### Footnote
 
@@ -93,6 +192,18 @@ In order of frequency:
 10. **Inline $(\hat\beta = \ldots, \text{SE} = \ldots)$** that duplicates the table directly below.
 11. **Defending dropped specifications in body prose.** Belongs in a footnote, robustness subsection, or data appendix. Defending the *chosen* specification is fine and often required.
 12. **Stacked hedges** in one sentence.
+13. **Parenthetical narrative labels in intro chain summaries**:
+    `(\textit{the leakage channel})`, `(\textit{the production
+    channel})` and similar after each "First/Second/..." link. Not
+    common in AER or QJE intros — sentence-level signposting already
+    structures the chain, so the parenthetical labels are visual noise.
+    Reserve italicized parentheticals for inline variable or
+    abbreviation definitions: `(\emph{count})`, `(\textbf{Exp})`,
+    `(\textit{a priori})`.
+14. **Asserting a policy conclusion without the inferential bridge**.
+    "The asymmetry provides a precise rationale for CBAM targeted at
+    greenhouse gases" — the reader cannot reconstruct why. See
+    "Abstract: state the inferential step" above.
 
 ## Common over-application failures
 

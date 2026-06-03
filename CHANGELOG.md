@@ -6,6 +6,76 @@ If you have forked this template, see the **Upgrading** section at the bottom fo
 
 ---
 
+## v1.8.2 — 2026-06-03
+
+A **manuscript-writing convention** patch release. Expands
+`manuscript-writing-style.md` with five new positive templates and two
+new anti-patterns drawn from a real top-5 revision sprint on an
+empirical economics paper. The rule grew from 117 to 227 lines; all
+additions are universally applicable principles tested against AER and
+QJE intro arcs, robustness-summary conventions, and policy-section
+norms.
+
+### Added
+
+- **Introduction architecture: where numbers go.** New positive
+  template. Codifies the top-5 intro arc: P1–2 motivation + question
+  (no numbers); P3 high-level finding + headline magnitude (one
+  headline number); P4–5 why-not-obvious + identification (no
+  numbers); P6–8 detailed-results paragraphs (specific per-spec ranges
+  + per-outcome magnitudes); P9+ policy + literature. Failure mode to
+  catch: all numbers in P3 and no numbers in P6–8 (referees skip
+  number-free detail paragraphs as filler). Includes a
+  per-detail-paragraph audit test.
+- **Abstract: state the inferential step.** New positive template.
+  Policy claims in the abstract should unfold the logic from result to
+  conclusion in "Because X, Y" form, not assert the conclusion alone.
+  Side-by-side example contrasts "asserts the conclusion" (cut) with
+  "unfolds the bridge" (use).
+- **Robustness summary table.** New positive template. When
+  alternative specifications produce raw coefficients on different
+  scales (e.g., alternative weighting schemes whose underlying
+  regressors have different units), add a *Per-SD (%)* column so all
+  rows are comparable on a single interpretable scale. Footnote-mark
+  off-scale rows pointing to the per-SD column as the apples-to-apples
+  comparison. Document Kanzig-shock-style specs where per-SD doesn't
+  apply with "--" in the column.
+- **Policy claims acknowledge the policy's actual mechanism.** New
+  positive template. When making a policy claim about a specific
+  instrument (CBAM, EITC, Pigouvian tax, emissions cap), the claim
+  must address the mechanism's actual design. Examples of mechanism
+  details to address for each policy.
+- **Promised robustness checks must be delivered.** New positive
+  template. If §5 promises a robustness check, the appendix must
+  deliver the table or the promise must come out of §5. Includes an
+  audit-pattern grep for §5 promise verbs ("we verify," "we check,"
+  "we control for").
+- **Anti-pattern #13: parenthetical narrative labels in intro chain
+  summaries.** Adds to the existing anti-pattern list.
+  `(\textit{the leakage channel})`, `(\textit{the production channel})`
+  etc. after each "First/Second/..." link. Not common in AER/QJE intros
+  — sentence-level signposting already structures the chain. Reserve
+  italicized parentheticals for inline variable/abbreviation
+  definitions like `(\emph{count})`, `(\textbf{Exp})`, `(\textit{a priori})`.
+- **Anti-pattern #14: asserting a policy conclusion without the
+  inferential bridge.** Cross-refs the new "Abstract: state the
+  inferential step" template.
+
+### Motivation
+
+Tested in a June 2026 revision sprint on a top-5-target carbon leakage
+/ Chinese environmental enforcement paper for the LSE–Yale Firms, Trade,
+and Development conference. The intro had six parenthetical narrative
+labels (dropped); P3 carried all magnitudes and P6–7 carried none
+(rebalanced); the abstract asserted a CBAM conclusion without the
+inferential bridge (rewritten); the robustness summary had two rows on
+different scales without a per-SD comparison column (added); and the
+empirical-strategy section promised three robustness checks that the
+appendix did not deliver (one was added, two are queued for a follow-up).
+Each of these five fixes generalizes beyond the project setting.
+
+---
+
 ## v1.8.1 — 2026-05-22
 
 A **manuscript-writing convention** patch release. Adds one path-scoped rule that codifies a top-journal prose convention (declarative, not defensive; $\hat\beta$/SE in tables not prose; per-SD magnitudes; no result pre-announcement in section openers). Motivated by a real review cycle in which a defensive subsection opener was rewritten from 16 lines to 1, and the cleaner pattern was identified as belonging in the template, not just one project.
