@@ -495,6 +495,7 @@ The most common mistake when applying this rule is cutting substantive logic alo
 6. **Inferential-bridge check.** Each policy claim in the Abstract is in "Because X, Y" form.
 7. **Promised-robustness check.** Each robustness check promised in §5 has a corresponding appendix table.
 8. **Mechanism-acknowledgement check.** Each policy claim in the Discussion section addresses the mechanism the policy uses (CBAM credit-for-price-paid; EITC phase-in/out; etc.).
+9. **AI-voice audit.** After any AI-assisted revision pass, run `/humanize` on the edited files (or rely on `/review-paper-light` Agent C, which runs `humanize-auditor` automatically). The §7.2 tactical checklist catches the most common AI tells by grep, but `/humanize` also flags symmetric paragraph shapes, tricolon abuse, and lexical fingerprints (the LLM training-distribution markers) that grep cannot detect. Triggered automatically by the orchestrator when an AI-assisted edit touches a paper-like file; the writer should also run it explicitly before journal submission or working-paper posting.
 
 ---
 

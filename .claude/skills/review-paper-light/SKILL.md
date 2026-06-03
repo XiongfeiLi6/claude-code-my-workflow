@@ -1,8 +1,8 @@
 ---
-description: Run a fast 2-agent pre-submission check for an economics paper — focuses on contribution, identification, and causal overclaiming. Completes in ~1 minute.
+description: Run a fast 3-agent pre-submission check for an economics paper — focuses on contribution, identification, causal overclaiming, and AI-voice tells. Completes in ~1-2 minutes.
 ---
 
-You are coordinating a fast pre-submission check of an economics paper. You will run 2 agents in parallel and consolidate their output into a short, prioritized report.
+You are coordinating a fast pre-submission check of an economics paper. You will run 3 agents in parallel (substance, claim discipline, AI-voice audit) and consolidate their output into a short, prioritized report.
 
 ## Phase 1: Discover the Paper
 
@@ -18,9 +18,11 @@ Record:
 - Full path of each .tex file
 - Paper title, authors, and abstract
 
-## Phase 2: Launch 2 Agents in Parallel
+## Phase 2: Launch 3 Agents in Parallel
 
-In a **single message**, launch both agents using the Agent tool with `subagent_type: "general-purpose"`.
+In a **single message**, launch all three agents. Use `subagent_type: "general-purpose"` for Agents A and B; use `subagent_type: "humanize-auditor"` for Agent C.
+
+The humanize audit is included automatically (not optional) because AI-voice tells are increasingly a credibility tax at top journals, and authors using AI tools for drafting cannot rely on memory to detect their own drift toward LLM patterns. A 1-minute audit at this stage costs less than a desk reject framed around prose suspicion.
 
 ---
 
@@ -119,6 +121,26 @@ The .tex files to review are: [LIST ALL TEX FILE PATHS HERE]
 
 ---
 
+### AGENT C — AI-Voice Audit (`humanize-auditor`)
+
+Use the Skill tool to invoke `humanize` on the manuscript directory. Pass `manuscript/` (or the directory containing the .tex files) as the target, with default severity threshold.
+
+The `humanize` skill internally dispatches the `humanize-auditor` agent, which audits the prose for:
+- Boilerplate transition openers ("Moreover", "Furthermore", "It is important to note that")
+- AI-cliché lexicon ("delve", "navigate the complexities", "robust framework", "tapestry")
+- Em-dash overuse (≥ 3 per paragraph)
+- Symmetric paragraph shapes (LLM-distributional tell)
+- Tricolon abuse ("...not only X, but also Y, and indeed Z")
+- Hedging stacking ("may potentially could")
+- Formulaic openers ("Recent advances in...", "It has long been recognized that...")
+- "Not only X but also Y" frames
+
+Save the humanize-auditor's report and integrate its **High-severity** findings into the consolidated report as a Section 3.
+
+Do NOT auto-rewrite — the humanize skill is detect-and-flag only. The author edits.
+
+---
+
 ## Phase 3: Consolidate and Save
 
 After both agents return, consolidate into a single report.
@@ -155,6 +177,17 @@ Save to: `QUICK_REVIEW_[YYYY-MM-DD].md`
 ## 2. Causal Overclaiming & Unsupported Claims
 
 [Agent B output]
+
+---
+
+## 3. AI-Voice Audit (humanize)
+
+[Agent C — humanize-auditor output. Include the **High-severity** findings in full; summarize Medium and Low as counts only.
+
+Format:
+- **High-severity tells** (numbered list with file:line, the offending text quoted, the AI-tell category, and the fix)
+- **Counts at Medium and Low severity** (table: category × count, plus the path to the full humanize report for the writer's reference)
+]
 
 ---
 
