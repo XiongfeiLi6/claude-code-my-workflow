@@ -6,6 +6,127 @@ If you have forked this template, see the **Upgrading** section at the bottom fo
 
 ---
 
+## v1.9.0 — 2026-06-03
+
+A **manuscript-writing constitutional rewrite** minor release.
+`manuscript-writing-style.md` promoted from a style sheet (with
+positive templates + a long anti-pattern list) to a **constitutional
+standard** for every economics paper the writer produces, regardless
+of submission target. The standard is calibrated to top-5 best
+practice; the framing is that aiming at the constitutional standard
+guarantees a publishable paper at the highest level, even when the
+specific submission target is lower.
+
+The rewrite is motivated by user feedback that the v1.8.x series had
+drifted back toward "what not to do, what to drop" framing — exactly
+the framing the v1.8.0 baseline was supposed to move away from. The
+v1.9.0 rewrite reorganizes content around **positive templates** and
+trims the negative content to a short, ranked **common failure modes**
+section.
+
+### Structural changes
+
+The rule grew from 228 to 412 lines and gained five new top-level
+sections. The new structure:
+
+0. **Calibration and scope** — minimalist vs discursive register;
+   empirical vs theory vs hybrid; **AE audience model with reading-
+   time table** (NEW).
+1. **Foundational principle** — world-claim vs reader-direction;
+   three derived rules; self-excusing test.
+2. **Document architecture** — empirical, theory, hybrid section
+   sequences (NEW; the empirical section sequence is the implicit
+   reference structure for every other template in the document).
+3. **Section templates** — Abstract, Introduction, Related
+   Literature, Institutional Context, Conceptual Framework, Data,
+   Empirical Strategy, Results, Robustness, Discussion/Policy,
+   Conclusion, Appendix. Each section has a short template; most
+   include an example skeleton. (PRIOR VERSION had templates only
+   for Subsection Opener, Result Paragraph, Caveat, Transition,
+   Footnote — paragraph-level only. NEW VERSION has section-level
+   templates that codify what each major manuscript section should
+   contain.)
+4. **Paragraph-level templates** — Subsection Opener, Result
+   Paragraph, **Mechanism / Channel Paragraph** (NEW), Caveat,
+   Transition, Footnote.
+5. **Sentence-level conventions** — Voice/agency, Tense, Hedging,
+   Statistical-significance language, Number presentation (NEW
+   section; the prior version only mentioned voice in passing).
+6. **Visual conventions** — Table captions/notes, Robustness summary,
+   Figure captions, Equations, Emphasis, Citation style,
+   Cross-references (NEW section; the prior version had no
+   equation-numbering, citation-style, or cross-reference
+   conventions).
+7. **Common failure modes** — short ranked list of the five
+   highest-frequency failures (PRIOR VERSION had 14 anti-patterns;
+   NEW VERSION compresses to 5 and reframes each toward the
+   constructive fix).
+8. **Over-application failures** — the existing "edit the wrapper,
+   keep the core" guidance, retained.
+9. **Sanity checks** — expanded from 4 to 8 items, including the
+   new "inferential-bridge check," "promised-robustness check," and
+   "mechanism-acknowledgement check."
+
+### Content additions
+
+- **Abstract template:** five-component skeleton (motivation, gap,
+  contribution, headline result, inferential implication) with a
+  worked example. Inferential implication required in "Because X, Y"
+  form.
+- **Introduction architecture:** paragraph-by-paragraph numerical-
+  content table extended from the v1.8.2 patch. Added the
+  Back-of-the-Envelope (P9) and Related Literature (P11+) rows.
+  Added the self-containment test ("a reader who reads only the
+  Introduction should leave with the contribution, the method, the
+  headline result, the inferential implication").
+- **Empirical Strategy template:** four-component skeleton
+  (specification, source of variation, identifying assumption,
+  threats and mitigations). Adds the "promised-robustness discipline"
+  audit.
+- **Robustness paragraph template:** three-component skeleton.
+- **Discussion / Policy template:** three-component skeleton
+  (refinement, quantification, limitations). Codifies that policy
+  claims must acknowledge the policy's actual mechanism.
+- **Conclusion template:** distinguishes conclusion from summary;
+  three components (what we showed, why it matters, open questions).
+- **Appendix template:** four-section skeleton (Data, Theory,
+  Tables, Figures) with single-canonical-Tables-section discipline.
+- **Mechanism / channel paragraph template:** four-step skeleton
+  (candidate mechanisms, empirical signatures, observed signature,
+  inference).
+- **Voice / tense / hedging / number presentation:** explicit rules
+  for each of these sentence-level conventions.
+- **Equation conventions:** numbering policy, introduction
+  ("is given by" / colon), punctuation, symbol-definition discipline.
+- **Citation and cross-reference style:** `\citet` vs `\citep`,
+  citation-cluster alphabetization, `\Cref` capitalization rules,
+  hard-coded vs labeled cross-references.
+
+### Constitutional framing
+
+The "constitutional" framing is explicit at the top of the document.
+The standard is the same for every paper — not because every paper
+will be submitted to a top-5 journal, but because the constitutional
+standard guarantees quality regardless of journal. Calibration to top-5
+best practice provides a single fixed reference.
+
+### No content removed
+
+Every positive template in the v1.8.2 version is retained verbatim or
+edited only for clarity. The "Anti-patterns to cut" section is the
+only material that was substantially compressed — from 14 items to 5
+common failure modes, with the cut items either folded into the
+positive templates they motivated or quietly retired.
+
+### Motivation
+
+User asked for a constitutional rewrite after auditing the v1.8.x
+series: "treat this writing style as a constitutional file for all
+papers I am gonna write in Economics study. The standard should the
+highest, as high as the best practice in Top 5 papers."
+
+---
+
 ## v1.8.2 — 2026-06-03
 
 A **manuscript-writing convention** patch release. Expands
