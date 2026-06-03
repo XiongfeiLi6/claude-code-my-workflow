@@ -1,8 +1,8 @@
 ---
-description: Run a 6-agent pre-submission referee report for an academic paper targeting a specified journal
+description: Run a 7-agent pre-submission referee report for an academic paper targeting a specified journal. Covers grammar/style, consistency, claim discipline, mathematics, tables/figures, contribution evaluation, and AI-voice audit.
 ---
 
-You are coordinating a rigorous pre-submission review of an academic economics paper. You will run 6 specialized review agents in parallel and consolidate their findings into a structured report.
+You are coordinating a rigorous pre-submission review of an academic economics paper. You will run 7 specialized review agents in parallel and consolidate their findings into a structured report.
 
 ## Phase 1: Parse Arguments and Discover the Paper
 
@@ -48,7 +48,11 @@ Record:
 
 **If zero table files are found**, warn the user: "No table .tex files were found in standard locations. Tables may be stored in an `output/` or non-standard directory. Agent 5 will only be able to check table captions and cross-references from the main .tex files."
 
-## Phase 2: Launch 6 Review Agents in Parallel
+## Phase 2: Launch 7 Review Agents in Parallel
+
+Agents 1–6 are general-purpose review agents launched with `subagent_type: "general-purpose"`. Agent 7 (AI-voice audit) is launched via the Skill tool calling `humanize`, which internally dispatches the `humanize-auditor` agent. All seven run in parallel — issue them in a single message.
+
+The AI-voice audit is included automatically (not optional) because referee suspicion of AI-drafted prose is increasingly a credibility tax at top journals, and authors using AI tools cannot rely on memory to detect their own drift toward LLM patterns. The marginal cost of a 30–60 second audit at submission time is far less than the cost of a desk reject framed around prose suspicion.
 
 In a **single message**, launch all 6 agents using the Agent tool with `subagent_type: "general-purpose"`. Each agent reads the paper files independently. Pass the complete list of .tex file paths, figure paths, and table paths to each agent in its prompt. When constructing Agent 6's prompt, add the following line at the top: "The target journal is [resolved value of TARGET_JOURNAL]." Do not substitute the value into the body of the prompt — leave all conditional logic (e.g., "If TARGET_JOURNAL is top-field...") intact so Agent 6 can reason with it.
 
@@ -445,6 +449,29 @@ The .tex files to review are: [LIST ALL TEX FILE PATHS HERE]
 
 ---
 
+### AGENT 7 — AI-Voice Audit (`humanize-auditor`)
+
+Invocation: use the Skill tool with `skill: humanize` and pass the manuscript directory (the directory containing the .tex files) as the target. Default severity threshold.
+
+The `humanize` skill internally dispatches `humanize-auditor`, which audits the prose for the canonical LLM-fingerprint patterns:
+
+- **Boilerplate transition openers** ("Moreover", "Furthermore", "Additionally", "It is important to note that", "It should be noted that", "It bears emphasizing that").
+- **AI-cliché lexicon** ("delve", "navigate the complexities", "robust framework", "tapestry", "showcase", "facilitate", "leverage" used as a verb in prose).
+- **Em-dash overuse** (≥ 3 em-dashes per paragraph as the threshold).
+- **Symmetric paragraph shapes** (the training-distribution tell — all paragraphs of similar length, similar topic-sentence position, similar conclusion-sentence cadence).
+- **Tricolon abuse** ("...not only X, but also Y, and indeed Z" — sometimes Z is added by the model for rhythm, not for substance).
+- **Hedging stacking** ("may potentially could", "approximately roughly about", "in some cases possibly").
+- **"Not only X but also Y" frames** beyond what the substance demands.
+- **Formulaic openers** ("Recent advances in...", "It has long been recognized that...", "In an increasingly complex world...").
+
+Save the auditor report. Integrate **High-severity** findings into the consolidated report's new §7 section. Summarize Medium and Low findings as counts with a pointer to the saved auditor report path.
+
+Do NOT auto-rewrite. The humanize skill is detect-and-flag only. The author edits.
+
+The .tex files to review are: [LIST ALL TEX FILE PATHS HERE]
+
+---
+
 ## Phase 3: Consolidate and Save
 
 **Before consolidating**, check for agent failures: if any agent returned no output or clearly malformed output, insert a placeholder section in the report (e.g., "## 4. Mathematics, Equations & Notation — Agent did not return output") and include it in the final user-facing summary.
@@ -515,9 +542,17 @@ where `[YYYY-MM-DD]` is today's date.
 
 ---
 
+## 7. AI-Voice Audit (humanize)
+
+[Agent 7 — humanize-auditor output. Include the **High-severity** findings in full (file:line, the offending text quoted, the AI-tell category, the recommended fix). Summarize **Medium and Low** severity findings as counts only, organized by category (boilerplate transitions, AI-cliché lexicon, em-dash overuse, symmetric paragraph shapes, tricolon abuse, hedging stacking, formulaic openers, "not only X but also Y" frames). Include the path to the saved auditor report so the writer can review Medium/Low details if needed.
+
+This section is included automatically because referee suspicion of AI-drafted prose at top journals is increasingly a credibility tax; the cost of a 30–60 second audit at this stage is far less than the cost of a desk reject framed around prose suspicion. Detect-and-flag only — the author edits manually to preserve voice.]
+
+---
+
 ## Priority Action Items
 
-Each agent has tagged its findings as `[CRITICAL]`, `[MAJOR]`, or `[MINOR]`. Collect all tagged items across agents and rank them here using the following triage hierarchy: `[CRITICAL]` items from Agent 3 and Agent 6 Part 2 first, then `[CRITICAL]` from Agent 6 Part 3, then remaining `[CRITICAL]` items by agent order, then all `[MAJOR]` items, then `[MINOR]` items.
+Each agent has tagged its findings as `[CRITICAL]`, `[MAJOR]`, or `[MINOR]` (Agent 7 uses High / Medium / Low; map High → MAJOR, Medium → MINOR, Low → omit from the priority list). Collect all tagged items across agents and rank them here using the following triage hierarchy: `[CRITICAL]` items from Agent 3 and Agent 6 Part 2 first, then `[CRITICAL]` from Agent 6 Part 3, then remaining `[CRITICAL]` items by agent order, then all `[MAJOR]` items (including Agent 7 High-severity AI-voice tells), then `[MINOR]` items. AI-voice tells are MAJOR rather than CRITICAL because they affect framing credibility, not identification — but referees at top journals will catch them, so they belong in the actionable list rather than as silent polish.
 
 **CRITICAL** (must fix — these could cause desk rejection or major referee objections):
 1. ...
