@@ -270,6 +270,7 @@ Rules use path-scoped loading: **always-on** rules load every session (~100 line
 | `orchestrator-protocol` | Contractor mode: implement → verify → review → fix → score |
 | `session-logging` | Three logging triggers: post-plan, incremental, end-of-session |
 | `meta-governance` | Template vs. working project distinctions |
+| `document-organization` | No working `.md` in repo root; typed `quality_reports/` subdirs; master-task-list entry point |
 
 **Path-scoped** (load only when working on matching files):
 
