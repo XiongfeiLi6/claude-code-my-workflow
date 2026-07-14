@@ -12,9 +12,9 @@ paths:
 
 | Share | Tier | Use for |
 |---:|---|---|
-| ~70% | **Haiku 4.5** | Mechanical work — file renames, citation-format conversion, TikZ extraction, bib validation, proofread-fix application, simple grep / file lookups |
-| ~20% | **Sonnet 4.6** | Review and critique — `r-reviewer`, `slide-auditor`, `proofreader`, `quarto-fixer`, `humanize-auditor` |
-| ~10% | **Opus 4.8** | High-judgment work — `editor`, `methods-referee`, `domain-referee`, `claim-verifier`, `quarto-critic`, `tikz-reviewer`, `domain-reviewer`, `verifier` for non-trivial gates |
+| ~70% | **Haiku tier** | Mechanical work — file renames, citation-format conversion, TikZ extraction, bib validation, proofread-fix application, simple grep / file lookups |
+| ~20% | **Sonnet tier** | Review and critique — `r-reviewer`, `slide-auditor`, `proofreader`, `quarto-fixer`, `humanize-auditor` |
+| ~10% | **Opus tier** | High-judgment work — `editor`, `methods-referee`, `domain-referee`, `claim-verifier`, `quarto-critic`, `tikz-reviewer`, `domain-reviewer`, `verifier` for non-trivial gates |
 
 Set per-agent via `model:` in the agent's YAML frontmatter:
 
@@ -31,7 +31,7 @@ Set per-skill via the same field in `SKILL.md` frontmatter. Inheritance is fine 
 
 Model tier is the second cost lever; **effort is the first.** Every model runs at an effort level (`low / medium / high / xhigh / max`), and lowering effort is cheaper than dropping a tier — reach for it first.
 
-- **Opus 4.8 defaults to `high`**, and its `high` does roughly what Opus 4.7's `xhigh` did, for fewer tokens. Do **not** reflexively set `xhigh`.
+- **The Opus tier defaults to `high`**, and successive generations have folded more capability into `high`. Do **not** reflexively set `xhigh`.
 - **Mechanical work** (Haiku tier) → `low` / `medium`.
 - **Review and judgment** (Sonnet / Opus) → `high` (the default).
 - **The hardest runs** (deep refactors, the toughest `/review-paper --peer`) → `xhigh`; `ultracode` (xhigh + dynamic workflows) for repo-scale autonomous tasks.
@@ -45,7 +45,7 @@ Cost reduction on routed skills is typically **50–80%** with no quality loss o
 
 ## Routing recipe per task type
 
-### Mechanical (Haiku 4.5)
+### Mechanical (Haiku tier)
 
 - **TikZ → SVG extraction** (`extract-tikz`'s execution agent).
 - **Bib formatting / citation rewrites** (`validate-bib`'s mechanical fix path).
@@ -53,7 +53,7 @@ Cost reduction on routed skills is typically **50–80%** with no quality loss o
 - **Proofread fix application** (when the fix is "replace X with Y" mechanically).
 - **File rename / search-and-replace operations.**
 
-### Review / critique (Sonnet 4.6)
+### Review / critique (Sonnet tier)
 
 - **R code review** (`r-reviewer`).
 - **Slide layout audit** (`slide-auditor`).
@@ -62,7 +62,7 @@ Cost reduction on routed skills is typically **50–80%** with no quality loss o
 - **AI-voice audit** (`humanize-auditor`).
 - **Beamer ↔ Quarto translation** (`beamer-translator`) — translation is bounded enough to live here unless the source TeX has unusual TikZ.
 
-### High-judgment (Opus 4.8)
+### High-judgment (Opus tier)
 
 - **Editor for `/review-paper --peer`** (`editor`).
 - **Both referee agents** (`domain-referee`, `methods-referee`).
@@ -88,7 +88,20 @@ Aider's pattern uses one model as both planner and executor. We deliberately do 
 
 ## How `/commit` uses this rule
 
-`/commit`'s pre-commit verifier currently runs at the orchestrator's tier. When this rule's pattern matures (Sonnet 4.6 reliably catches most issues), the verifier can be routed to Sonnet by default with Opus reserved for `--strict` mode. Pending evaluation.
+**Implemented (2026-07-14).** `/commit` is pinned `model: sonnet`, `effort: medium` in its SKILL.md
+frontmatter and defaults to **quick mode**: stage + commit on the current branch, reading `git diff
+--stat` only (never full diffs). The expensive branch → PR → merge ceremony runs only on `/commit full`
+or an explicit request. Rationale: commit-message writing is mechanical-tier work; the PR ceremony is a
+milestone gate, not a per-task step. The pre-commit **verifier** spawn is full-mode only and carries its own
+tier pin (Opus, per “verifier for non-trivial gates” above).
+
+## Session-default model (the manual layer)
+
+Frontmatter pins cover subagents and skills; the main conversation's model cannot be switched by rule.
+Set your everyday driver once in `.claude/settings.local.json` (`"model": "opus"` or similar — this file
+is gitignored, so the choice stays personal, per meta-governance), and switch up to the top tier with
+`/model` only for the hardest sessions. Use **aliases** (`haiku`/`sonnet`/`opus`), not full model IDs,
+in all pins: aliases survive model-generation upgrades; hardcoded IDs go stale.
 
 ## Cross-references
 

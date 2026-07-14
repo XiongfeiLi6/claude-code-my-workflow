@@ -178,7 +178,7 @@ This workflow is designed as a **single hub for an entire research program** —
 ## What's Included
 
 <details>
-<summary><strong>18 agents, 38 skills, 28 rules, 6 hooks</strong> (click to expand)</summary>
+<summary><strong>18 agents, 50 skills, 31 rules, 6 hooks</strong> (click to expand)</summary>
 
 ### Agents (`.claude/agents/`)
 
@@ -220,7 +220,7 @@ This workflow is designed as a **single hub for an entire research program** —
 | `/validate-bib` | Cross-reference citations against bibliography |
 | `/devils-advocate` | Challenge design decisions before committing |
 | `/create-lecture` | Full lecture creation workflow |
-| `/commit` | Stage, commit, create PR, and merge to main |
+| `/commit` | Stage and commit (quick mode, Sonnet-pinned); `full` adds PR + merge to main |
 | `/lit-review` | Literature search, synthesis, and gap identification |
 | `/research-ideation` | Generate research questions and empirical strategies |
 | `/interview-me` | Interactive interview to formalize a research idea |

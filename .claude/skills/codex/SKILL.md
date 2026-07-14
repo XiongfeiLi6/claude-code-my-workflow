@@ -1,6 +1,8 @@
 ---
 name: codex
 description: Delegate coding tasks to Codex CLI for execution. Only invoke this skill when the user explicitly asks to use Codex — e.g., "用 codex 来做", "让 codex 执行", "ask codex to...", "codex 帮我写". Do not proactively delegate to Codex for general coding requests the user didn't specifically ask Codex to handle. Codex is an autonomous coding agent with the same tools as Claude (file read/write, grep, bash) — it explores the codebase and implements changes on its own. Claude's role is to understand the problem clearly and frame it well for Codex to execute.
+argument-hint: "[task description | --model <m> | --read-only | --full-auto | --sandbox | --workspace <dir> | --skip-git-repo-check]"
+allowed-tools: ["Bash", "Read", "Glob", "Grep", "Task"]
 ---
 
 ## Critical rules
