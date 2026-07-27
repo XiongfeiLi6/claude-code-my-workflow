@@ -1,0 +1,109 @@
+---
+title: "Confidential Report to the Editor"
+author: "Anonymous Referee"
+date: "2026-03-05"
+format:
+  pdf:
+    documentclass: article
+    fontsize: 11pt
+    geometry:
+      - margin=1in
+    colorlinks: false
+    toc: false
+    number-sections: false
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+# Confidential Report to the Editor
+
+**Manuscript ID:** JEEM-D-26-00040  
+**Title:** Monitoring the Monitors: How Environmental Information Shapes Bureaucratic Incentives in China  
+**Reviewer:** Anonymous Referee  
+**Date:** 2026-03-05  
+**Confidentiality:** Editor only
+
+## Editorial Recommendation
+
+**Decision:** Major Revision
+
+## Message to Editor
+
+I view the paper as potentially suitable for JEEM after substantial revision. The empirical setting and topic are strong, but the current theory-empirics link is not yet sufficiently tight.
+
+My highest-priority concern is that the model omits an explicit economic-performance component in the promotion index, while the empirical and institutional narrative relies on growth-versus-environment incentive tradeoffs. This limits structural interpretation of post-period coefficients.
+
+I recommend an R-and-R conditional on:
+
+1. A revised multi-task model with explicit environmental and economic channels in promotion incentives.
+2. A clearer mapping from revised FOCs to testable empirical coefficients.
+3. Stronger identification and mechanism-validation tests as detailed in the author letter.
+
+## Key Confidential Concerns
+
+1. Post-period estimates may conflate monitoring information effects with broader policy-regime shifts.
+2. IV exclusion and channel interpretation require additional robustness work.
+3. Text-coded mechanism variables need transparent validation evidence.
+4. Outcome coding rules for promotion require fuller documentation.
+5. The model should explicitly include economic performance and permit post-2013 shifts in environmental and potentially growth weights.
+
+## Full Letter to Authors (for transmission or adaptation)
+
+---
+
+# Referee Report to Authors
+
+**Manuscript ID:** JEEM-D-26-00040  
+**Title:** Monitoring the Monitors: How Environmental Information Shapes Bureaucratic Incentives in China  
+**Reviewer:** Anonymous Referee  
+**Date:** 2026-03-05
+
+## Summary
+
+This paper asks an important and policy-relevant question, and the empirical setting is promising. The manuscript has clear strengths in data assembly and motivation. The key revisions below are intended to strengthen identification, improve model-empirics alignment, and increase confidence in mechanism interpretation.
+
+## Major Concerns
+
+### MC1: Distinguish monitoring-information effects from broader policy shifts
+
+- **Issue:** The post-period likely captures multiple concurrent institutional changes, not only information precision from monitoring.
+- **Requested Revision:** Add design features that better isolate monitoring timing effects (for example, rollout-timing event studies, leads/lags, and wave-based checks).
+
+### MC2: Strengthen IV exclusion and interpretation
+
+- **Issue:** Thermal inversions may affect promotion-related political pressures through channels beyond annual mean PM.
+- **Requested Revision:** Add falsification and sensitivity analyses (for example, alternative exposure windows, weather controls, and robustness checks around direct-channel concerns).
+
+### MC3: Validate mechanism measurement from text-coded policy actions
+
+- **Issue:** AI-assisted coding of municipal work reports needs validation evidence.
+- **Requested Revision:** Provide coding-validation diagnostics (human audit sample, agreement metrics, precision/recall by category, and robustness to alternative coding thresholds).
+
+### MC4: Clarify promotion outcome construction
+
+- **Issue:** Promotion coding categories and possible time variation in coding practice need clearer documentation.
+- **Requested Revision:** Add an appendix table defining all outcome states and re-estimate core results under alternative promotion definitions.
+
+### MC5: Revise the model to include explicit economic-performance incentives
+
+- **Issue:** The current model does not explicitly include economic performance in the promotion index; this weakens the theoretical mapping to a growth-versus-environment cadre evaluation framework.
+- **Requested Revision:** Introduce a multi-task promotion index (for example, environmental and growth components) and present the environmental effort FOC as a net-promotion-return condition: marginal cost of effort equals promotion gains from cleaner air minus promotion losses from weaker growth. Discuss post-2013 changes in environmental weight (`omega_p`) and possible growth-weight shifts (`omega_y`) and map these to empirical specifications.
+
+## Requested Empirical Tests Linked to the Revised Model
+
+1. Estimate both pollution and growth gradients in promotion and interact each with post.
+2. Test whether effort responses are weaker where growth costs of environmental effort are higher.
+3. Provide heterogeneity by baseline pollution and growth pressure.
+4. Clarify which post interactions identify information precision versus incentive re-weighting channels.
+
+## Minor Concerns
+
+1. Tighten notation consistency between Section 3 and empirical equations.
+2. Avoid overloaded notation for utility objects and risk-aversion parameters.
+3. Improve discussion of external validity and scope conditions.
+
+## Closing Note
+
+The paper has high potential. A revision that tightens the model structure and aligns empirical tests with that revised theory would substantially improve credibility and contribution.

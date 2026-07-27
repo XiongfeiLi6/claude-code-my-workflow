@@ -1,0 +1,85 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage{amsmath, amsfonts, amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{tgpagella}
+
+\setstretch{1.5}
+
+\begin{document}
+
+\begin{center}
+    \Large \textbf{Journal of Environmental Economics and Management Referee Report}\\[1ex]
+    \large \textbf{Paper Title:} Monitoring the Monitors: How Environmental Information Shapes Bureaucratic Incentives in China\\
+    \large \textbf{Manuscript ID:} JEEM-D-26-00040
+\end{center}
+
+\section{Summary of the Paper}
+
+This paper studies whether China's nationwide rollout of PM2.5 monitoring and disclosure changed bureaucratic incentives in a way that increased environmental effort by local officials. The manuscript combines a principal-agent framework with city-mayor panel evidence from 2003--2020. The empirical design uses thermal inversion as an instrument for air pollution and examines how the pollution-promotion gradient changed after monitoring adoption.
+
+The paper reports three main findings. First, before monitoring, lower PM2.5 is weakly related to higher promotion probability, while after monitoring the relationship becomes stronger and statistically significant. Second, local governments appear to adopt more pollution-control measures in response to lagged pollution after monitoring. Third, these measures are argued to become more effective at mitigating inversion-driven pollution episodes after monitoring.
+
+\section{Strengths and Concerns}
+
+\textbf{Strengths:}
+\begin{itemize}
+    \item The topic is relevant and policy important: how information systems change bureaucratic incentives in environmental governance.
+    \item The manuscript brings together model, institutional context, and multiple empirical margins (promotion outcomes, policy effort, and mitigation effectiveness).
+    \item The data effort is substantial, especially mayor-level panel assembly and the coding of municipal policy actions.
+    \item The paper makes a credible attempt to connect institutional reform and behavior in a large developing-country governance setting.
+\end{itemize}
+
+\noindent \textbf{Concerns:}
+\begin{itemize}
+    \item \textbf{Major concern: interpretation of the post-2013 shift.}
+    The paper interprets post-monitoring changes mainly as incentive realignment through improved observability. However, several concurrent channels could also explain the findings:
+    \begin{itemize}
+        \item improved top-down accountability (effort existed before, but upper levels observed it less clearly),
+        \item changed promotion-evaluation weights (more weight on environment),
+        \item greater resources and implementation support from upper levels,
+        \item stronger public awareness/participation,
+        \item learning/perception effects (officials better understood actual pollution levels).
+    \end{itemize}
+    I would like to see stronger empirical tests that explicitly separate or bound these channels.
+
+    \item \textbf{Model concern: missing explicit economic-performance channel in promotion incentives.}
+    The current model places environmental outcomes directly in the promotion utility but does not explicitly include economic performance in the promotion index. In a cadre-evaluation context with growth-environment tradeoffs, this weakens the structural interpretation. A revised setup should include both channels (for example, an index with economic and environmental components). Then the environmental-effort FOC naturally becomes a net-promotion-return condition: marginal cost equals promotion gains from cleaner air minus promotion losses from weaker growth. If the environmental weight can shift after 2013, and possibly the growth weight as well, empirical identification should reflect this added complexity.
+
+    \item \textbf{Effort measures are interesting but should be expanded.}
+    The work-report-based effort measure is informative, but I would like to see more direct enforcement/action indicators (for example, environmental penalties, supervision intensity, compliance inspections, enforcement staffing/intensity).
+
+    \item \textbf{Administrative measures mechanism is not fully convincing.}
+    The interpretation that PM2.5 decreases administrative measures due to ``fog vs smog confusion'' is not yet persuasive without stronger supporting evidence.
+
+    \item \textbf{Promotion outcome coding and sample restrictions may bias interpretation.}
+    Lateral transfers can be career-improving in practice (for example, poor-city to rich-city transfer), but are treated as non-promotion. Also, dropping demoted/retired/disciplined officials may mechanically raise observed promotion rates and potentially bias estimated incentive effects.
+
+    \item \textbf{Pre-period estimate in baseline results.}
+    In Table 2, the pre-2013 PM2.5 coefficient is already negative and near significance. This partially weakens the sharp pre/post contrast in the narrative and deserves deeper discussion.
+
+    \item \textbf{Log(y+1) concern for high-pollution days.}
+    Using $\log(\text{HPD}+1)$ (Table 3) may be sensitive, and this transformation is increasingly questioned (e.g., Chen and Roth). Level specifications and alternative count-model robustness would be useful.
+\end{itemize}
+
+\noindent \textbf{Extra Suggestions:}
+\begin{itemize}
+    \item Consider local projections (Jorda-style impulse response) to show dynamic effects of PM2.5 on promotion outcomes. A coefficient-path figure could be very informative.
+
+    \item You discuss a multi-layered hierarchy in context, but evidence is mostly at mayor level. Consider extending discussion or tests across hierarchy (mayors vs county leaders vs provincial leaders, where feasible).
+
+    \item Consider year-by-year coefficient plots (or rolling-window/event-time coefficient paths) to transparently show how pollution-promotion sensitivity evolves over time.
+
+    \item Add more heterogeneity analysis by key groups: region (including key control regions), age cohort, education, and gender.
+
+    \item Provide richer appendix documentation on data construction, variable definitions, coding rules, and indicator details.
+\end{itemize}
+
+\section{Conclusion}
+
+The manuscript addresses an important question and has strong potential. The main priority is to tighten channel identification and strengthen the model-empirics mapping, especially around growth-environment tradeoffs and post-2013 mechanism interpretation. With these revisions, the paper could make a stronger contribution.
+
+\end{document}

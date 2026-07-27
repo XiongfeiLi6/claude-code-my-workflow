@@ -1,0 +1,94 @@
+---
+title: "Referee Report"
+subtitle: "JEEM-D-26-00040"
+author: "Anonymous Referee"
+date: "2026-03-05"
+format:
+  pdf:
+    documentclass: article
+    fontsize: 11pt
+    geometry:
+      - margin=1in
+    colorlinks: false
+    toc: false
+    number-sections: false
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+## Recommendation
+
+**Category:** Major Revision
+
+## Confidential Comments to Editor
+
+### Contribution and Fit
+
+This manuscript addresses a JEEM-relevant question: whether improved environmental monitoring changes bureaucratic incentives. The paper combines a principal-agent framing with mayor-level panel evidence and an IV strategy based on thermal inversions. The core empirical finding is that the pollution-promotion gradient appears after nationwide monitoring rollout, while it is near zero before monitoring. The mechanism section, linking policy adoption and mitigation effectiveness to the same information shock, is potentially publishable and policy-relevant.
+
+### Key Publication Risks
+
+1. The causal interpretation relies on strong exclusion assumptions for thermal inversions and for post-2013 institutional changes that are broader than monitoring alone.
+2. The treatment timing and the definition of the post period need sharper identification diagnostics to rule out differential pre-trends and city-type compositional effects.
+3. The text-analysis-based mechanism measures are promising but currently under-validated for measurement error and coding consistency.
+
+### Editor-Facing Bottom Line
+
+The paper has clear upside and a strong empirical agenda, but I do not think it is publication-ready in current form. I recommend Major Revision with a high bar for causal identification and measurement validation.
+
+## Comments to Authors
+
+### Summary
+
+This is an ambitious and timely paper. The central idea is compelling: better observability changes career incentives and can discipline local governance outcomes. The paper is well structured and the baseline findings are economically meaningful (for example, the post-monitoring effect magnitudes in Section 6/Table 2). The main revisions I request are about tightening causal interpretation, clarifying treatment timing logic, and validating mechanism measurement.
+
+### Major Concerns
+
+#### MC1: Separating monitoring effects from concurrent policy and governance shocks
+
+- **Severity:** Major
+- **Issue:** The main interaction effect is interpreted as an information-observability channel, but the post period coincides with major policy and enforcement shifts (for example, Action Plan implementation and broader environmental governance tightening). This creates risk that the estimated post interaction captures bundled reforms beyond observability.
+- **Evidence Anchor:** Section 2.2 (Action Plan and rollout narrative), Section 4.1 (equation with `Post_ct` interaction), Section 6/Table 2 (core interaction coefficient).
+- **Suggested Fix:** Add designs that isolate monitoring timing more sharply: event-study around city-level monitoring activation, leads/lags tests, and a stacked design by rollout wave. Include placebo outcomes less likely to respond to monitoring observability if the mechanism is specific.
+
+#### MC2: IV exclusion restriction and channel interpretation need stronger defense
+
+- **Severity:** Major
+- **Issue:** Thermal inversion is a common instrument for pollution, but here promotion may respond through channels correlated with inversion intensity (for example, highly visible pollution episodes that trigger public complaints, emergency responses, or upper-level political pressure independent of annual mean PM). The exclusion assumption is therefore not fully defended in the promotion equation.
+- **Evidence Anchor:** Section 4.1 identification discussion, Figure 3 first-stage relationship, Section 6/Table 2 and Table 3 where inversion-based instruments identify promotion effects.
+- **Suggested Fix:** Provide additional falsification and sensitivity analyses: control for seasonal extreme-weather proxies, test non-pollution political outcomes where inversion should not matter, and report robustness with alternative exposure windows and Conley-style sensitivity for plausible direct effects.
+
+#### MC3: Mechanism measurement from government reports requires validation
+
+- **Severity:** Major
+- **Issue:** The mechanism claims depend on AI-assisted coding of work reports into policy action categories. Without stronger validation, measurement error could bias both responsiveness and effectiveness estimates.
+- **Evidence Anchor:** Section 7 description of AI-assisted text analysis, Appendix Table 1 category mapping, Tables 4-6 mechanism estimates.
+- **Suggested Fix:** Add a validation appendix: human-coded audit sample, intercoder agreement, precision/recall by category, and robustness to alternative coding thresholds. Show that results are not driven by document length or report style changes over time.
+
+#### MC4: Promotion outcome construction and interpretation should be clearer
+
+- **Severity:** Moderate
+- **Issue:** The promotion variable definition needs tighter documentation on category coding (higher rank vs lateral transfer vs equivalent-rank reassignment), and whether coding changes over time could affect estimated gradients.
+- **Evidence Anchor:** Section 5.1 mayoral promotion description, Table 2 and Table 3 notes on dependent variable construction.
+- **Suggested Fix:** Include an explicit coding table in the appendix, then re-estimate key models under alternative promotion definitions (strict upward-only, excluding lateral moves, and multinomial outcome splits).
+
+#### MC5: The model omits explicit economic-performance incentives in promotion
+
+- **Severity:** Major
+- **Issue:** Section 3 does not explicitly include economic performance in the promotion index; growth enters only implicitly through effort cost. This weakens the model's ability to represent the central growth-vs-environment tradeoff in cadre evaluation and makes it hard to interpret post-2013 coefficient changes structurally.
+- **Evidence Anchor:** Section 3.2 Equation (3) (promotion utility), Section 3.3 (principal problem), Section 4.1 (promotion regression with `Post_ct` interactions).
+- **Suggested Fix:** Replace the single-channel setup with a multi-task promotion index (for example, `R = omega_y * Y - omega_p * S_p`). Then state the environmental-effort FOC as a net-promotion-return condition: marginal effort cost equals promotion gain from cleaner air minus promotion loss from weaker growth. Empirically, allow post-2013 changes in `omega_p` (and discuss possible shifts in `omega_y`), and estimate both pollution and growth gradients with post interactions so channel interpretation is transparent.
+
+### Minor Concerns
+
+1. Clarify the exact city-level `Post_ct` timing rule in the main text and summarize wave assignment logic in one compact table.
+2. Tighten notation continuity between the conceptual model (Section 3) and empirical coefficients (Section 4) so parameter mapping is explicit.
+3. Add one concise paragraph in the conclusion on external validity limits beyond China's cadre system.
+4. Report main coefficients with both percentage-point and baseline-relative interpretations in all primary tables for consistency.
+
+### Suggested Robustness and Clarifications
+
+- Add heterogeneity by baseline pollution quartile and by city administrative rank with consistent specification across baseline and mechanism tables.
+- Include an explicit pre-trend diagnostic figure for promotion outcomes by rollout wave before monitoring adoption.

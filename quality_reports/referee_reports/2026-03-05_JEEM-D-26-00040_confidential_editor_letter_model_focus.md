@@ -1,0 +1,48 @@
+# Confidential Letter to the Editor
+
+**Manuscript ID:** JEEM-D-26-00040  
+**Title:** Monitoring the Monitors: How Environmental Information Shapes Bureaucratic Incentives in China  
+**Reviewer:** Anonymous Referee  
+**Date:** 2026-03-05  
+**Confidentiality:** For editor only
+
+## Recommendation
+
+**Major Revision**
+
+## Editor Summary
+
+I find the paper's question important and potentially suitable for JEEM. The empirical setting is strong, and the data work is substantial. However, the current theoretical section is not yet adequate to support the paper's main interpretation.
+
+My central concern is that the model does not explicitly include economic performance in the promotion rule. In the current Section 3, promotion utility is written as a function of pollution signals and effort cost only. Economic performance appears only implicitly through the effort cost term. This is insufficient for a paper that argues re-weighting in a multi-dimensional cadre evaluation environment.
+
+In my judgment, this weakens the theoretical contribution and blurs interpretation of the empirical coefficients.
+
+## Why the current model is not decision-useful
+
+1. **Missing economic-performance term in promotion probability:** The promotion index should include both environmental and growth components if the paper's mechanism is about shifting evaluation priorities.
+2. **Single-task structure in a multi-task institutional setting:** The current setup cannot formally represent growth-environment tradeoffs in promotion incentives.
+3. **FOC interpretation is incomplete:** In a revised multi-task model, the effort FOC should equate marginal effort cost to the *net* promotion return from cleaner air minus the promotion loss from weaker growth.
+4. **Post-2013 weight change complicates identification:** If the environmental weight (`omega_p`) changes after 2013, and potentially the growth weight (`omega_y`) also shifts, the promotion regressions need a richer specification and additional tests.
+
+## Suggested R-and-R conditions
+
+I recommend that an R-and-R require the authors to complete all of the following:
+
+1. **Replace Section 3 with an explicit multi-task promotion model** where:
+   - promotion index includes both observed economic performance and environmental performance,
+   - monitoring affects environmental signal precision,
+   - post-2013 re-weighting in promotion incentives is allowed.
+2. **State and map the revised effort FOC clearly**:
+   - marginal effort cost = promotion gain from cleaner air minus promotion loss from weaker growth.
+3. **Revise the empirical specification to match the model**:
+   - include economic-performance terms and interactions with post,
+   - test whether the pollution gradient and growth gradient shift after monitoring,
+   - add heterogeneity tests based on growth pressure and baseline pollution.
+4. **Strengthen identification discussion** when policy weights can change after 2013:
+   - explain what is identified by each interaction term,
+   - include event-study and robustness checks that separate signal-precision effects from broader policy-regime shifts.
+
+## Editorial note
+
+I have conveyed the core model concern to the authors in constructive terms and provided concrete revision directions. In this version, I do not recommend acceptance or minor revision, because the theoretical mechanism is currently under-modeled relative to the paper's claims.
