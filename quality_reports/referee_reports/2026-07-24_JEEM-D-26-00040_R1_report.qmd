@@ -1,0 +1,79 @@
+---
+title: "Referee Report (Second Round)"
+author: "Anonymous Referee"
+date: "2026-07-24"
+format:
+  pdf:
+    documentclass: article
+    fontsize: 11pt
+    geometry:
+      - margin=1in
+    colorlinks: false
+    toc: false
+    number-sections: false
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+
+**Date:** 2026-07-24
+**Manuscript ID:** JEEM-D-26-00040R1
+**Reviewer:** Anonymous Referee (Reviewer 2)
+
+## Recommendation
+
+**Category: Minor Revision**
+
+## Confidential Comments to Editor
+
+### Assessment of the Revision
+
+This is a serious and largely successful revision, and I cross-checked the response letter's claims against the revised manuscript; the responses are accurate. The four central issues from the first round are largely resolved. The new event study and the reframing of the contribution as a reduced-form effect of the clean-air governance regime settle the timing and interpretation concern; the rewritten multitask model now maps one-to-one to the empirical specifications (which also resolves Referee 1's model concerns); and the promotion coding, sample restrictions, and IV diagnostics are documented and stress-tested. The one partially outstanding area is validation of the text-based effort measure.
+
+### Remaining Required and Suggested Concerns
+
+My remaining points are limited. Two could in principle move results rather than wording: the unreported lower-order interaction terms in the information-gains specification (Table 3), on which the paper's remaining mechanism claim rests, and a direct human-audit validation of the AI-based text classifier, which the authors substituted with coarser proxies. The rest are presentational: calibrating the abstract's mechanism claim to the paper's own hedged language, reconciling an OLS-IV sign contrast in the provincial-leader appendix, and documenting an estimator label. The paper is close to being publishable at JEEM, and I expect a quick final round.
+
+## Comments to Authors
+
+### Summary
+
+Thank you for the careful and substantive revision. The manuscript has improved considerably. The conceptual framework is now a coherent multitask principal-agent model whose first-order condition maps directly to the empirical specifications, and the contribution has been appropriately reframed as a reduced-form effect of the clean-air governance regime. The promotion coding is documented and stress-tested, and the new event-study, information-gains, local-projection, and provincial-leader analyses respond directly to the first-round comments. I verified the response letter's claims against the revised manuscript and found the responses accurate.
+
+My remaining points are limited. One substantive request from the first round is still outstanding (validation of the AI-based text classifier), and the new analyses introduce a small number of reporting and interpretation issues. None of these requires new identification strategies or major data work. I list them below as required points, followed by optional suggestions.
+
+### Assessment of Responses to First-Round Comments
+**3.1 (Core interpretation).** Largely addressed. The event study (Figure 3) is presented candidly: pre-adoption coefficients are imprecise without a systematic trend, and the post-adoption gradient strengthens gradually, becoming significant after roughly three event years. The reframing as a reduced-form effect of the monitoring-and-disclosure regime is carried through the title, the results text (p. 23), and the conclusion, which now states explicitly that the paper does not directly test the weight-change channels. The new information-gains test (Table 3) is a constructive addition and does provide evidence consistent with an observability channel. Several issues with this test and its framing remain. See Required Point R1.
+**3.2 (Model-empirics mapping).** Fully resolved. The revised model (Section 3) includes the multitask promotion schedule, CARA utility over the realized career payoff with the risk premium carrying signal variance, a well-motivated objective for the higher-level government, and a first-order condition that is exactly the net-promotion-return condition requested. Proposition 1's four-primitive comparative statics give the empirical results an honest interpretation.
+**3.3 (Promotion coding and sample restrictions).** Resolved. The coding rule for lateral transfers to sub-provincial cities and provincial capitals is now explicit (Section 5.1 and footnote 6), demoted/disciplined officials are included in the baseline (footnote 5; Table 1), and Table 7 columns (3) and (5) show the results are robust to excluding sub-provincial cities and demoted/disciplined officials, respectively.
+**3.4 (Instrument exclusion and diagnostics).** Substantially addressed. The expanded discussion of the exclusion restriction and the weather-control robustness check (Table 7, column 4) are welcome. Two residual points on characterization and interpretation remain. See Required Point R3.
+**3.5 (Effort measurement validation).** Partially addressed. The category-level adoption trends (Appendix Figure 2), the released classification code, and the waste-gas investment proxy (Appendix Tables 4 and 6) are useful steps. However, the core first-round request - a direct validation of the AI-based classification against human coding - has not been carried out, and the category-level trends themselves show that several categories break exactly at 2013-2014, which keeps the reporting-template concern alive. See Required Point R2.
+**3.6 (Fog vs. smog interpretation).** Resolved. The interpretation is now presented as one possibility.
+**Secondary comments (4.1-4.6).** All substantively addressed. The pre-period narrative is now carefully worded (the largest pre-period t-statistic across Table 7 corresponds to p approx. 0.31), the log(1+Y) transformation has been replaced and PPML added, and local projections appear in Appendix Figure 4. The provincial-leader extension (Section 9, Appendix Table 7) includes a frank power discussion, the heterogeneity analysis (Table 4) is informative, and the documentation is much expanded. Three small residuals from these items appear under Required Points R4-R5 and one minor suggestion.
+
+## Major Concerns
+**R1. Complete Table 3's reporting and calibrate the mechanism claim to it.**
+ The paper's remaining mechanism claim rests on Table 3. Four related fixes, only the first involving any estimation, would let it bear that weight.
+ (i) Report the constituent two-way terms log(PM2.5) x API correlation and Post x API correlation. If these terms are omitted from the specification, the triple interaction conflates the information-gains effect with time-invariant differences in the pollution-promotion gradient across high- and low-correlation cities and with differential post-period level shifts; if they are included but unreported, please report them or state their inclusion in the table notes.
+ (ii) Clarify the direction of the interaction variable. The text narrates that "larger information gains magnify the difference," but the regressor is the API *correlation*, which moves inversely with the information gain, so the expected and estimated triple coefficient is *positive*. Either define an explicit information-gain variable (for example, one minus the correlation) or add a clarifying sentence so readers do not misread the sign. Note also that the implied post-shift gradient change remains substantially negative even at the highest observed correlation levels, which suggests that non-information channels carry much of the effect, consistent with the paper's own reduced-form framing.
+ (iii) Add one sentence acknowledging that low pre-period API correlation may proxy for pre-period misreporting intensity, which could correlate with post-2013 enforcement exposure through channels beyond information per se (larger revealed pollution gaps, tighter targets, more central attention); the test is consistent with the observability mechanism but does not isolate it from this exposure channel.
+ (iv) Align the abstract with Section 7.1's own language. "We show that at least part of this change occurred through an observability-and-incentives mechanism" overstates what the design isolates; "We provide evidence consistent with an observability-and-incentives mechanism" would match it. Similarly, "mayors who reduced PM2.5 concentrations were no more likely to be promoted before the regime shift" reads as a precise zero, while the IV pre-period estimate is an imprecise -0.275 (SE 0.298); "not detectably more likely" (or similar) would be accurate.
+**R2. Validate the text classifier directly.**
+ The first-round request for a human-audit validation of the AI-based classification remains open, and it is the one remaining item that involves real (though modest) work: draw a random audit sample of work-report passages, have them coded by human coders blind to the AI output, and report agreement statistics (for example, precision and recall by category). This matters because Appendix Figure 2 shows that several categories - clean heating and coal substitution, heavy-pollution emergency response, dust control - rise or jump precisely at 2013-2014, and emergency-response plans were mandated by the 2013 Action Plan. For these categories, reporting-template changes and genuine effort changes are observationally similar in keyword counts. A robustness check excluding Action-Plan-mandated categories (or at a minimum tempering "the adoption frequency of most policy categories remained relatively stable" to acknowledge the exceptions) would substantially strengthen Section 7.3.
+**R3. Discuss the weather-control sensitivity and characterize Appendix Table 2 accurately.**
+ Two related points. First, Appendix Table 2 shows that inversion strength predicts visibility (2.852, SE 1.555) and dew point (1.349, SE 0.786), both significant at the 10 percent level; only minimum temperature is a clean null. The current characterization ("limited evidence ... significantly predicted") understates two marginally significant coefficients out of three. Second, adding the weather controls moves the key interaction from -0.313 to -0.569 (Table 7, column 4): the sign and significance are stable, but the magnitude nearly doubles. A brief discussion of why the estimate is sensitive in magnitude to these controls (and which estimate the authors regard as preferred, and why) would make the robustness claim complete. As written, "remain unchanged" describes sign and significance only.
+**R4. Document the estimator in Appendix Table 5.**
+ The response letter states that Appendix Table 5 uses PPML with fixed effects, and Appendix Table 3's notes state Poisson quasi-maximum likelihood explicitly, but Appendix Table 5's notes do not name the estimator. Please state it in the notes (and report the same fit diagnostics as the neighboring tables).
+**R5. Reconcile the OLS and IV results for provincial leaders.**
+ In Appendix Table 7, the OLS specification with province controls (column 2) shows a positive and statistically significant interaction (0.282, SE 0.129), while the IV interaction (column 3) is negative and insignificant. The text discusses only the IV null. One sentence acknowledging the OLS-IV contrast and explaining why the IV estimate is preferred (and what the contrast implies, given only 22 clusters) would preempt confusion.
+
+## Minor Concerns
+Section 3: the career-reward slope on growth (delta_t) is taken as given while the pollution slope (gamma_t) is optimized. A one-sentence justification for this asymmetry (for example, the growth slope reflecting a long-standing institutional legacy) would tighten the exposition.
+Appendix Figure 4: for the promotion outcome, the horizon-3 confidence interval includes zero and horizon 1 is borderline; "robust to alternative outcome horizons" is slightly generous for that outcome (the effort outcomes are robust throughout).
+Alternative promotion definitions (for example, strict upward-only, or a multinomial treatment separating adverse exits) remain a useful, optional robustness exercise now that demoted/disciplined officials are in the baseline.
+
+### Closing
+
+The revision substantially improves the paper and engages seriously with every first-round comment. The required points above are bounded: one modest validation exercise, one specification-reporting fix, and several presentational calibrations. I expect they can be addressed quickly.

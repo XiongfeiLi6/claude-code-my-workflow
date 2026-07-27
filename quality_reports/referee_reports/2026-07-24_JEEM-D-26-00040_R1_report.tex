@@ -1,0 +1,381 @@
+% Options for packages loaded elsewhere
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+  11pt,
+]{article}
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+% Make \paragraph and \subparagraph free-standing
+\makeatletter
+\ifx\paragraph\undefined\else
+  \let\oldparagraph\paragraph
+  \renewcommand{\paragraph}{
+    \@ifstar
+      \xxxParagraphStar
+      \xxxParagraphNoStar
+  }
+  \newcommand{\xxxParagraphStar}[1]{\oldparagraph*{#1}\mbox{}}
+  \newcommand{\xxxParagraphNoStar}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+  \let\oldsubparagraph\subparagraph
+  \renewcommand{\subparagraph}{
+    \@ifstar
+      \xxxSubParagraphStar
+      \xxxSubParagraphNoStar
+  }
+  \newcommand{\xxxSubParagraphStar}[1]{\oldsubparagraph*{#1}\mbox{}}
+  \newcommand{\xxxSubParagraphNoStar}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+\makeatother
+
+
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+
+
+
+
+
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+
+
+ 
+
+
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\AtBeginDocument{%
+\ifdefined\contentsname
+  \renewcommand*\contentsname{Table of contents}
+\else
+  \newcommand\contentsname{Table of contents}
+\fi
+\ifdefined\listfigurename
+  \renewcommand*\listfigurename{List of Figures}
+\else
+  \newcommand\listfigurename{List of Figures}
+\fi
+\ifdefined\listtablename
+  \renewcommand*\listtablename{List of Tables}
+\else
+  \newcommand\listtablename{List of Tables}
+\fi
+\ifdefined\figurename
+  \renewcommand*\figurename{Figure}
+\else
+  \newcommand\figurename{Figure}
+\fi
+\ifdefined\tablename
+  \renewcommand*\tablename{Table}
+\else
+  \newcommand\tablename{Table}
+\fi
+}
+\@ifpackageloaded{float}{}{\usepackage{float}}
+\floatstyle{ruled}
+\@ifundefined{c@chapter}{\newfloat{codelisting}{h}{lop}}{\newfloat{codelisting}{h}{lop}[chapter]}
+\floatname{codelisting}{Listing}
+\newcommand*\listoflistings{\listof{codelisting}{List of Listings}}
+\makeatother
+\makeatletter
+\makeatother
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\@ifpackageloaded{subcaption}{}{\usepackage{subcaption}}
+\makeatother
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Referee Report (Second Round)},
+  pdfauthor={Anonymous Referee},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+
+\title{Referee Report (Second Round)}
+\author{Anonymous Referee}
+\date{2026-07-24}
+\begin{document}
+\maketitle
+
+
+\textbf{Date:} 2026-07-24 \textbf{Manuscript ID:} JEEM-D-26-00040R1
+\textbf{Reviewer:} Anonymous Referee (Reviewer 2)
+
+\subsection{Recommendation}\label{recommendation}
+
+\textbf{Category: Minor Revision}
+
+\subsection{Confidential Comments to
+Editor}\label{confidential-comments-to-editor}
+
+\subsubsection{Assessment of the
+Revision}\label{assessment-of-the-revision}
+
+This is a serious and largely successful revision, and I cross-checked
+the response letter's claims against the revised manuscript; the
+responses are accurate. The four central issues from the first round are
+largely resolved. The new event study and the reframing of the
+contribution as a reduced-form effect of the clean-air governance regime
+settle the timing and interpretation concern; the rewritten multitask
+model now maps one-to-one to the empirical specifications (which also
+resolves Referee 1's model concerns); and the promotion coding, sample
+restrictions, and IV diagnostics are documented and stress-tested. The
+one partially outstanding area is validation of the text-based effort
+measure.
+
+\subsubsection{Remaining Required and Suggested
+Concerns}\label{remaining-required-and-suggested-concerns}
+
+My remaining points are limited. Two could in principle move results
+rather than wording: the unreported lower-order interaction terms in the
+information-gains specification (Table 3), on which the paper's
+remaining mechanism claim rests, and a direct human-audit validation of
+the AI-based text classifier, which the authors substituted with coarser
+proxies. The rest are presentational: calibrating the abstract's
+mechanism claim to the paper's own hedged language, reconciling an
+OLS-IV sign contrast in the provincial-leader appendix, and documenting
+an estimator label. The paper is close to being publishable at JEEM, and
+I expect a quick final round.
+
+\subsection{Comments to Authors}\label{comments-to-authors}
+
+\subsubsection{Summary}\label{summary}
+
+Thank you for the careful and substantive revision. The manuscript has
+improved considerably. The conceptual framework is now a coherent
+multitask principal-agent model whose first-order condition maps
+directly to the empirical specifications, and the contribution has been
+appropriately reframed as a reduced-form effect of the clean-air
+governance regime. The promotion coding is documented and stress-tested,
+and the new event-study, information-gains, local-projection, and
+provincial-leader analyses respond directly to the first-round comments.
+I verified the response letter's claims against the revised manuscript
+and found the responses accurate.
+
+My remaining points are limited. One substantive request from the first
+round is still outstanding (validation of the AI-based text classifier),
+and the new analyses introduce a small number of reporting and
+interpretation issues. None of these requires new identification
+strategies or major data work. I list them below as required points,
+followed by optional suggestions.
+
+\subsubsection{Assessment of Responses to First-Round
+Comments}\label{assessment-of-responses-to-first-round-comments}
+
+\textbf{3.1 (Core interpretation).} Largely addressed. The event study
+(Figure 3) is presented candidly: pre-adoption coefficients are
+imprecise without a systematic trend, and the post-adoption gradient
+strengthens gradually, becoming significant after roughly three event
+years. The reframing as a reduced-form effect of the
+monitoring-and-disclosure regime is carried through the title, the
+results text (p.~23), and the conclusion, which now states explicitly
+that the paper does not directly test the weight-change channels. The
+new information-gains test (Table 3) is a constructive addition and does
+provide evidence consistent with an observability channel. Several
+issues with this test and its framing remain. See Required Point R1.
+\textbf{3.2 (Model-empirics mapping).} Fully resolved. The revised model
+(Section 3) includes the multitask promotion schedule, CARA utility over
+the realized career payoff with the risk premium carrying signal
+variance, a well-motivated objective for the higher-level government,
+and a first-order condition that is exactly the net-promotion-return
+condition requested. Proposition 1's four-primitive comparative statics
+give the empirical results an honest interpretation. \textbf{3.3
+(Promotion coding and sample restrictions).} Resolved. The coding rule
+for lateral transfers to sub-provincial cities and provincial capitals
+is now explicit (Section 5.1 and footnote 6), demoted/disciplined
+officials are included in the baseline (footnote 5; Table 1), and Table
+7 columns (3) and (5) show the results are robust to excluding
+sub-provincial cities and demoted/disciplined officials, respectively.
+\textbf{3.4 (Instrument exclusion and diagnostics).} Substantially
+addressed. The expanded discussion of the exclusion restriction and the
+weather-control robustness check (Table 7, column 4) are welcome. Two
+residual points on characterization and interpretation remain. See
+Required Point R3. \textbf{3.5 (Effort measurement validation).}
+Partially addressed. The category-level adoption trends (Appendix Figure
+2), the released classification code, and the waste-gas investment proxy
+(Appendix Tables 4 and 6) are useful steps. However, the core
+first-round request - a direct validation of the AI-based classification
+against human coding - has not been carried out, and the category-level
+trends themselves show that several categories break exactly at
+2013-2014, which keeps the reporting-template concern alive. See
+Required Point R2. \textbf{3.6 (Fog vs.~smog interpretation).} Resolved.
+The interpretation is now presented as one possibility.
+\textbf{Secondary comments (4.1-4.6).} All substantively addressed. The
+pre-period narrative is now carefully worded (the largest pre-period
+t-statistic across Table 7 corresponds to p approx. 0.31), the log(1+Y)
+transformation has been replaced and PPML added, and local projections
+appear in Appendix Figure 4. The provincial-leader extension (Section 9,
+Appendix Table 7) includes a frank power discussion, the heterogeneity
+analysis (Table 4) is informative, and the documentation is much
+expanded. Three small residuals from these items appear under Required
+Points R4-R5 and one minor suggestion.
+
+\subsection{Major Concerns}\label{major-concerns}
+
+\textbf{R1. Complete Table 3's reporting and calibrate the mechanism
+claim to it.} The paper's remaining mechanism claim rests on Table 3.
+Four related fixes, only the first involving any estimation, would let
+it bear that weight. (i) Report the constituent two-way terms log(PM2.5)
+x API correlation and Post x API correlation. If these terms are omitted
+from the specification, the triple interaction conflates the
+information-gains effect with time-invariant differences in the
+pollution-promotion gradient across high- and low-correlation cities and
+with differential post-period level shifts; if they are included but
+unreported, please report them or state their inclusion in the table
+notes. (ii) Clarify the direction of the interaction variable. The text
+narrates that ``larger information gains magnify the difference,'' but
+the regressor is the API \emph{correlation}, which moves inversely with
+the information gain, so the expected and estimated triple coefficient
+is \emph{positive}. Either define an explicit information-gain variable
+(for example, one minus the correlation) or add a clarifying sentence so
+readers do not misread the sign. Note also that the implied post-shift
+gradient change remains substantially negative even at the highest
+observed correlation levels, which suggests that non-information
+channels carry much of the effect, consistent with the paper's own
+reduced-form framing. (iii) Add one sentence acknowledging that low
+pre-period API correlation may proxy for pre-period misreporting
+intensity, which could correlate with post-2013 enforcement exposure
+through channels beyond information per se (larger revealed pollution
+gaps, tighter targets, more central attention); the test is consistent
+with the observability mechanism but does not isolate it from this
+exposure channel. (iv) Align the abstract with Section 7.1's own
+language. ``We show that at least part of this change occurred through
+an observability-and-incentives mechanism'' overstates what the design
+isolates; ``We provide evidence consistent with an
+observability-and-incentives mechanism'' would match it. Similarly,
+``mayors who reduced PM2.5 concentrations were no more likely to be
+promoted before the regime shift'' reads as a precise zero, while the IV
+pre-period estimate is an imprecise -0.275 (SE 0.298); ``not detectably
+more likely'' (or similar) would be accurate. \textbf{R2. Validate the
+text classifier directly.} The first-round request for a human-audit
+validation of the AI-based classification remains open, and it is the
+one remaining item that involves real (though modest) work: draw a
+random audit sample of work-report passages, have them coded by human
+coders blind to the AI output, and report agreement statistics (for
+example, precision and recall by category). This matters because
+Appendix Figure 2 shows that several categories - clean heating and coal
+substitution, heavy-pollution emergency response, dust control - rise or
+jump precisely at 2013-2014, and emergency-response plans were mandated
+by the 2013 Action Plan. For these categories, reporting-template
+changes and genuine effort changes are observationally similar in
+keyword counts. A robustness check excluding Action-Plan-mandated
+categories (or at a minimum tempering ``the adoption frequency of most
+policy categories remained relatively stable'' to acknowledge the
+exceptions) would substantially strengthen Section 7.3. \textbf{R3.
+Discuss the weather-control sensitivity and characterize Appendix Table
+2 accurately.} Two related points. First, Appendix Table 2 shows that
+inversion strength predicts visibility (2.852, SE 1.555) and dew point
+(1.349, SE 0.786), both significant at the 10 percent level; only
+minimum temperature is a clean null. The current characterization
+(``limited evidence \ldots{} significantly predicted'') understates two
+marginally significant coefficients out of three. Second, adding the
+weather controls moves the key interaction from -0.313 to -0.569 (Table
+7, column 4): the sign and significance are stable, but the magnitude
+nearly doubles. A brief discussion of why the estimate is sensitive in
+magnitude to these controls (and which estimate the authors regard as
+preferred, and why) would make the robustness claim complete. As
+written, ``remain unchanged'' describes sign and significance only.
+\textbf{R4. Document the estimator in Appendix Table 5.} The response
+letter states that Appendix Table 5 uses PPML with fixed effects, and
+Appendix Table 3's notes state Poisson quasi-maximum likelihood
+explicitly, but Appendix Table 5's notes do not name the estimator.
+Please state it in the notes (and report the same fit diagnostics as the
+neighboring tables). \textbf{R5. Reconcile the OLS and IV results for
+provincial leaders.} In Appendix Table 7, the OLS specification with
+province controls (column 2) shows a positive and statistically
+significant interaction (0.282, SE 0.129), while the IV interaction
+(column 3) is negative and insignificant. The text discusses only the IV
+null. One sentence acknowledging the OLS-IV contrast and explaining why
+the IV estimate is preferred (and what the contrast implies, given only
+22 clusters) would preempt confusion.
+
+\subsection{Minor Concerns}\label{minor-concerns}
+
+Section 3: the career-reward slope on growth (delta\_t) is taken as
+given while the pollution slope (gamma\_t) is optimized. A one-sentence
+justification for this asymmetry (for example, the growth slope
+reflecting a long-standing institutional legacy) would tighten the
+exposition. Appendix Figure 4: for the promotion outcome, the horizon-3
+confidence interval includes zero and horizon 1 is borderline; ``robust
+to alternative outcome horizons'' is slightly generous for that outcome
+(the effort outcomes are robust throughout). Alternative promotion
+definitions (for example, strict upward-only, or a multinomial treatment
+separating adverse exits) remain a useful, optional robustness exercise
+now that demoted/disciplined officials are in the baseline.
+
+\subsubsection{Closing}\label{closing}
+
+The revision substantially improves the paper and engages seriously with
+every first-round comment. The required points above are bounded: one
+modest validation exercise, one specification-reporting fix, and several
+presentational calibrations. I expect they can be addressed quickly.
+
+
+
+
+\end{document}
