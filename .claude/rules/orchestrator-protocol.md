@@ -1,42 +1,39 @@
 # Orchestrator Protocol: Contractor Mode
 
-**After a plan is approved, the orchestrator takes over autonomously.**
+After plan approval, execute autonomously unless ambiguity or decisions require user input.
 
-## The Loop
+## Main Loop
 
 ```
-Plan approved → orchestrator activates
-  │
-  Step 1: IMPLEMENT — Execute plan steps
-  │
-  Step 2: VERIFY — Compile, render, check outputs
-  │         If verification fails → fix → re-verify
-  │
-  Step 3: REVIEW — Run review agents (by file type)
-  │
-  Step 4: FIX — Apply fixes (critical → major → minor)
-  │
-  Step 5: RE-VERIFY — Confirm fixes are clean
-  │
-  Step 6: SCORE — Apply quality-gates rubric
-  │
-  └── Score >= threshold?
-        YES → Present summary to user
-        NO  → Loop back to Step 3 (max 5 rounds)
-              After max rounds → present with remaining issues
+Plan approved
+  -> IMPLEMENT
+  -> VERIFY
+  -> REVIEW
+  -> FIX
+  -> RE-VERIFY
+  -> SCORE
 ```
 
-## Limits
+If score >= threshold: deliver artifacts + summary.
+If score < threshold: iterate fix/re-verify (max 5 rounds).
 
-- **Main loop:** max 5 review-fix rounds
-- **Critic-fixer sub-loop:** max 5 rounds
-- **Verification retries:** max 2 attempts
-- Never loop indefinitely
+## Milestone Check-ins (Early Sessions)
 
-## "Just Do It" Mode
+Emit concise check-ins at stage boundaries:
+1. plan -> implementation handoff
+2. first draft generated
+3. verification finished
+4. final PDF + score ready
 
-When user says "just do it" / "handle it":
-- Skip final approval pause
-- Auto-commit if score >= 80
-- Still run the full verify-review-fix loop
-- Still present the summary
+## Escalate to User Only For
+
+- recommendation category ambiguity
+- missing/unclear manuscript evidence affecting major conclusions
+- conflicting instructions that change deliverable scope
+
+## Guardrails
+
+- no fabricated evidence or references
+- preserve reviewer anonymity
+- keep confidential editor comments separate from author comments
+- no delivery before verification and quality gate pass

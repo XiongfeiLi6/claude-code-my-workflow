@@ -15,13 +15,9 @@ if [ -z "$FILE" ]; then
   exit 0
 fi
 
-# ============================================================
-# CUSTOMIZE: Add patterns for files you want to protect
-# Uses basename matching — add full paths for more precision
-# ============================================================
+# Protected files should be genuinely high-risk only.
 PROTECTED_PATTERNS=(
   "Bibliography_base.bib"
-  "settings.json"
 )
 
 BASENAME=$(basename "$FILE")

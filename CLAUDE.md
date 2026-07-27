@@ -1,12 +1,7 @@
-# CLAUDE.MD -- Academic Project Development with Claude Code
+# CLAUDE.MD -- JEEM Referee Workflow (Paper-First)
 
-<!-- HOW TO USE: Replace [BRACKETED PLACEHOLDERS] with your project info.
-     Customize Beamer environments and CSS classes for your theme.
-     Keep this file under ~150 lines — Claude loads it every session.
-     See the guide at docs/workflow-guide.html for full documentation. -->
-
-**Project:** [YOUR PROJECT NAME]
-**Institution:** [YOUR INSTITUTION]
+**Project:** Anonymous JEEM Referee Workflow (JEEM-D-26-00040)
+**Institution:** Anonymous Reviewer
 **Branch:** main
 
 ---
@@ -14,48 +9,62 @@
 ## Core Principles
 
 - **Plan first** -- enter plan mode before non-trivial tasks; save plans to `quality_reports/plans/`
-- **Verify after** -- compile/render and confirm output at the end of every task
-- **Single source of truth** -- Beamer `.tex` is authoritative; Quarto `.qmd` derives from it
-- **Quality gates** -- nothing ships below 80/100
-- **[LEARN] tags** -- when corrected, save `[LEARN:category] wrong → right` to MEMORY.md
+- **Spec before plan for ambiguity** -- create a MUST/SHOULD/MAY spec when scope is unclear
+- **Contractor mode after approval** -- execute autonomously after plan approval, ask only on ambiguity/decisions
+- **Milestone check-ins (early sessions)** -- report at stage boundaries: spec, plan, draft, verification, final
+- **Evidence-grounded critique** -- every major claim in a review must map to manuscript text, table, or design choice
+- **No fabrication** -- if content is uncertain or unreadable, state uncertainty explicitly
+- **Anonymity by default** -- reports and artifacts use anonymous reviewer identity
+- **Verify before delivery** -- no report is delivered without quality scoring + PDF rendering checks
+- **[LEARN] tags** -- when corrected, save `[LEARN:category] wrong -> right` to MEMORY.md
 
 ---
 
 ## Folder Structure
 
 ```
-[YOUR-PROJECT]/
-├── CLAUDE.MD                    # This file
-├── .claude/                     # Rules, skills, agents, hooks
-├── Bibliography_base.bib        # Centralized bibliography
-├── Figures/                     # Figures and images
-├── Preambles/header.tex         # LaTeX headers
-├── Slides/                      # Beamer .tex files
-├── Quarto/                      # RevealJS .qmd files + theme
-├── docs/                        # GitHub Pages (auto-generated)
-├── scripts/                     # Utility scripts + R code
-├── quality_reports/             # Plans, session logs, merge reports
-├── explorations/                # Research sandbox (see rules)
-├── templates/                   # Session log, quality report templates
-└── master_supporting_docs/      # Papers and existing slides
+claude-code-my-workflow/
+├── CLAUDE.md                              # This file
+├── .claude/                               # Rules, skills, agents, hooks
+├── templates/                             # Report and workflow templates
+├── scripts/                               # Utility scripts
+├── quality_reports/
+│   ├── specs/                             # Requirements specs
+│   ├── plans/                             # Implementation plans
+│   ├── session_logs/                      # Session logs
+│   ├── merges/                            # Merge reports
+│   └── referee_reports/                   # Referee report source artifacts
+├── output/
+│   └── pdf/                               # Final PDF deliverables
+├── master_supporting_docs/
+│   ├── supporting_papers/                 # Optional in-repo paper copies
+│   └── supporting_slides/
+└── docs/                                  # Existing docs assets
 ```
+
+---
+
+## Canonical Artifact Paths
+
+- **Source manuscript (default):** external path allowed (outside repo root)
+- **Optional manuscript copy (if requested):** `master_supporting_docs/supporting_papers/`
+- **Structured review report (markdown):** `quality_reports/referee_reports/YYYY-MM-DD_[paper]_report.md`
+- **PDF-ready source (quarto):** `quality_reports/referee_reports/YYYY-MM-DD_[paper]_report.qmd`
+- **Final polished PDF:** `output/pdf/YYYY-MM-DD_[paper]_referee_report.pdf`
 
 ---
 
 ## Commands
 
 ```bash
-# LaTeX (3-pass, XeLaTeX only)
-cd Slides && TEXINPUTS=../Preambles:$TEXINPUTS xelatex -interaction=nonstopmode file.tex
-BIBINPUTS=..:$BIBINPUTS bibtex file
-TEXINPUTS=../Preambles:$TEXINPUTS xelatex -interaction=nonstopmode file.tex
-TEXINPUTS=../Preambles:$TEXINPUTS xelatex -interaction=nonstopmode file.tex
-
-# Deploy Quarto to GitHub Pages
-./scripts/sync_to_docs.sh LectureN
-
 # Quality score
-python scripts/quality_score.py Quarto/file.qmd
+python3 scripts/quality_score.py quality_reports/referee_reports/file_report.qmd
+
+# Render polished referee report PDF
+./scripts/render_referee_report.sh quality_reports/referee_reports/file_report.qmd
+
+# Optional direct render (fallback)
+quarto render quality_reports/referee_reports/file_report.qmd --to pdf
 ```
 
 ---
@@ -64,73 +73,52 @@ python scripts/quality_score.py Quarto/file.qmd
 
 | Score | Gate | Meaning |
 |-------|------|---------|
-| 80 | Commit | Good enough to save |
-| 90 | PR | Ready for deployment |
-| 95 | Excellence | Aspirational |
+| 80 | Deliverable | Ready to share |
+| 90 | Strong | Journal-grade rigor |
+| 95 | Excellence | Exceptional clarity and polish |
 
 ---
 
-## Skills Quick Reference
+## Skill Quick Reference
 
 | Command | What It Does |
 |---------|-------------|
-| `/compile-latex [file]` | 3-pass XeLaTeX + bibtex |
-| `/deploy [LectureN]` | Render Quarto + sync to docs/ |
-| `/extract-tikz [LectureN]` | TikZ → PDF → SVG |
-| `/proofread [file]` | Grammar/typo/overflow review |
-| `/visual-audit [file]` | Slide layout audit |
-| `/pedagogy-review [file]` | Narrative, notation, pacing review |
-| `/review-r [file]` | R code quality review |
-| `/qa-quarto [LectureN]` | Adversarial Quarto vs Beamer QA |
-| `/slide-excellence [file]` | Combined multi-agent review |
-| `/translate-to-quarto [file]` | Beamer → Quarto translation |
-| `/validate-bib` | Cross-reference citations |
-| `/devils-advocate` | Challenge slide design |
-| `/create-lecture` | Full lecture creation |
-| `/commit [msg]` | Stage, commit, PR, merge |
-| `/lit-review [topic]` | Literature search + synthesis |
-| `/research-ideation [topic]` | Research questions + strategies |
-| `/interview-me [topic]` | Interactive research interview |
-| `/review-paper [file]` | Manuscript review |
-| `/data-analysis [dataset]` | End-to-end R analysis |
-| `/learn [skill-name]` | Extract discovery into persistent skill |
-| `/context-status` | Show session health + context usage |
+| `/review-paper [file]` | Full manuscript referee review with dual-section output; `--peer JEEM` adds the simulated editor + referee pipeline |
+| `/review-paper-light [file]` | Fast 3-agent triage: contribution, identification, overclaiming (~1-2 min) |
+| `/review-paper-full [file] [journal]` | 7-agent deep scan: consistency, claims, math, tables, contribution |
+| `/review-paper-code [dir]` | Review a replication package: code quality + paper-to-code mapping |
+| `/seven-pass-review [file]` | 7 parallel lenses (abstract, intro, methods, results, robustness, prose, citations) |
+| `/verify-claims [file]` | CoVe fact-check of evidence anchors via forked claim-verifier |
+| `/respond-to-referees` | R&R rounds: audit whether prior concerns were addressed |
+| `/humanize [file]` | AI-voice audit of report prose before delivery |
+| `/question-quality [question]` | Gentzkow six-criterion lens on the paper's research question |
+| `/audit-reproducibility` | Cross-check manuscript numbers against replication outputs |
+| `/checkpoint` | Session-handoff snapshot for multi-session review work |
+| `/proofread [file]` | Grammar/typo/style review of report artifacts |
+| `/lit-review [topic]` | Literature search + synthesis support |
+| `/context-status` | Session health + context usage |
+| `/learn [skill-name]` | Persist reusable workflow lessons |
 | `/deep-audit` | Repository-wide consistency audit |
+
+**Referee agent cluster** (used by `--peer` mode and verification): `editor`, `domain-referee`, `methods-referee`, `claim-verifier`, `humanize-auditor`. Journal calibration in `.claude/references/journal-profiles.md` (includes a JEEM profile).
 
 ---
 
-<!-- CUSTOMIZE: Replace the example entries below with your own
-     Beamer environments and Quarto CSS classes. These are examples
-     from the original project — delete them and add yours. -->
+## Referee Report Standard (Default)
 
-## Beamer Custom Environments
-
-| Environment       | Effect        | Use Case       |
-|-------------------|---------------|----------------|
-| `[your-env]`      | [Description] | [When to use]  |
-
-<!-- Example entries (delete and replace with yours):
-| `keybox` | Gold background box | Key points |
-| `highlightbox` | Gold left-accent box | Highlights |
-| `definitionbox[Title]` | Blue-bordered titled box | Formal definitions |
--->
-
-## Quarto CSS Classes
-
-| Class              | Effect        | Use Case       |
-|--------------------|---------------|----------------|
-| `[.your-class]`    | [Description] | [When to use]  |
-
-<!-- Example entries (delete and replace with yours):
-| `.smaller` | 85% font | Dense content slides |
-| `.positive` | Green bold | Good annotations |
--->
+1. **Recommendation:** Reject / Major Revision / Minor Revision / Accept
+2. **Confidential comments to editor:** publication fit, contribution significance, key risks
+3. **Comments to authors:** actionable major + minor issues
+4. **Evidence anchors:** page/section/table/figure references wherever possible
+5. **Tone:** rigorous, constructive, professionally neutral
 
 ---
 
 ## Current Project State
 
-| Lecture | Beamer | Quarto | Key Content |
-|---------|--------|--------|-------------|
-| 1: [Topic] | `Lecture01_Topic.tex` | `Lecture1_Topic.qmd` | [Brief description] |
-| 2: [Topic] | `Lecture02_Topic.tex` | -- | [Brief description] |
+| Item | Status | Notes |
+|------|--------|-------|
+| Workflow mode | Paper-first | Slide/TikZ/Beamer workflows retained but dormant |
+| Reviewer identity | Anonymous | No personal/institutional signature in outputs |
+| Check-in policy | Milestone | Extra stage-boundary updates in early sessions |
+| Primary manuscript | `JEEM-D-26-00040.pdf` | Located outside repo root by user preference |

@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """
-Quality Scoring System for Academic Course Materials
+Quality Scoring System for Academic Workflow Artifacts.
 
 Calculates objective quality scores (0-100) based on defined rubrics.
-Enforces quality gates: 80 (commit), 90 (PR), 95 (excellence).
+Enforces quality gates: 80 (deliverable), 90 (strong), 95 (excellence).
 
 Usage:
+    python scripts/quality_score.py quality_reports/referee_reports/report.qmd
+    python scripts/quality_score.py quality_reports/referee_reports/report.md
     python scripts/quality_score.py Quarto/Lecture6_Topic.qmd
-    python scripts/quality_score.py Quarto/Lecture6_Topic.qmd --summary
-    python scripts/quality_score.py Quarto/*.qmd
     python scripts/quality_score.py Slides/Lecture01_Topic.tex
     python scripts/quality_score.py scripts/R/Lecture06_simulations.R
 """
@@ -76,6 +76,27 @@ BEAMER_RUBRIC = {
     },
     'minor': {
         'font_size_reduction': {'points': 1},
+    }
+}
+
+REFEREE_REPORT_RUBRIC = {
+    'critical': {
+        'missing_recommendation': {'points': 25},
+        'missing_editor_section': {'points': 20},
+        'missing_author_section': {'points': 20},
+        'unverifiable_or_placeholder_content': {'points': 30},
+        'pdf_render_failure': {'points': 100, 'auto_fail': True},
+    },
+    'major': {
+        'missing_evidence_anchor': {'points': 8},
+        'recommendation_misaligned': {'points': 10},
+        'missing_major_concerns_section': {'points': 5},
+        'missing_minor_concerns_section': {'points': 5},
+        'format_hierarchy_issue': {'points': 5},
+    },
+    'minor': {
+        'writing_issue': {'points': 1},
+        'terminology_drift': {'points': 2},
     }
 }
 
@@ -365,6 +386,121 @@ class IssueDetector:
         broken = cited_keys - bib_keys
         return list(broken)
 
+    @staticmethod
+    def has_markdown_heading(content: str, heading_text: str) -> bool:
+        """Check whether a heading exists (case-insensitive)."""
+        pattern = rf'^\s*#{{1,6}}\s+{re.escape(heading_text)}\s*$'
+        return bool(re.search(pattern, content, flags=re.IGNORECASE | re.MULTILINE))
+
+    @staticmethod
+    def parse_recommendation(content: str) -> str:
+        """Extract recommendation category if present."""
+        match = re.search(
+            r'\*{0,2}Category:\*{0,2}\s*(Reject|Major Revision|Minor Revision|Accept)',
+            content,
+            flags=re.IGNORECASE
+        )
+        if not match:
+            return ""
+        normalized = match.group(1).lower()
+        if normalized == 'major revision':
+            return 'Major Revision'
+        if normalized == 'minor revision':
+            return 'Minor Revision'
+        if normalized == 'reject':
+            return 'Reject'
+        if normalized == 'accept':
+            return 'Accept'
+        return ""
+
+    @staticmethod
+    def extract_major_concern_blocks(content: str) -> List[str]:
+        """Extract major concern sub-sections using MC headings."""
+        matches = list(re.finditer(r'^\s*####\s+MC\d+\s*:', content, flags=re.MULTILINE))
+        if not matches:
+            return []
+        blocks = []
+        for idx, match in enumerate(matches):
+            start = match.start()
+            end = matches[idx + 1].start() if idx + 1 < len(matches) else len(content)
+            blocks.append(content[start:end])
+        return blocks
+
+    @staticmethod
+    def major_blocks_missing_anchor(content: str) -> List[int]:
+        """Return 1-based indices of major concern blocks missing evidence anchors."""
+        blocks = IssueDetector.extract_major_concern_blocks(content)
+        missing = []
+        for i, block in enumerate(blocks, 1):
+            has_label = re.search(r'Evidence Anchor\s*:', block, flags=re.IGNORECASE)
+            has_reference = re.search(
+                r'(section|page|table|figure|equation|appendix)\s*[A-Za-z0-9.-]*',
+                block,
+                flags=re.IGNORECASE
+            )
+            if not has_label and not has_reference:
+                missing.append(i)
+        return missing
+
+    @staticmethod
+    def check_qmd_pdf_render(filepath: Path) -> Tuple[bool, str]:
+        """Render QMD to PDF and validate output exists and is non-empty."""
+        repo_root = Path(__file__).resolve().parent.parent
+        render_script = repo_root / 'scripts' / 'render_referee_report.sh'
+
+        if render_script.exists():
+            try:
+                result = subprocess.run(
+                    [str(render_script), str(filepath)],
+                    capture_output=True,
+                    text=True,
+                    timeout=240,
+                    cwd=repo_root
+                )
+            except subprocess.TimeoutExpired:
+                return False, "PDF render timeout (>4min)"
+            if result.returncode != 0:
+                return False, (result.stderr or result.stdout)[:400]
+
+            output_pdf = filepath.with_suffix('.pdf')
+            if output_pdf.exists() and output_pdf.stat().st_size > 0:
+                return True, ""
+
+            final_pdf = repo_root / 'output' / 'pdf' / f"{filepath.stem.replace('_report', '_referee_report')}.pdf"
+            if final_pdf.exists() and final_pdf.stat().st_size > 0:
+                return True, ""
+
+            return False, "Render script completed but expected PDF was not found"
+
+        # Fallback to direct Quarto render when script is unavailable.
+        try:
+            result = subprocess.run(
+                ['quarto', 'render', filepath.name, '--to', 'pdf'],
+                capture_output=True,
+                text=True,
+                timeout=180,
+                cwd=filepath.parent
+            )
+        except subprocess.TimeoutExpired:
+            return False, "PDF render timeout (>3min)"
+        except FileNotFoundError:
+            return False, "Quarto not installed"
+
+        if result.returncode != 0:
+            return False, (result.stderr or result.stdout)[:400]
+
+        output_pdf = filepath.with_suffix('.pdf')
+        if not output_pdf.exists() or output_pdf.stat().st_size == 0:
+            return False, f"Rendered file missing or empty: {output_pdf}"
+        return True, ""
+
+    @staticmethod
+    def detect_basic_writing_issues(content: str) -> int:
+        """Count lightweight writing issues for minor deductions."""
+        repeated_word_hits = re.findall(r'\b([A-Za-z]+)\s+\1\b', content, flags=re.IGNORECASE)
+        double_space_hits = len(re.findall(r'[^ \n]  [^ \n]', content))
+        return len(repeated_word_hits) + min(double_space_hits, 5)
+
 # ==============================================================================
 # QUALITY SCORER
 # ==============================================================================
@@ -548,6 +684,112 @@ class QualityScorer:
         self.score = max(0, self.score)
         return self._generate_report()
 
+    def score_referee_report(self, is_qmd: bool) -> Dict:
+        """Score manuscript referee report artifacts (.md/.qmd)."""
+        content = self.filepath.read_text(encoding='utf-8')
+
+        recommendation = IssueDetector.parse_recommendation(content)
+        if not recommendation:
+            self.issues['critical'].append({
+                'type': 'missing_recommendation',
+                'description': 'Missing recommendation category',
+                'details': 'Add Category: Reject / Major Revision / Minor Revision / Accept',
+                'points': REFEREE_REPORT_RUBRIC['critical']['missing_recommendation']['points']
+            })
+            self.score -= REFEREE_REPORT_RUBRIC['critical']['missing_recommendation']['points']
+
+        if not IssueDetector.has_markdown_heading(content, 'Confidential Comments to Editor'):
+            self.issues['critical'].append({
+                'type': 'missing_editor_section',
+                'description': 'Missing \"Confidential Comments to Editor\" section',
+                'details': 'Add explicit confidential section for editor-only comments',
+                'points': REFEREE_REPORT_RUBRIC['critical']['missing_editor_section']['points']
+            })
+            self.score -= REFEREE_REPORT_RUBRIC['critical']['missing_editor_section']['points']
+
+        if not IssueDetector.has_markdown_heading(content, 'Comments to Authors'):
+            self.issues['critical'].append({
+                'type': 'missing_author_section',
+                'description': 'Missing \"Comments to Authors\" section',
+                'details': 'Add explicit author-facing section',
+                'points': REFEREE_REPORT_RUBRIC['critical']['missing_author_section']['points']
+            })
+            self.score -= REFEREE_REPORT_RUBRIC['critical']['missing_author_section']['points']
+
+        # Placeholders indicate incomplete/unverifiable report content.
+        if '{{' in content or '}}' in content:
+            self.issues['critical'].append({
+                'type': 'unverifiable_or_placeholder_content',
+                'description': 'Template placeholders remain in report',
+                'details': 'Replace all placeholder tokens with concrete text',
+                'points': REFEREE_REPORT_RUBRIC['critical']['unverifiable_or_placeholder_content']['points']
+            })
+            self.score -= REFEREE_REPORT_RUBRIC['critical']['unverifiable_or_placeholder_content']['points']
+
+        if not IssueDetector.has_markdown_heading(content, 'Major Concerns'):
+            self.issues['major'].append({
+                'type': 'missing_major_concerns_section',
+                'description': 'Missing \"Major Concerns\" section',
+                'details': 'Add major concern subsection with actionable items',
+                'points': REFEREE_REPORT_RUBRIC['major']['missing_major_concerns_section']['points']
+            })
+            self.score -= REFEREE_REPORT_RUBRIC['major']['missing_major_concerns_section']['points']
+
+        if not IssueDetector.has_markdown_heading(content, 'Minor Concerns'):
+            self.issues['major'].append({
+                'type': 'missing_minor_concerns_section',
+                'description': 'Missing \"Minor Concerns\" section',
+                'details': 'Add concise minor concern list',
+                'points': REFEREE_REPORT_RUBRIC['major']['missing_minor_concerns_section']['points']
+            })
+            self.score -= REFEREE_REPORT_RUBRIC['major']['missing_minor_concerns_section']['points']
+
+        missing_anchors = IssueDetector.major_blocks_missing_anchor(content)
+        for idx in missing_anchors:
+            self.issues['major'].append({
+                'type': 'missing_evidence_anchor',
+                'description': f'Major concern MC{idx} lacks evidence anchor',
+                'details': 'Reference manuscript location (section/page/table/figure/equation)',
+                'points': REFEREE_REPORT_RUBRIC['major']['missing_evidence_anchor']['points']
+            })
+            self.score -= REFEREE_REPORT_RUBRIC['major']['missing_evidence_anchor']['points']
+
+        major_count = len(IssueDetector.extract_major_concern_blocks(content))
+        if recommendation == 'Accept' and major_count > 0:
+            self.issues['major'].append({
+                'type': 'recommendation_misaligned',
+                'description': 'Recommendation may be too positive for number of major concerns',
+                'details': f'Found {major_count} major concern block(s) with Accept recommendation',
+                'points': REFEREE_REPORT_RUBRIC['major']['recommendation_misaligned']['points']
+            })
+            self.score -= REFEREE_REPORT_RUBRIC['major']['recommendation_misaligned']['points']
+
+        writing_issue_count = min(IssueDetector.detect_basic_writing_issues(content), 10)
+        for _ in range(writing_issue_count):
+            self.issues['minor'].append({
+                'type': 'writing_issue',
+                'description': 'Minor writing issue detected',
+                'details': 'Review repeated words or spacing artifacts',
+                'points': REFEREE_REPORT_RUBRIC['minor']['writing_issue']['points']
+            })
+            self.score -= REFEREE_REPORT_RUBRIC['minor']['writing_issue']['points']
+
+        if is_qmd:
+            rendered, error = IssueDetector.check_qmd_pdf_render(self.filepath)
+            if not rendered:
+                self.auto_fail = True
+                self.issues['critical'].append({
+                    'type': 'pdf_render_failure',
+                    'description': 'QMD to PDF render failed',
+                    'details': error,
+                    'points': REFEREE_REPORT_RUBRIC['critical']['pdf_render_failure']['points']
+                })
+                self.score = 0
+                return self._generate_report()
+
+        self.score = max(0, self.score)
+        return self._generate_report()
+
     def _generate_report(self) -> Dict:
         """Generate quality score report."""
         if self.auto_fail:
@@ -672,27 +914,24 @@ class QualityScorer:
 
 def main():
     parser = argparse.ArgumentParser(
-        description='Calculate quality scores for course materials',
+        description='Calculate quality scores for workflow artifacts',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  # Score a single Quarto file
-  python scripts/quality_score.py Quarto/Lecture6_Topic.qmd
+  # Score a referee report (markdown)
+  python scripts/quality_score.py quality_reports/referee_reports/2026-03-05_report.md
+
+  # Score a referee report (QMD, includes PDF render check)
+  python scripts/quality_score.py quality_reports/referee_reports/2026-03-05_report.qmd
 
   # Score multiple files
-  python scripts/quality_score.py Quarto/*.qmd
+  python scripts/quality_score.py quality_reports/referee_reports/*.qmd
 
   # Score a Beamer/LaTeX file
   python scripts/quality_score.py Slides/Lecture01_Topic.tex
 
   # Score an R script
   python scripts/quality_score.py scripts/R/Lecture06_simulations.R
-
-  # Summary only (no detailed issues)
-  python scripts/quality_score.py Quarto/Lecture6.qmd --summary
-
-  # Verbose output (include minor issues)
-  python scripts/quality_score.py Quarto/Lecture6.qmd --verbose
 
 Quality Thresholds:
   80/100 = Commit threshold (blocks if below)
@@ -725,8 +964,24 @@ Exit Codes:
         try:
             scorer = QualityScorer(filepath, verbose=args.verbose)
 
+            normalized = str(filepath).replace('\\', '/')
+            is_referee_artifact = (
+                'quality_reports/referee_reports/' in normalized
+                or filepath.name.startswith('referee-report')
+            )
+
             if filepath.suffix == '.qmd':
-                report = scorer.score_quarto()
+                if is_referee_artifact:
+                    report = scorer.score_referee_report(is_qmd=True)
+                else:
+                    report = scorer.score_quarto()
+            elif filepath.suffix == '.md':
+                if is_referee_artifact:
+                    report = scorer.score_referee_report(is_qmd=False)
+                else:
+                    print(f"Error: Unsupported markdown target (expected referee artifact): {filepath}")
+                    exit_code = max(exit_code, 1)
+                    continue
             elif filepath.suffix == '.R':
                 report = scorer.score_r_script()
             elif filepath.suffix == '.tex':

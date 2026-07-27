@@ -1,67 +1,58 @@
 ---
 paths:
-  - "Slides/**/*.tex"
-  - "Quarto/**/*.qmd"
-  - "scripts/**/*.R"
+  - "quality_reports/referee_reports/**"
+  - "templates/referee-report.*"
+  - "output/pdf/**"
 ---
 
-# Quality Gates & Scoring Rubrics
+# Quality Gates and Scoring Rubric (Referee Reports)
 
 ## Thresholds
 
-- **80/100 = Commit** -- good enough to save
-- **90/100 = PR** -- ready for deployment
-- **95/100 = Excellence** -- aspirational
+- 80/100 = deliverable threshold
+- 90/100 = strong journal-grade quality
+- 95/100 = excellence
 
-## Quarto Slides (.qmd)
+## Referee Report Artifacts (.md / .qmd)
 
-| Severity | Issue | Deduction |
-|----------|-------|-----------|
-| Critical | Compilation failure | -100 |
-| Critical | Equation overflow | -20 |
-| Critical | Broken citation | -15 |
-| Critical | Typo in equation | -10 |
-| Major | Text overflow | -5 |
-| Major | TikZ label overlap | -5 |
-| Major | Notation inconsistency | -3 |
-| Minor | Font size reduction | -1 per slide |
-| Minor | Long lines (>100 chars) | -1 (EXCEPT documented math formulas) |
+### Critical Issues
 
-## R Scripts (.R)
+| Issue | Deduction |
+|-------|-----------|
+| Missing recommendation category | -25 |
+| Missing confidential editor section | -20 |
+| Missing author comments section | -20 |
+| Fabricated or unverifiable evidence claim | -30 |
+| Render failure for PDF-ready QMD | -100 (auto-fail) |
 
-| Severity | Issue | Deduction |
-|----------|-------|-----------|
-| Critical | Syntax errors | -100 |
-| Critical | Domain-specific bugs | -30 |
-| Critical | Hardcoded absolute paths | -20 |
-| Major | Missing set.seed() | -10 |
-| Major | Missing figure generation | -5 |
+### Major Issues
 
-## Beamer Slides (.tex)
+| Issue | Deduction |
+|-------|-----------|
+| Major concern lacks evidence anchor | -8 each |
+| Internal inconsistency across sections | -8 |
+| Recommendation not aligned with concerns | -10 |
+| Overly vague major concern (non-actionable) | -5 each |
+| Formatting hierarchy unclear | -5 |
 
-| Severity | Issue | Deduction |
-|----------|-------|-----------|
-| Critical | XeLaTeX compilation failure | -100 |
-| Critical | Undefined citation | -15 |
-| Critical | Overfull hbox > 10pt | -10 |
+### Minor Issues
+
+| Issue | Deduction |
+|-------|-----------|
+| Typos/grammar issues | -1 each (cap 10) |
+| Inconsistent terminology | -2 |
+| Minor style/punctuation drift | -1 each |
 
 ## Enforcement
 
-- **Score < 80:** Block commit. List blocking issues.
-- **Score < 90:** Allow commit, warn. List recommendations.
-- User can override with justification.
+- Score < 80: block delivery and fix issues.
+- Score >= 80: deliverable allowed.
+- Score >= 90: strong quality.
 
-## Quality Reports
+## Required Checks Before Delivery
 
-Generated **only at merge time**. Use `templates/quality-report.md` for format.
-Save to `quality_reports/merges/YYYY-MM-DD_[branch-name].md`.
-
-## Tolerance Thresholds (Research)
-
-<!-- Customize for your domain -->
-
-| Quantity | Tolerance | Rationale |
-|----------|-----------|-----------|
-| Point estimates | [e.g., 1e-6] | [Numerical precision] |
-| Standard errors | [e.g., 1e-4] | [MC variability] |
-| Coverage rates | [e.g., +/- 0.01] | [MC with B reps] |
+- [ ] Recommendation present and explicit
+- [ ] Editor/author split present
+- [ ] Evidence anchors included for major points
+- [ ] PDF render succeeds for QMD artifacts
+- [ ] Final score >= 80

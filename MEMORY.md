@@ -70,3 +70,23 @@ When a mistake is corrected, append a `[LEARN:category]` entry below.
 [LEARN:meta] Dogfooding principles must be enforced: plan-first, spec-then-plan, quality gates, session logs → we follow our own guide.
 
 [LEARN:meta] Template development work (building infrastructure, docs) doesn't create session logs in quality_reports/ → those are for user work (slides, analysis), not meta-work. Keeps template clean for users who fork.
+
+[LEARN:workflow] This project runs in paper-first mode by default. Slide/Beamer/TikZ assets remain available but dormant unless explicitly requested.
+
+[LEARN:workflow] Early sessions use milestone check-ins at stage boundaries: spec, plan, first draft, verification, final artifact.
+
+[LEARN:governance] Reviewer identity is anonymous by default. Do not include personal or institutional identifiers in referee outputs.
+
+[LEARN:files] Canonical report paths: quality_reports/referee_reports/ for source artifacts and output/pdf/ for final PDF deliverables.
+
+[LEARN:pdf] For PDF QA in this environment, prefer Quarto render + pypdf validation, with Ghostscript raster preview fallback when pdftoppm is unavailable.
+
+[LEARN:workflow] User preference: always generate PDF outputs after each completed work batch, not only source markdown/qmd artifacts.
+
+[LEARN:workflow] Deliverable policy: maintain exactly the currently requested PDF set in `output/pdf/` (regenerate required PDFs each work batch and remove obsolete ones).
+
+[LEARN:pdf] The render_referee_report.sh XeLaTeX fallback silently drops non-ASCII characters (unicode minus, en/em dashes -> negatives vanish from rendered numbers) and restarts markdown ordered-list numbering per item. Keep referee-report sources pure ASCII and use bold-paragraph numbering ("**1. Title.**") instead of markdown ordered lists.
+
+[LEARN:pdf] Referee report delivery format: hand-authored .tex in the March 2026 template (12pt article, margin 1in, setstretch 1.5, tgpagella = Palatino, centered bold title block, numbered sections, itemize with bold labels), compiled with PDFLATEX. xelatex silently ignores tgpagella and produces Latin Modern; verify with pdffonts that TeXGyrePagella is embedded. md/qmd remain the quality-scored sources; the .tex is the styled delivery source.
+
+[LEARN:workflow] Quality scorer requires the combined master report artifact (Category: line + "Confidential Comments to Editor" + "Comments to Authors" + "Major Concerns" + "Minor Concerns" headings) — score the combined _report.qmd; split author/editor PDFs are delivery artifacts derived from it (March 2026 and July 2026 rounds both follow this pattern).

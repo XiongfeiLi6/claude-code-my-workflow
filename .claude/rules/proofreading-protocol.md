@@ -1,47 +1,42 @@
 ---
 paths:
-  - "Slides/**/*.tex"
-  - "Quarto/**/*.qmd"
-  - "quality_reports/**"
+  - "quality_reports/referee_reports/**"
+  - "templates/referee-report.*"
 ---
 
-# Proofreading Agent Protocol (MANDATORY)
+# Proofreading Protocol (Referee Reports)
 
-**Every lecture file MUST be reviewed before any commit or PR.**
+Every referee report should be proofread before delivery.
 
-**CRITICAL RULE: The agent must NEVER apply changes directly. It proposes all changes for review first.**
+## Scope
 
-## What the Agent Checks
+1. Grammar and clarity
+2. Typos and punctuation
+3. Terminology consistency
+4. Recommendation wording consistency
+5. Confidential/editor vs author section separation clarity
 
-1. **Grammar** -- subject-verb agreement, missing articles, wrong prepositions
-2. **Typos** -- misspellings, search-and-replace corruption, duplicated words
-3. **Overflow** -- overfull hbox (Beamer), content exceeding slide boundaries (Quarto)
-4. **Consistency** -- notation, citation style (`\citet` vs `\citep`, `[@key]`), terminology
-5. **Academic quality** -- informal abbreviations, missing words, awkward phrasing
+## Workflow
 
-## Three-Phase Workflow
+### Phase 1: Review and Propose (no direct edits for substantive claims)
 
-### Phase 1: Review & Propose (NO EDITS)
+- Produce proposed fixes with location and rationale.
+- For any substantive statement change, keep the original claim traceable.
 
-Each agent:
-1. Reads the entire file
-2. Produces a **report** with every proposed change:
-   - Location (line number or slide title)
-   - Current text
-   - Proposed fix
-   - Category (grammar / typo / overflow / consistency)
-3. Saves report to `quality_reports/` (e.g., `quality_reports/LectureN_Topic_report.md`)
-4. **Does NOT modify any source files**
+### Phase 2: Apply low-risk fixes
 
-### Phase 2: Review & Approve
+- Apply mechanical fixes directly (typos/grammar/style).
+- Do not alter substantive judgment without explicit rationale.
 
-The user reviews the proposed changes:
-- Accepts all, accepts selectively, or requests modifications
-- **Only after explicit approval** does the agent proceed
+### Phase 3: Re-verify
 
-### Phase 3: Apply Fixes
+- Ensure section headers and recommendation label remain intact.
+- Re-run quality scoring if substantive text changed.
 
-Apply only approved changes:
-- Use Edit tool; use `replace_all: true` for issues with multiple instances
-- Verify each edit succeeded
-- Report completion summary
+## Required report sections
+
+- Recommendation
+- Confidential comments to editor
+- Comments to authors
+- Major concerns
+- Minor concerns

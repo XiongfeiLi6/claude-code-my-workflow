@@ -1,60 +1,45 @@
 ---
 paths:
   - "master_supporting_docs/**"
+  - "quality_reports/referee_reports/**"
+  - "output/pdf/**"
 ---
 
-# Robust PDF Processing
+# PDF Processing Protocol (Paper Review)
 
-## The Safe Processing Workflow
+Use robust, chunked PDF workflows for long manuscripts and publication-grade outputs.
 
-**Step 1: Receive PDF Upload**
-- User uploads PDF to `master_supporting_docs/supporting_papers/` or `supporting_slides/`
-- Claude DOES NOT attempt to read it directly
+## Input Processing
 
-**Step 2: Check PDF Properties**
-```bash
-pdfinfo paper_name.pdf | grep "Pages:"
-ls -lh paper_name.pdf
-```
+1. Resolve manuscript path in this order:
+   - direct path supplied by user (can be outside repo)
+   - `master_supporting_docs/supporting_papers/`
+2. Inspect basic properties using Python (`pypdf`) when `pdfinfo` is unavailable.
+3. For long manuscripts, extract/read in chunks (for example 5 pages at a time).
+4. Track uncertainty if text extraction is noisy.
 
-**Step 3: Create Subfolder and Split**
-```bash
-mkdir -p paper_name/
+## Output Processing
 
-for i in {0..9}; do
-  start=$((i*5 + 1))
-  end=$(((i+1)*5))
-  gs -sDEVICE=pdfwrite -dNOPAUSE -dBATCH -dSAFER \
-     -dFirstPage=$start -dLastPage=$end \
-     -sOutputFile="paper_name/paper_name_p$(printf '%03d' $start)-$(printf '%03d' $end).pdf" \
-     paper_name.pdf 2>/dev/null
-done
-```
+1. Render referee report QMD to PDF.
+2. Validate using Python:
+   - file exists
+   - non-zero size
+   - page count >= 1
+3. Generate raster preview for layout QA:
+   - `pdftoppm` if available
+   - Ghostscript fallback otherwise
 
-**Step 4: Process Chunks Intelligently**
-- Read chunks ONE AT A TIME using the Read tool
-- Extract key information from each chunk
-- Build understanding progressively
-- Don't try to hold all chunks in working memory
+## Quality Requirements
 
-**Step 5: Selective Deep Reading**
-- After scanning all chunks, identify the most relevant sections
-- Only read those sections in detail for slide development
-- Skip appendices, references, or less relevant sections unless needed
+- Consistent typography and section hierarchy
+- No clipped/overlapping text
+- Clear separation of editor vs author sections
+- Human-readable references and labels
+- ASCII hyphens only
 
-## Error Handling Protocol
+## Error Handling
 
-**If a chunk fails to process:**
-1. Note the problematic chunk (e.g., "Chunk p021-025 failed")
-2. Try splitting into 1-2 page pieces
-3. If still failing, skip and document the gap
-
-**If splitting fails:**
-1. Check if Ghostscript is installed: `gs --version`
-2. Try alternative: `pdftk paper.pdf burst output paper_%03d.pdf`
-3. If all else fails, ask user to upload specific page ranges manually
-
-**If memory/token issues persist:**
-1. Process only 2-3 chunks per session
-2. Focus on specific sections user identifies as most important
-
+If parsing or rendering fails:
+1. capture exact error
+2. retry with fallback method
+3. if still failing, report blocker and partial progress with clear next action

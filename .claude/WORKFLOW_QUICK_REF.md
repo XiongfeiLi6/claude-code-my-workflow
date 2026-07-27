@@ -1,6 +1,6 @@
 # Workflow Quick Reference
 
-**Model:** Contractor (you direct, Claude orchestrates)
+**Model:** Plan-first contractor mode for anonymous manuscript referee work
 
 ---
 
@@ -9,33 +9,45 @@
 ```
 Your instruction
     ↓
-[PLAN] (if multi-file or unclear) → Show plan → Your approval
+[SPEC] (if ambiguous) -> MUST/SHOULD/MAY + clarity status
     ↓
-[EXECUTE] Implement, verify, done
+[PLAN] -> file-level implementation plan -> your approval
     ↓
-[REPORT] Summary + what's ready
+[EXECUTE] autonomous implementation
     ↓
-Repeat
+[MILESTONE CHECK-INS] draft, verification, final artifact
+    ↓
+[REPORT] outputs + quality score + open decisions (if any)
 ```
 
 ---
 
 ## I Ask You When
 
-- **Design forks:** "Option A (fast) vs. Option B (robust). Which?"
-- **Code ambiguity:** "Spec unclear on X. Assume Y?"
-- **Replication edge case:** "Just missed tolerance. Investigate?"
-- **Scope question:** "Also refactor Y while here, or focus on X?"
+- Recommendation threshold is borderline (Major vs Minor Revision)
+- A key manuscript section is unreadable/ambiguous and changes conclusions
+- You need to choose between materially different framing choices
+- Scope expansion is non-trivial (new analyses, extra documents, new templates)
 
 ---
 
-## I Just Execute When
+## I Execute Autonomously When
 
-- Code fix is obvious (bug, pattern application)
-- Verification (tolerance checks, tests, compilation)
-- Documentation (logs, commits)
-- Plotting (per established standards)
-- Deployment (after you approve, I ship automatically)
+- Report structure is already approved
+- Evidence extraction and synthesis are straightforward
+- Rendering, QA checks, and score evaluation are mechanical
+- Fixes are clear and do not change substantive judgment
+
+---
+
+## Early Session Check-ins (Enabled)
+
+For your first sessions, I check in at these boundaries:
+1. Spec complete
+2. Plan complete
+3. First report draft complete
+4. Verification complete
+5. Final PDF complete
 
 ---
 
@@ -43,44 +55,30 @@ Repeat
 
 | Score | Action |
 |-------|--------|
-| >= 80 | Ready to commit |
-| < 80  | Fix blocking issues |
+| >= 80 | Deliverable ready |
+| < 80  | Block delivery and fix issues |
 
 ---
 
-## Non-Negotiables (Customize These)
+## Non-Negotiables
 
-<!-- Replace with YOUR project's locked-in preferences -->
-
-- [YOUR PATH CONVENTION] (e.g., `here::here()` for R, relative paths for LaTeX)
-- [YOUR SEED CONVENTION] (e.g., `set.seed()` once at top for stochastic code)
-- [YOUR FIGURE STANDARDS] (e.g., white bg, 300 DPI, custom theme)
-- [YOUR COLOR PALETTE] (e.g., institutional colors)
-- [YOUR TOLERANCE THRESHOLDS] (e.g., 1e-6 for point estimates)
+- Evidence-grounded critique only
+- No fabricated claims, citations, or section references
+- Anonymous reviewer identity in all report artifacts
+- Confidential comments to editor are kept separate from author-facing comments
+- PDF must pass render and visual sanity checks before delivery
 
 ---
 
-## Preferences
+## Canonical Paths
 
-<!-- Fill in as you discover your working style -->
-
-**Visual:** [How you want figures/plots handled]
-**Reporting:** [Concise bullets? Detailed prose? Details on request?]
-**Session logs:** Always (post-plan, incremental, end-of-session)
-**Replication:** [How strict? Flag near-misses?]
-
----
-
-## Exploration Mode
-
-For experimental work, use the **Fast-Track** workflow:
-- Work in `explorations/` folder
-- 60/100 quality threshold (vs. 80/100 for production)
-- No plan needed — just a research value check (2 min)
-- See `.claude/rules/exploration-fast-track.md`
+- Report sources: `quality_reports/referee_reports/`
+- Final PDFs: `output/pdf/`
+- Optional in-repo manuscript copies: `master_supporting_docs/supporting_papers/`
+- Default manuscript source: external path provided by user
 
 ---
 
 ## Next Step
 
-You provide task → I plan (if needed) → Your approval → Execute → Done.
+You provide task -> I spec/plan if needed -> you approve -> I execute autonomously with milestone check-ins.
