@@ -106,26 +106,35 @@ Empirical-leaning hybrid: insert Conceptual Framework after Context. Theory-lean
 
 ### 3.1 Abstract template
 
-Five components, 150–200 words total:
+**Evidence base.** The opener and gap conventions below were re-calibrated in July 2026 against a coded sample of 60 published abstracts and 30 introduction openings from AER, QJE, JPE, REStud, and Econometrica (2021–26), plus the closest cousin papers in the relevant genre (survey memo: `quality_reports/research/2026-07-30_top5-abstract-intro-strategy.md` in the originating project; re-run the survey against your own target journals and genre cousins to recalibrate for a different field). Percentages cited below are from that sample.
 
-1. **Motivation** (1 sentence): the question or vulnerability the literature opens.
-2. **Gap** (1 sentence): what the literature has not done.
-3. **Contribution** (1–2 sentences): what this paper does, including the setting and the method.
-4. **Headline result** (2–3 sentences): the central finding with one or two headline magnitudes.
-5. **Inferential implication** (1–2 sentences): why this matters, in **"Because X, Y"** form.
+Six components, 150–200 words total (journal medians run shorter — JPE ≈95, AER ≈100, ECMA ≈135, REStud ≈150, QJE ≈170 — so treat 200 as the ceiling, not the target):
 
-The "Because X, Y" structure is required for the inferential implication: it forces the writer to spell out the bridge from result to implication. "X provides a rationale for Y" lets the writer skip the bridge.
+1. **Opener** (1 sentence): a direct declarative "We study X" pitched at the altitude of the *question*, not the setting — the modal top-5 move (~70% of abstracts). The setting is fused into the opener or the next sentence. Interrogative openers are rare and work only when the question itself is a puzzle; result-first openers ("We show that...") are a minority move reserved for stark unconditional findings. Never open the abstract on the contribution or the literature.
+2. **Gap** (0–1 sentence, optional, scope-matched): explicit gap sentences appear in only ~8% of top-5 abstracts (REStud: 0 of 12; two papers deleted their working-paper gap sentence at publication). If a gap is stated, it must be an *evidence or data* gap ("has not been studied experimentally", "existing variation rarely moves X alone") at exactly the scope of the question — never "the literature has not...", and never a broad question paired with a gap claimed against a narrower literature. The gap's default home is Introduction P1–P3, not the abstract. The norm is enforced at publication: coded examples include AEJ:Applied deleting a working paper's opening gap sentence from the published abstract.
+3. **Contribution + design** (1–2 sentences): what this paper does, with setting and method compressed to one clause. Identification detail beyond one clause is unusual at top-5; the design's decomposition belongs in the intro and the strategy section unless an author decision keeps it in the abstract.
+4. **Headline result** (1–2 sentences, landing mid-abstract): the central finding with **one curated interpreted magnitude** (percent of baseline per SD, pp change, elasticity). Abstracts are number-light: the sample median is 1–3 distinct numbers, and zero-number abstracts are common (AER 7/12, REStud 9/12). The full magnitude battery debuts in Introduction P3–P5.
+5. **Mechanism back-third** (1–2 sentences): after the headline, channel, heterogeneity, or counterfactual — never a robustness recap.
+6. **Inferential implication** (0–1 sentence): implication endings appear in only ~35% of top-5 abstracts and are never prescriptive ("policymakers should" does not occur); about half of abstracts end flat on the sharpest finding. House rule: *when* an implication is drawn, it takes the **"Because X, Y"** form — it forces the writer to spell out the bridge from result to implication ("X provides a rationale for Y" lets the writer skip the bridge). Ending flat on the mechanism finding is equally acceptable.
+
+**Named templates worth imitating:** Baseler et al. (JPE 2025) — broad puzzle + scope-matched gap in two sentences; Arteaga–Barone (QJE 2026) — connect two salient phenomena; Bhalotra et al. (REStud 2025) — the gendered-shock genre benchmark (direct opener, zero numbers, ends on the model as contribution); Aizer (AER 2010) — result stated with no numbers at all.
 
 Example skeleton (substantive content from a carbon-leakage / enforcement paper):
 > *Does carbon leakage provoke a regulatory response in the destination country? [Motivation.] The literature documents that leakage occurs but treats the destination as a passive absorber. [Gap.] We provide the first evidence tracing each link of the chain from foreign carbon pricing to domestic enforcement, using a shift-share design that maps EU~ETS embodied carbon costs to Chinese city-sectors. [Contribution + method.] A one-standard-deviation rise in export-weighted carbon exposure raises Chinese environmental penalty counts by approximately one percent, with the response strategic, institutionally mediated by the 2016 centralization of inspection, and asymmetric across pollutants. [Result.] Because Chinese enforcement already closes much of the regulated-pollutant gap but leaves the CO_2 gap open, a CBAM targeted narrowly at greenhouse gases is appropriately calibrated, while a CBAM extended to broad environmental standards would over-correct. [Inferential implication, in "Because X, Y" form.]*
 
 ### 3.2 Introduction template
 
+**P1 opener discipline (evidence-calibrated, same survey as §3.1).** Intro P1 opens **one altitude above the abstract**: a broad phenomenon (~50% of coded intros) or a striking fact/statistic (~40%). **Zero of 30 coded intros open with the contribution** — "X has rarely been studied for Y" is banned as a P1 opener; contribution claims enter with "In this paper, we..." in P2–P3 and in the related-literature paragraphs. Rules:
+
+- **Striking-fact openers require a verified citation** (a WHO/Lancet prevalence estimate, an administrative aggregate, a named national statistic). Verify the number against the source before wiring; the fact must be the paper's own outcome or treatment at global/national scope, not a loosely related shock statistic. **Match the fact's jurisdiction to the setting:** papers in a single-country setting cite that country's administrative or survey source (a US paper cites CDC, not WHO); papers using a global fact follow it with a setting-scoped statistic in the next clause or sentence. When the two statistics use different variable definitions, keep each figure attached to its own definition.
+- **The explicit gap lives in P1–P3 and is scope-matched to the question.** 26 of 30 coded intros state the gap there, phrased at the altitude of the question, not of the setting. Never claim a broad gap and answer a narrow question; never pose a broad question and state the gap against a narrower literature (the scope-mismatch error).
+- **The invariant funnel:** P1 phenomenon/fact → P2 the gap or measurement challenge, ending in the question → "In this paper, we..." → headline magnitudes by P3–P5.
+
 **Architecture.** A top-5 introduction has the following paragraph structure. Numerical-content discipline is strict:
 
 | Paragraph | Role | Numerical content |
 |---|---|---|
-| P1–2 | Motivation + research question | None |
+| P1–2 | Motivation + research question | None (exception: one cited prevalence/scale statistic in a striking-fact P1 opener) |
 | P3 | High-level finding + headline magnitude | One headline number |
 | P4–5 | Why-not-obvious + identification strategy | None |
 | P6–8 | Detailed results | Per-spec ranges, per-outcome magnitudes, benchmark comparisons |
@@ -495,7 +504,9 @@ The most common mistake when applying this rule is cutting substantive logic alo
 6. **Inferential-bridge check.** Each policy claim in the Abstract is in "Because X, Y" form.
 7. **Promised-robustness check.** Each robustness check promised in §5 has a corresponding appendix table.
 8. **Mechanism-acknowledgement check.** Each policy claim in the Discussion section addresses the mechanism the policy uses (CBAM credit-for-price-paid; EITC phase-in/out; etc.).
-9. **AI-voice audit.** After any AI-assisted revision pass, run `/humanize` on the edited files. The audit also runs automatically inside `/review-paper-light` (Agent C) and `/review-paper-full` (Agent 7), so the standard pre-submission review pipelines catch AI tells without explicit invocation. The §7.2 tactical checklist catches the most common AI tells by grep, but `/humanize` also flags symmetric paragraph shapes, tricolon abuse, and lexical fingerprints (the LLM training-distribution markers) that grep cannot detect. Run explicitly before journal submission or working-paper posting; rely on the review-paper integration as the default safety net for ad-hoc revision passes.
+9. **Scope-match check.** The gap sentence (abstract, if present, and intro P1–P3) is stated at exactly the scope of the question the opener poses — not against a narrower literature, not broader than what the paper answers.
+10. **P1-opener check.** Intro P1 opens on a phenomenon or a verified striking fact, one altitude above the abstract's opener; it does not open on the contribution or the literature. The abstract opens with a direct declarative at question altitude.
+11. **AI-voice audit.** After any AI-assisted revision pass, run `/humanize` on the edited files. The audit also runs automatically inside `/review-paper-light` (Agent C) and `/review-paper-full` (Agent 7), so the standard pre-submission review pipelines catch AI tells without explicit invocation. The §7.2 tactical checklist catches the most common AI tells by grep, but `/humanize` also flags symmetric paragraph shapes, tricolon abuse, and lexical fingerprints (the LLM training-distribution markers) that grep cannot detect. Run explicitly before journal submission or working-paper posting; rely on the review-paper integration as the default safety net for ad-hoc revision passes.
 
 ---
 
