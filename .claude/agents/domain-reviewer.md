@@ -3,6 +3,7 @@ name: domain-reviewer
 description: Substantive domain review for lecture slides. Template agent — customize the 5 review lenses for your field. Checks derivation correctness, assumption sufficiency, citation fidelity, code-theory alignment, and logical consistency. Use after content is drafted or before teaching.
 tools: Read, Grep, Glob
 model: opus
+effort: high
 ---
 
 <!-- AUTO-DETECT-TEMPLATE-MARKER — do not remove unless you have customized
@@ -25,10 +26,11 @@ model: opus
      EXAMPLES (two disciplines, to show the customization is field-agnostic):
 
      - Econ — original version: an "Econometrica referee" for causal inference /
-       panel data. Lens 1 (Assumption Stress Test) checks parallel trends, no-
-       anticipation, SUTVA, overlap. Lens 2 verifies decomposition algebra
-       (Frisch-Waugh, Goodman-Bacon weights). Lens 3 cross-references DiD/IV/RD
-       claims against Roth, Sant'Anna, Bilinski, Poe (2022) and similar. Lens 4
+       panel data. Lens 1 (Assumption Stress Test) checks each identifying
+       assumption as stated against the cited source (SUTVA, overlap, the
+       exact version of the assumption the paper uses). Lens 2 verifies
+       decomposition algebra (Frisch-Waugh). Lens 3 cross-references
+       identification claims against the papers the slides cite. Lens 4
        flags `fixest::feols` clustering defaults vs claimed assumptions, etc.
 
      - Poli-sci — an "AJPS methods referee" variant. Lens 1 checks ignorability

@@ -14,6 +14,28 @@
     "deny": []
   },
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/git-guardrails.py",
+            "timeout": 20
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/root-of-trust-guard.py",
+            "timeout": 20
+          }
+        ]
+      }
+    ],
     "Notification": [
       {
         "hooks": [
@@ -50,7 +72,7 @@
     ],
     "PostToolUse": [
       {
-        "matcher": "Bash|Task",
+        "matcher": "Bash|Agent|Task",
         "hooks": [
           {
             "type": "command",
@@ -60,11 +82,11 @@
         ]
       },
       {
-        "matcher": "Write|Edit",
+        "matcher": "Write|Edit|MultiEdit",
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/verify-reminder.py",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/claim-reconcile.py",
             "timeout": 5
           }
         ]

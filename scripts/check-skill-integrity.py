@@ -16,6 +16,11 @@ Checks:
   4. Rule paths/globs ↔ skill implementation parity — if a rule lists a
      skill in its `paths:` or `globs:` frontmatter, that skill must
      reference the rule's protocol keywords in its body.
+  5. Rule-keyword REGISTRY completeness — check 4 only sees rules that
+     someone remembered to register, so a skill-scoped rule missing from
+     RULE_KEYWORDS is passed by omission. Any rule scoping itself to
+     `.claude/skills/` must be registered, with keywords or with an
+     explicit `[]` and the reason it is not keyword-checkable.
 
 Exit codes:
   0 = all checks pass, or only P2 advisories
@@ -44,7 +49,7 @@ REPO = Path(__file__).resolve().parent.parent
 # ---- Known tool names the harness exposes ------------------------------------
 
 TOOLS = {
-    "Task", "Bash", "Edit", "Write", "MultiEdit", "Read", "Grep", "Glob",
+    "Agent", "Task", "Bash", "Edit", "Write", "MultiEdit", "Read", "Grep", "Glob",
     "WebFetch", "WebSearch", "NotebookEdit",
 }
 
@@ -117,6 +122,18 @@ TOOL_INVOCATION_PATTERNS = {
     # The primary check. Task is the most common missing-permission bug
     # (see PR #92 — 4 skills each promised to spawn claim-verifier via Task
     # but forgot to declare Task in allowed-tools).
+    # NOTE (2026-08-21): the subagent-spawning tool is `Agent`. `Task` is retained
+    # as a legacy alias so forks on older Claude Code keep passing; `TaskCreate`/
+    # `TaskGet`/... are the unrelated agent-teams task-list tools and are NOT this.
+    "Agent": [
+        r"\bvia\s+the\s+`?Agent`?\s+tool\b",
+        r"\bvia\s+`?Agent`?\b",
+        r"`Agent`\s+subagents?\b",
+        r"`Agent`\s+calls?\b",
+        r"`Agent`\s+with\b",
+        r"\bAgent:\s*subagent_type",
+        r"`Agent`\s+tool\b",
+    ],
     "Task": [
         r"\bvia\s+`?Task`?\b",
         r"\bsubagent_type\s*=",
@@ -402,8 +419,16 @@ RULE_KEYWORDS: dict[str, list[str]] = {
     # authors — and a dead entry here misleads future maintainers.
     "post-flight-verification.md": ["claim-verifier", "Post-Flight"],
     "summary-parity.md": [],  # empty = explicitly skipped; applies to edits
+    # empty = explicitly skipped. model-routing governs the OPTIONAL `model:`
+    # and `effort:` frontmatter fields, and "inheritance is fine" is a
+    # documented, correct choice for most skills — so there is no keyword a
+    # conforming SKILL.md must contain, and any non-empty list here would fail
+    # 59 of 60 skills for obeying the rule. Enforced instead by
+    # check-model-versions.sh (the tier NAMES stay current) and by review.
+    "model-routing.md": [],
     # Add more as new rules ship that include `.claude/skills/*/SKILL.md`
-    # in their paths: or globs: frontmatter.
+    # in their paths: or globs: frontmatter — check 5 below FAILS if you
+    # forget, so this registry can no longer go green by omission.
 }
 
 
@@ -449,6 +474,54 @@ def check_rule_skill_parity() -> list[tuple[str, str, str]]:
     return findings
 
 
+# ---- Check 5: the registry above is COMPLETE ---------------------------------
+#
+# Check 4 only looks at rules that already have a RULE_KEYWORDS entry, so a rule
+# shipped with `.claude/skills/**/SKILL.md` in its `paths:` and no entry here is
+# passed by OMISSION — the loudest possible way for a rule-vs-implementation gate
+# to be green while nothing is checked. That is what happened to
+# review-fencing.md in v2.5.1: it claimed all 60 SKILL.md files, was implemented by
+# zero of them, and this script said "all checks pass".
+#
+# So the registry itself is now checked: a rule that scopes itself to skill files
+# must appear in RULE_KEYWORDS — with keywords, or with an explicit `[]` and a
+# comment saying why it is not keyword-checkable. Silence is no longer an option.
+
+
+def check_rule_registry_completeness() -> list[tuple[str, str, str]]:
+    """Every rule whose `paths:`/`globs:` scope targets `.claude/skills/`
+    must be registered in RULE_KEYWORDS (possibly as an explicit skip)."""
+    findings: list[tuple[str, str, str]] = []
+    for rule_md in sorted(REPO.glob(".claude/rules/*.md")):
+        if rule_md.name in RULE_KEYWORDS:
+            continue
+        try:
+            rule_text = rule_md.read_text(encoding="utf-8")
+        except (OSError, UnicodeError):
+            findings.append((
+                "P2",
+                rule_md.relative_to(REPO).as_posix(),
+                "unreadable; registry completeness not checked for this rule",
+            ))
+            continue
+        fm, _ = parse_frontmatter(rule_text)
+        scope = (fm.get("paths") or []) + (fm.get("globs") or [])
+        if not isinstance(scope, list):
+            continue
+        if any(isinstance(p, str) and ".claude/skills/" in p for p in scope):
+            findings.append((
+                "P0",
+                rule_md.relative_to(REPO).as_posix(),
+                "rule scopes itself to .claude/skills/ files but has no "
+                "RULE_KEYWORDS entry in scripts/check-skill-integrity.py — "
+                "check 4 would pass it by omission. Add the protocol keywords "
+                "a conforming SKILL.md must contain, or an explicit [] with "
+                "the reason it is not keyword-checkable; if neither is true, "
+                "narrow the rule's paths: to what actually implements it.",
+            ))
+    return findings
+
+
 # ---- Runner ------------------------------------------------------------------
 
 def _fmt(findings: Iterable[tuple[str, str, str]]) -> str:
@@ -475,6 +548,7 @@ def main() -> int:
         ("flag parity", check_flag_parity),
         ("anchor resolution", check_anchor_resolution),
         ("rule-skill parity", check_rule_skill_parity),
+        ("rule registry completeness", check_rule_registry_completeness),
     ]:
         try:
             findings = fn()

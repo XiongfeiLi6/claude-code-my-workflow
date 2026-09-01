@@ -6,6 +6,16 @@ Prevents the drift pattern that hit PRs #70, #76, #78 — where adding a skill
 (agent, rule, hook) updates `.claude/` but leaves stale counts in README,
 CLAUDE.md, the guide source, the rendered guide, or the landing page.
 
+Two kinds of check:
+  1. COUNT assertions — prose like "13 agents, 27 skills, 21 rules" must
+     match the on-disk inventory (the original check).
+  2. TABLE-ROW assertions — an enumerative markdown table preceded by a
+     `<!-- surface-sync-table: <kind> -->` marker must have exactly one
+     data row per item of <kind> on disk. This catches the drift the
+     count check misses: e.g. the v1.5.0 peer-review trio that was added
+     to `.claude/` but left OUT of the README/CLAUDE.md skills tables for
+     three releases (the counts were right; the table rows were stale).
+
 Run via `./scripts/check-surface-sync.sh` pre-commit, or `/commit` will
 invoke it automatically.
 
@@ -41,8 +51,24 @@ SURFACES = [
     REPO / "CLAUDE.md",
     REPO / "guide/workflow-guide.qmd",
     REPO / "docs/workflow-guide.html",
+    # The render that lands beside the .qmd. It is byte-identical to the docs/
+    # copy above (`cmp` clean at 2026-08-23) but was NOT scanned, so eleven
+    # inventory sites in it — the same eleven the docs/ copy is gated on — took
+    # a planted 99 with both gates green during the 76-site sweep. Cheap to
+    # close, and it keeps the pair from diverging silently if one is re-rendered
+    # and the other is not.
+    REPO / "guide/workflow-guide.html",
     REPO / "docs/index.html",
     REPO / "templates/skill-template.md",
+    # The `/commit` skill's Step 0b quotes the inventory compound verbatim
+    # ("18 agents, 60 skills, 37 rules, 8 hooks") as the worked example of what
+    # the consistency gate checks. It was NOT scanned until 2026-08-23: a
+    # 33-site planted-lie sweep caught 32 sites and missed exactly this one
+    # ("99 agents" here left surface-sync AND derived-counts green), even
+    # though the SAME line's "all ten gates" was already gated by
+    # check-derived-counts.py. A stale inventory inside the skill that runs the
+    # gate is the r1 failure re-armed, so the file is a scanned surface now.
+    REPO / ".claude/skills/commit/SKILL.md",
 ]
 
 # Phrasings that assert THIS TEMPLATE's counts. We deliberately require
@@ -85,11 +111,84 @@ COMPOUND_PHRASINGS: list[tuple[str, list[tuple[int, str]]]] = [
 # template (not attribution, not a generic count). Each must be a scaffold
 # specific enough that false positives are unlikely.
 SINGULAR_PHRASINGS: list[tuple[str, str]] = [
-    # "this template's 27" (prose shortcut in Built-In Skills callout)
-    (r"this template's\s+(\d+)\b",                  "skills"),
+    # "this template's 27" (prose shortcut in Built-In Skills callout).
+    # Match BOTH the ASCII apostrophe and the typographic ’ (U+2019) that
+    # Quarto emits in rendered HTML — a straight-quote-only regex let
+    # docs/workflow-guide.html drift to a stale count past a green gate.
+    (r"this template['’]s\s+(\d+)\b",               "skills"),
     # "(N skills for LaTeX..." (templates/skill-template.md trailing note)
     (r"\((\d+)\s+skills?\s+for\b",                  "skills"),
+    # "The guide includes N skills" — the guide's .qmd prose AND its rendered
+    # HTML (an <a> tag sits between the number and "skills", so match the
+    # number right after "guide includes"). This prose form matched none of
+    # the count regexes at v2.0 and shipped a stale "50" to live users.
+    (r"guide includes\s+(\d+)\b",                   "skills"),
+    # "the template has/ships/includes/provides N skills" — a bare "N skills" is
+    # deliberately NOT matched (it would fire on legitimate prose like "start with
+    # 2-3 skills"), but a count carrying a template-specific verb+noun is
+    # unambiguous. Added 2026-08-21 after qualifying backtest.sh: a seeded
+    # "This template has 99 skills." left every gate green.
+    (r"(?:this\s+)?template\s+(?:has|ships|includes|provides|offers)\s+(\d+)\s+skills?\b", "skills"),
+    (r"(?:this\s+)?template\s+(?:has|ships|includes|provides|offers)\s+(\d+)\s+agents?\b", "agents"),
+    (r"(?:this\s+)?template\s+(?:has|ships|includes|provides|offers)\s+(\d+)\s+rules?\b",  "rules"),
+    # ...and the same scaffold for hooks. Omitted until 2026-08-23, which left
+    # the guide's "The template includes 8 hooks" (Pattern 12 intro) ungated
+    # even though "hooks" was already a GROUND_TRUTH key — a seeded "99 hooks"
+    # there passed all ten gates.
+    (r"(?:this\s+)?template\s+(?:has|ships|includes|provides|offers)\s+(\d+)\s+hooks?\b",  "hooks"),
+    # "all N rules on day one" / "all 18 agents are pinned" — the totalizing
+    # phrasing. It says "all", so it is unambiguously this template's full
+    # inventory, never a "start with 2--3 rules" subset. Added 2026-08-23: the
+    # guide's Lessons Learned item 8 ("face all 37 rules on day one") matched
+    # neither the compound phrasings nor the template-verb scaffold, so a
+    # seeded 99 there shipped green.
+    (r"\ball\s+(\d+)\s+skills?\b",                  "skills"),
+    (r"\ball\s+(\d+)\s+agents?\b",                  "agents"),
+    (r"\ball\s+(\d+)\s+rules?\b",                   "rules"),
+    (r"\ball\s+(\d+)\s+hooks?\b",                   "hooks"),
+    # docs/index.html's "What you get" bullets — the FIRST inventory numbers a
+    # prospective forker sees, on the only surface published to the public web.
+    # Only the compound line above them was gated; the bullets themselves were
+    # not, so seeded 99s survived every gate (2026-08-23).
+    #
+    # Each is anchored on its own bullet tail rather than the bare
+    # `<strong>N kind</strong>` markup, because docs/workflow-guide.html — also
+    # a scanned surface — legitimately contains `<strong>3 agents</strong> is
+    # the sweet spot` and `<strong>17 specialized agents</strong>` (a DIFFERENT
+    # template's count). If you reword a bullet, update the pattern with it: an
+    # unmatched pattern reports nothing, which looks exactly like a pass.
+    (r"<strong>(\d+)\s+skills</strong>\s+covering\b",                        "skills"),
+    (r"<strong>(\d+)\s+specialized\s+agents</strong>\s*[—–-]\s*referees\b",  "agents"),
+    (r"<strong>(\d+)\s+rules</strong>\s*[—–-]\s*most\b",                     "rules"),
+    (r"\bplus\s+(\d+)\s+hooks?\s+that\s+act\b",                             "hooks"),
+    # The guide's feature table: "18 specialized agents for proofreading,
+    # layout, pedagogy, ...". Anchored on the trailing " for" because a bare
+    # "N specialized agents" also occurs as clo-author's "17 specialized
+    # agents" (guide 2710) and README's "21 specialized agents (7 worker-critic
+    # pairs...)" — OTHER projects' counts. Verified 2026-08-23 that
+    # "N specialized agents for" occurs at exactly three sites, all this
+    # template's own. Added after a 76-site planted-lie sweep took a seeded
+    # "99 specialized agents for proofreading" green on every gate.
+    (r"(\d+)\s+specialized\s+agents?\s+for\b",                              "agents"),
 ]
+
+# Enumerative-table markers. A surface opts a markdown table into the
+# row-count gate by placing this comment immediately before it:
+#
+#     <!-- surface-sync-table: skills -->
+#     | Skill | What It Does |
+#     |-------|--------------|
+#     | `/compile-latex` | ... |   <- one data row per skill on disk
+#
+# <kind> must be a key of GROUND_TRUTH. The data-row count (header and the
+# `|---|` separator excluded) must equal the on-disk count for that kind.
+# Only markdown sources should carry the marker — do NOT add it to the
+# rendered .html surfaces (their tables are <table>, not pipe rows).
+TABLE_MARKER_RE = re.compile(r"<!--\s*surface-sync-table:\s*([a-z]+)\s*-->")
+
+
+def _is_table_row(line: str) -> bool:
+    return line.lstrip().startswith("|")
 
 
 def scan_file(path: Path) -> list[tuple[int, str, int, str]]:
@@ -118,6 +217,56 @@ def scan_file(path: Path) -> list[tuple[int, str, int, str]]:
                 except (ValueError, IndexError):
                     continue
                 hits.append((lineno, kind, n, m.group(0)))
+    return hits
+
+
+def scan_tables(path: Path) -> list[tuple[int, str, int | None, str]]:
+    """
+    Find every `<!-- surface-sync-table: <kind> -->` marker and count the
+    data rows of the markdown table that immediately follows it.
+
+    Returns [(marker_line_number, kind, data_row_count, marker_raw)].
+    `data_row_count` is None when no well-formed table follows the marker.
+    """
+    if not path.exists():
+        return []
+    lines = path.read_text(encoding="utf-8").splitlines()
+    n = len(lines)
+    hits: list[tuple[int, str, int | None, str]] = []
+    i = 0
+    while i < n:
+        m = TABLE_MARKER_RE.search(lines[i])
+        if not m:
+            i += 1
+            continue
+        kind = m.group(1)
+        marker_lineno = i + 1
+        marker_raw = lines[i].strip()
+
+        # Advance to the header row: the first pipe-line after the marker,
+        # skipping intervening blanks/prose (a heading often sits between).
+        j = i + 1
+        while j < n and not _is_table_row(lines[j]) and not TABLE_MARKER_RE.search(lines[j]):
+            j += 1
+
+        # Need: header pipe-line, then a `|---|` separator, then data rows.
+        if (
+            j >= n
+            or not _is_table_row(lines[j])
+            or j + 1 >= n
+            or "---" not in lines[j + 1]
+        ):
+            hits.append((marker_lineno, kind, None, marker_raw))
+            i = j + 1
+            continue
+
+        k = j + 2  # first data row
+        count = 0
+        while k < n and _is_table_row(lines[k]):
+            count += 1
+            k += 1
+        hits.append((marker_lineno, kind, count, marker_raw))
+        i = k
     return hits
 
 
@@ -152,6 +301,32 @@ def main() -> int:
                     f"[matched: {raw!r}]"
                 )
 
+    # Enumerative-table row-count assertions (marker-driven).
+    table_hits = 0
+    for path in SURFACES:
+        for lineno, kind, count, raw in scan_tables(path):
+            table_hits += 1
+            if kind not in GROUND_TRUTH:
+                drift.append(
+                    f"  {rel(path)}:{lineno}  unknown table kind {kind!r} "
+                    f"(expected one of {', '.join(sorted(GROUND_TRUTH))})  "
+                    f"[marker: {raw!r}]"
+                )
+                continue
+            if count is None:
+                drift.append(
+                    f"  {rel(path)}:{lineno}  marker {raw!r} is not "
+                    f"immediately followed by a well-formed markdown table"
+                )
+                continue
+            expected = GROUND_TRUTH[kind]
+            if count != expected:
+                drift.append(
+                    f"  {rel(path)}:{lineno}  '{kind}' table has {count} "
+                    f"data row(s) (actual {kind} on disk: {expected})  "
+                    f"[marker: {raw!r}]"
+                )
+
     if drift:
         print("DRIFT DETECTED:", file=sys.stderr)
         for d in drift:
@@ -165,8 +340,8 @@ def main() -> int:
         return 1
 
     total_assertions = sum(len(v) for v in per_file.values())
-    print(f"All {total_assertions} count assertions match ground truth across "
-          f"{len(SURFACES)} surfaces.")
+    print(f"All {total_assertions} count assertions + {table_hits} enumerative-"
+          f"table row counts match ground truth across {len(SURFACES)} surfaces.")
     return 0
 
 

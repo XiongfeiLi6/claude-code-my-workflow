@@ -2,7 +2,7 @@
 
 **Author:** Xiongfei Li
 **Template branch:** `my-customizations` on `XiongfeiLi6/claude-code-my-workflow`
-**Last updated:** 2026-05-13
+**Last updated:** 2026-09-01
 
 ---
 
@@ -325,19 +325,19 @@ Each third-party author uses a different layout in their repo. Here are the thre
 
 | Skill family | Author | Source repo | Layout in source | Layout in your fork |
 |---|---|---|---|---|
-| `review-paper-full`, `review-paper-light`, `review-paper-code`, `review-pap`, `review-grant` | Backman | https://github.com/claesbackman/AI-research-feedback | flat `Skills/<name>.md` (one file per skill) | `.claude/skills/<name>/SKILL.md` (each wrapped in a directory) |
+| `review-paper-full`, `review-paper-light`, `review-paper-code`, `review-pap`, `review-grant`, `review-paper-checks`, `audit-analysis`, `paper-version`, `pdf-to-markdown`, `explain-diff` | Backman | https://github.com/claesbackman/AI-research-feedback | `Skills/<name>/SKILL.md` (folder layout since e956a7e, 2026-08) | `.claude/skills/<name>/SKILL.md` (same layout; only the flagship is renamed) |
 | `stata` (incl. `packages/` + `references/`) | Moore | https://github.com/dylantmoore/stata-skill | `plugins/stata/skills/stata/...` (plugin layout) | `.claude/skills/stata/...` |
 | `codex` | oil-oil | https://github.com/oil-oil/codex | `SKILL.md` + `scripts/` at repo root | `.claude/skills/codex/SKILL.md` + `.claude/skills/codex/scripts/` |
 
 **Important — the `review-paper` rename.** Backman ships his flagship skill as `review-paper`. Pedro's upstream also ships a skill called `review-paper` (different content, same name). To avoid the collision we renamed Backman's copy to `review-paper-full` in our fork. **Refreshing this one skill needs a special procedure** (below) — the simple `git checkout backman/main -- ...` pattern would overwrite Pedro's `review-paper` instead.
 
-**Baseline as of 2026-04-30** (so you can tell what's already in):
+**Baseline as of 2026-09-01** (so you can tell what's already in):
 
 | Skill family | Source commit | Status |
 |---|---|---|
-| Backman skills (all 5) | `b2a42c3` | ✅ in sync |
+| Backman skills (all 10 — 5 original + `review-paper-checks`, `audit-analysis`, `paper-version`, `pdf-to-markdown`, `explain-diff` added 2026-09-01) | `8abc36b` | ✅ in sync (flagship renamed to `review-paper-full`, frontmatter `name:` patched; his `review-pap` + `review-paper-full` bodies exceed Pedro's 500-line spec guidance — accepted as-shipped so refreshes stay clean) |
 | Moore stata | `33a7efc` | ✅ in sync |
-| Codex | `0b9f1d0` | ⚠️ local has divergence (we copied an older version with edits — refresh later if you want oil-oil's newer wording, including a Windows PowerShell variant we currently don't ship) |
+| Codex | `bb0fd0b` | ✅ in sync (upstream rewrote SKILL.md in Chinese with DeepSeek-runtime auto-selection; we now also carry `ask_codex.ps1` + `cutout.py`) |
 
 Update this table whenever you do a refresh.
 
@@ -367,16 +367,17 @@ git tag backup/pre-skill-refresh-$(date +%Y-%m-%d)   # safety net
 
 #### Recipe A — Backman skills (the renamed `review-paper-full`)
 
-Backman's `Skills/review-paper.md` lives in our repo as `.claude/skills/review-paper-full/SKILL.md`. We use `git show ... > destination` (NOT `git checkout`) to dump his file content into our renamed location without touching Pedro's `review-paper`:
+Backman's `Skills/review-paper/SKILL.md` (folder layout since 2026-08) lives in our repo as `.claude/skills/review-paper-full/SKILL.md`. We use `git show ... > destination` (NOT `git checkout`) to dump his file content into our renamed location without touching Pedro's `review-paper`. Since his files now carry frontmatter, also patch `name: review-paper` → `name: review-paper-full` after the dump (two skills must not share a `name:`):
 
 ```bash
 git fetch backman
 
 # See what Backman changed
-git log --oneline -10 backman/main -- Skills/review-paper.md
+git log --oneline -10 backman/main -- Skills/review-paper/SKILL.md
 
 # Overwrite OUR review-paper-full/SKILL.md with HIS review-paper.md content
-git show backman/main:Skills/review-paper.md > .claude/skills/review-paper-full/SKILL.md
+git show backman/main:Skills/review-paper/SKILL.md > .claude/skills/review-paper-full/SKILL.md
+python3 -c "p='.claude/skills/review-paper-full/SKILL.md'; s=open(p).read(); open(p,'w').write(s.replace('name: review-paper\n','name: review-paper-full\n',1))"
 
 # Review BEFORE committing — Backman may have changed flags, defaults, agent counts
 git diff .claude/skills/review-paper-full/SKILL.md
@@ -396,15 +397,17 @@ git push origin my-customizations
 For these the names match, so the simple pattern works. Pick the skill name and run:
 
 ```bash
-SKILL=review-paper-light    # or review-paper-code, review-pap, review-grant
+SKILL=review-paper-light    # or review-paper-code, review-pap, review-grant,
+                            # review-paper-checks, audit-analysis, paper-version,
+                            # pdf-to-markdown, explain-diff
 
 git fetch backman
 
 # See what changed
-git log --oneline -10 backman/main -- "Skills/${SKILL}.md"
+git log --oneline -10 backman/main -- "Skills/${SKILL}/SKILL.md"
 
 # Pull his version into our directory layout
-git show "backman/main:Skills/${SKILL}.md" > ".claude/skills/${SKILL}/SKILL.md"
+git show "backman/main:Skills/${SKILL}/SKILL.md" > ".claude/skills/${SKILL}/SKILL.md"
 
 git diff ".claude/skills/${SKILL}/SKILL.md"
 
@@ -455,10 +458,9 @@ git log --oneline -10 codex-src/main
 # Pull SKILL.md and scripts into our location
 git show codex-src/main:SKILL.md > .claude/skills/codex/SKILL.md
 git show codex-src/main:scripts/ask_codex.sh > .claude/skills/codex/scripts/ask_codex.sh
+git show codex-src/main:scripts/ask_codex.ps1 > .claude/skills/codex/scripts/ask_codex.ps1
+git show codex-src/main:scripts/cutout.py    > .claude/skills/codex/scripts/cutout.py
 chmod +x .claude/skills/codex/scripts/ask_codex.sh
-
-# (Optional) the upstream now ships a Windows PowerShell variant — pull it too if you want it
-# git show codex-src/main:scripts/ask_codex.ps1 > .claude/skills/codex/scripts/ask_codex.ps1
 
 git diff .claude/skills/codex/
 
@@ -468,7 +470,7 @@ git commit -m "Refresh codex skill from oil-oil ${HASH}"
 git push origin my-customizations
 ```
 
-⚠️ Our local `codex/SKILL.md` currently has divergence from upstream (older base + your edits). Running Recipe D will overwrite both. If you want to keep your local edits, use the cherry-pick pattern below instead.
+As of 2026-09-01 our copy matches upstream `bb0fd0b` exactly — Recipe D can run clean. If you ever re-introduce local edits, use the cherry-pick pattern below instead.
 
 **If you've made local edits to a third-party skill**
 
@@ -612,6 +614,11 @@ gh repo create micro-principles --private --source=. --remote=origin --push
 | review-paper-code | Backman | `/review-paper-code` | Paper-to-code reproducibility |
 | review-pap | Backman | `/review-pap` | Pre-analysis plan review |
 | review-grant | Backman | `/review-grant` | Grant proposal review |
+| review-paper-checks | Backman | `/review-paper-checks` | 3-agent mechanical pre-submission check |
+| audit-analysis | Backman | `/audit-analysis` | Adversarial audit of changed analysis code |
+| paper-version | Backman | `/paper-version` | Policy brief / short-summary versions of a paper |
+| pdf-to-markdown | Backman | `/pdf-to-markdown` | PDF → readable markdown |
+| explain-diff | Backman | `/explain-diff` | Explain a code change as a standalone HTML page |
 | stata | Moore | `/stata` | Comprehensive Stata reference |
 | codex | — | `/codex` | Delegate coding to Codex CLI |
 | compile-latex | Sant'Anna | `/compile-latex` | 3-pass XeLaTeX |

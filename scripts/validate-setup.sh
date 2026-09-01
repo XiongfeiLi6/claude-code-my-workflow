@@ -82,6 +82,9 @@ fi
 echo ""
 
 echo -e "${BOLD}Claude Code hooks:${RESET}"
+# Executable bit only. Whether each hook registered in .claude/settings.json — and the
+# pre-commit entry point below — is wired to a file that exists, is invocable, and is
+# tracked by git is checked by scripts/check-ledger-coverage.py (a gate in backtest.sh).
 hook_dir="$(dirname "$0")/../.claude/hooks"
 if [ -d "$hook_dir" ]; then
     non_exec=$(find "$hook_dir" -maxdepth 1 \( -name "*.py" -o -name "*.sh" \) ! -perm -u+x 2>/dev/null | wc -l | tr -d ' ')
@@ -95,6 +98,31 @@ if [ -d "$hook_dir" ]; then
     fi
 else
     echo -e "  ${YELLOW}⚠${RESET} .claude/hooks/ directory not found (are you in the project root?)"
+    warn=$((warn + 1))
+fi
+
+echo ""
+echo -e "${BOLD}Git pre-commit gate (v2.0):${RESET}"
+pchook="$(dirname "$0")/../.githooks/pre-commit"
+if [ -f "$pchook" ]; then
+    if [ -x "$pchook" ]; then
+        echo -e "  ${GREEN}✓${RESET} .githooks/pre-commit is executable"
+        pass=$((pass + 1))
+    else
+        echo -e "  ${YELLOW}⚠${RESET} .githooks/pre-commit is NOT executable — git silently skips it, disabling the gate"
+        echo -e "    Fix: chmod +x .githooks/pre-commit  (or re-run ./scripts/install-hooks.sh)"
+        warn=$((warn + 1))
+    fi
+    if command -v git >/dev/null 2>&1; then
+        if [ "$(git config core.hooksPath 2>/dev/null || true)" = ".githooks" ]; then
+            echo -e "  ${GREEN}✓${RESET} core.hooksPath → .githooks (gate active on every commit)"
+        else
+            echo -e "  ${YELLOW}⚠${RESET} pre-commit gate not activated — run ./scripts/install-hooks.sh"
+            warn=$((warn + 1))
+        fi
+    fi
+else
+    echo -e "  ${YELLOW}⚠${RESET} .githooks/pre-commit not found"
     warn=$((warn + 1))
 fi
 echo ""

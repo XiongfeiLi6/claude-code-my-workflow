@@ -9,8 +9,9 @@ description: |
   OR when you notice hooks firing for events you don't care about.
   DO NOT use on fresh projects — the scaffolding you'd delete hasn't been
   tried yet. Prevention (lean templates) beats cleanup.
-author: Claude Code Academic Workflow
-version: 1.0.0
+metadata:
+  author: Claude Code Academic Workflow
+  version: 1.0.0
 allowed-tools: ["Read", "Write", "Edit", "Bash", "Glob", "Grep"]
 ---
 

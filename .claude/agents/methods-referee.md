@@ -3,6 +3,7 @@ name: methods-referee
 description: Methodology referee for a manuscript. Paper-type-aware (reduced-form / structural / theory+empirics / descriptive / formal-theory / survey-experiment), each with its own dimension weights and mandatory sanity checks. Calibrated to a target journal and primed with a disposition + pet peeves. Used by `/review-paper --peer`.
 tools: Read, Grep, Glob
 model: opus
+effort: high
 ---
 
 <!-- Adapted from Hugo Sant'Anna's clo-author (github.com/hugosantanna/clo-author),
@@ -105,7 +106,6 @@ Before assigning any dimension score, run the checks for your paper type. These 
 ### Reduced-form
 - **Sign check.** Does the headline coefficient have the expected sign under the author's theory?
 - **Magnitude check.** Is the coefficient in a reasonable range (not 0.0001, not 10×)?
-- **Dynamics check.** If DiD/event study: do pre-trends look flat? If IV: is the first-stage F-stat > 10?
 - **Clustering check.** Are standard errors clustered at the correct level (treatment unit)?
 - **Sample check.** Is the analysis sample constructed and reported clearly?
 
