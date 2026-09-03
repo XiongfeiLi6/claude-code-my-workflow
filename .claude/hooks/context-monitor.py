@@ -32,8 +32,19 @@ import sys
 import time
 from pathlib import Path
 
-# Thresholds (effective percentage, where 100% ~ auto-compact)
-LEARN_THRESHOLDS = [40, 55, 65]
+# Thresholds (effective percentage, where 100% ~ auto-compact).
+# 2026-09-03 (token-economy.md): the three /learn nudges became two state nudges —
+# save state at 50 %, compress at 75 % — because a long session is lost to a
+# compaction with no state on disk, not to a missing skill extraction.
+STATE_THRESHOLDS = [
+    (50, "save state",
+     "📝 Context ~{p:.0f}% (approx) — write the session log entry and set the plan's phase/status on disk (token-economy.md §5).",
+     "Context usage is approximately {p:.0f}% (coarse proxy). Per token-economy.md §5: append the session log entry and update the active plan's status/phase on disk now, so a later compaction costs a summary rather than a decision."),
+    (75, "compress",
+     "🗜️ Context ~{p:.0f}% (approx) — finish the current phase, then /compress-session or /checkpoint; do not start a new phase.",
+     "Context usage is approximately {p:.0f}% (coarse proxy). Per token-economy.md §5: finish the current phase with its files written, run /compress-session (or /checkpoint), and do not open a new phase before compaction."),
+]
+LEARN_THRESHOLDS = [t for t, _, _, _ in STATE_THRESHOLDS]   # kept for the cache key format
 THRESHOLD_WARN = 80
 THRESHOLD_CRITICAL = 90
 
@@ -189,13 +200,10 @@ def run_context_monitor() -> int:
 
     shown = get_shown_thresholds()
 
-    # Check /learn thresholds (40%, 55%, 65%)
-    for threshold in LEARN_THRESHOLDS:
+    # State nudges (50% save state, 75% compress) — see STATE_THRESHOLDS
+    for threshold, _label, sys_msg, claude_msg in STATE_THRESHOLDS:
         if percentage >= threshold and threshold not in shown["learn"]:
-            emit(
-                f"💡 Context ~{percentage:.0f}% (approx) — if a reusable discovery emerged, consider /learn before auto-compaction.",
-                f"Context usage is approximately {percentage:.0f}% (coarse proxy). If a non-obvious discovery or reusable workflow emerged this session, consider running /learn to persist it as a skill before auto-compaction.",
-            )
+            emit(sys_msg.format(p=percentage), claude_msg.format(p=percentage))
             mark_threshold_shown("learn", threshold)
             return 0  # Only show one message at a time
 
