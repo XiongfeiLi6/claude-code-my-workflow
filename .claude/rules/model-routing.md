@@ -15,6 +15,7 @@ paths:
 | ~70% | **the Haiku tier** | Mechanical work — file renames, citation-format conversion, TikZ extraction, bib validation, proofread-fix application, simple grep / file lookups |
 | ~20% | **the Sonnet tier** | Review and critique — `r-reviewer`, `slide-auditor`, `proofreader`, `quarto-fixer`, `humanize-auditor` |
 | ~10% | **the Opus tier** | High-judgment work — `editor`, `methods-referee`, `domain-referee`, `claim-verifier`, `quarto-critic`, `tikz-reviewer`, `domain-reviewer`, `verifier` for non-trivial gates |
+| — | **Exploration tier (Sonnet)** | `Explore`, `Plan`, and inventory subagents launched from the main session — pass `model: sonnet` (Haiku for pure listings) at launch; they inherit the main model otherwise, and on a Fable session that is the largest single cost. See [`token-economy.md`](token-economy.md). |
 
 Set per-agent via `model:` in the agent's YAML frontmatter:
 

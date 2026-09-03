@@ -6,6 +6,22 @@ If you have forked this template, see the **Upgrading** section at the bottom fo
 
 ---
 
+## v2.5.1-fork.1 — 2026-09-03 (XiongfeiLi6 customizations)
+
+Fork-level release note so the current inventory line is true for this branch: on top of
+upstream v2.5.1 this fork carries 17 curated third-party/local skills and 4 local rules.
+
+**Inventory at release: 77 skills, 18 agents, 41 rules, 8 hooks, 10 gates** (upstream v2.5.1: 60 / 18 / 37 / 8 / 10).
+
+### Added
+- `token-economy.md` (always-on): subagent model tiers (Explore/Plan on Sonnet), bounded subagent
+  reports, read-once and Edit-tool discipline, session shape (Fable for design, Opus for implementing
+  an approved spec), state checkpoints at 50 % / 75 % context. Paid for in the BIB 301 course repo on
+  2026-09-02. `model-routing.md` gains the exploration-tier row; `context-monitor.py` nudges retuned
+  to save-state at 50 % and compress at 75 %.
+
+---
+
 ## v2.5.1 — 2026-08-24
 
 An **enforcement release.** Disciplines that had been working conventions in the owner's

@@ -2,7 +2,7 @@
 name: audit-analysis
 description: Adversarially audit changed analysis code against a base ref, hunting for correctness errors in sample construction, merges, variable construction, silent failures, and clustering or fixed effects. Runs in an isolated subagent. Use before circulating results or submitting. This is not a reproducibility or paper-to-code review — use review-paper-code for that.
 argument-hint: "[optional: base ref, default main]"
-allowed-tools: Bash, Read, Grep, Glob, Agent
+allowed-tools: ["Bash", "Read", "Grep", "Glob", "Agent"]
 disable-model-invocation: true
 ---
 

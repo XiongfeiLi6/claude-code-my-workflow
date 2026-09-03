@@ -40,7 +40,7 @@ python3 scripts/quality_score.py <changed-file-paths>
 
 ### Step 0b: Consistency Gate (Pre-Commit)
 
-**Runs unconditionally.** The full backtest suite — all ten gates (surface-sync count claims like `"18 agents, 77 skills, 40 rules, 8 hooks"` and marked tables, skill integrity, model currency, links, spec conformance, staleness, repo hygiene, derived counts, ledger coverage, hook battery):
+**Runs unconditionally.** The full backtest suite — all ten gates (surface-sync count claims like `"18 agents, 77 skills, 41 rules, 8 hooks"` and marked tables, skill integrity, model currency, links, spec conformance, staleness, repo hygiene, derived counts, ledger coverage, hook battery):
 
 ```bash
 ./scripts/backtest.sh

@@ -189,7 +189,7 @@ This workflow is designed as a **single hub for an entire research program** —
 ## What's Included
 
 <details>
-<summary><strong>18 agents, 77 skills, 40 rules, 8 hooks</strong> (click to expand; includes this fork's 17 curated third-party/local skills and 3 local rules on top of upstream's 60 / 37)</summary>
+<summary><strong>18 agents, 77 skills, 41 rules, 8 hooks</strong> (click to expand; includes this fork's 17 curated third-party/local skills and 4 local rules on top of upstream's 60 / 37)</summary>
 
 ### Agents (`.claude/agents/`)
 
@@ -327,6 +327,7 @@ Rules use path-scoped loading: **always-on** rules load every session; **path-sc
 | `prompt-shaping` (v2.0) | Ambient habit — shape informal/ambiguous requests before acting (replaces the retired `/prompt` + `/prompt-only` skills) |
 | `document-organization` (fork) | No working `.md` in repo root; typed `quality_reports/` subdirs; master-task-list entry point |
 | `skill-promotion-policy` (fork) | Three-tier threshold before a recurring pattern becomes a formal skill (12-round heuristic) |
+| `token-economy` (fork) | Performance-leaning token discipline for long sessions: subagent model tiers, bounded subagent reports, read-once and edit-tool discipline, state checkpoints at 50 % / 75 % context |
 
 **Path-scoped** (load only when working on matching files):
 
