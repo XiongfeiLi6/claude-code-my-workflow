@@ -16,6 +16,20 @@ reached 82 % of context on setup work alone. Most of the spend was avoidable (ta
 | Review lenses (`domain-reviewer`, `claim-verifier`, `methods-referee`, `tikz-reviewer`, …) | as pinned in their frontmatter (`model-routing.md`) | judgment work; do not demote |
 | `verifier` before a `main` commit | as pinned | gate |
 
+**Launch shape (2026-09-04, paid for in the UTS project):**
+
+- **Execution and exploration agents start fresh** (`subagent_type: general-purpose`, or a named
+  agent), with the file paths and facts they need written into the prompt. A **`fork` copies the
+  whole conversation into the subagent and always runs on the parent model** — the `model:` tier
+  above is silently ignored — so nine forks off a long Fable session cost ~2.7M tokens, most of it
+  re-sent context. Fork only when the agent genuinely needs the conversation (a review of what was
+  just decided), never for "run this pipeline and report".
+- **At most two heavy agents in flight at once.** A session-limit hit kills every running agent;
+  each resume re-sends its context and re-runs unfinished steps. Four parallel forks made one hit
+  cost four restarts.
+- **Long agent tasks are phased to disk**: scripts, logs, and partial memos written as they go, so
+  a killed agent resumes from files, not from scratch.
+
 Every subagent prompt ends with a **report contract**: a size cap (≤ 150 lines), tables with
 paths and line numbers, no verbatim reproduction unless the text will be copied into a deliverable.
 An unbounded report is paid for twice — once by the agent, once when it lands in the main context.

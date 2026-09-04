@@ -10,6 +10,11 @@ Monitors approximate context usage and provides progressive, de-duplicated nudge
 Hook Event: PostToolUse (on common tools). Throttled to 60-second intervals
 when below the warning threshold.
 
+Cache scope (2026-09-04): the "already shown" flags live in a per-SESSION cache
+(keyed by the hook input's `session_id`), not per project. Before this fix the
+project-level cache kept the 80/90 % flags set forever, so after one long session
+no later session could ever be warned again.
+
 Output contract (PostToolUse, exit 0): emits JSON on stdout with a `systemMessage`
 (shown to the user) AND `hookSpecificOutput.additionalContext` (injected into
 Claude's context). Plain stdout would reach Claude but NOT the user, and would
@@ -79,9 +84,22 @@ def get_session_dir() -> Path:
     return session_dir
 
 
+_SESSION_ID = ""   # set from hook input in run_context_monitor()
+
+
+def get_cache_dir() -> Path:
+    """Per-session cache dir: <project session dir>/<session_id>/ (falls back to project dir)."""
+    base = get_session_dir()
+    if not _SESSION_ID:
+        return base
+    d = base / _SESSION_ID
+    d.mkdir(parents=True, exist_ok=True)
+    return d
+
+
 def read_cache() -> dict:
     """Read the context monitor cache."""
-    cache_file = get_session_dir() / "context-monitor-cache.json"
+    cache_file = get_cache_dir() / "context-monitor-cache.json"
     if not cache_file.exists():
         return {}
     try:
@@ -92,7 +110,7 @@ def read_cache() -> dict:
 
 def save_cache(data: dict) -> None:
     """Save the context monitor cache."""
-    cache_file = get_session_dir() / "context-monitor-cache.json"
+    cache_file = get_cache_dir() / "context-monitor-cache.json"
     try:
         cache_file.write_text(json.dumps(data, indent=2))
     except IOError:
@@ -184,6 +202,9 @@ def run_context_monitor() -> int:
         hook_input = json.load(sys.stdin)
     except (json.JSONDecodeError, IOError):
         hook_input = {}
+
+    global _SESSION_ID
+    _SESSION_ID = str(hook_input.get("session_id", "") or "")[:64].replace("/", "_")
 
     # Estimate current context usage (coarse proxy)
     percentage = estimate_context_percentage(hook_input)

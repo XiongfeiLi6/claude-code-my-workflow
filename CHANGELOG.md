@@ -13,6 +13,13 @@ upstream v2.5.1 this fork carries 17 curated third-party/local skills and 4 loca
 
 **Inventory at release: 77 skills, 18 agents, 41 rules, 8 hooks, 10 gates** (upstream v2.5.1: 60 / 18 / 37 / 8 / 10).
 
+### Fixed (2026-09-04)
+- `context-monitor.py` keeps its "already shown" flags in a per-session cache (keyed by the hook's
+  `session_id`) instead of per project — the project-level cache had left the 80/90 % warnings
+  permanently consumed after one long session. `token-economy.md` §1 gains the launch shape:
+  execution/exploration agents start fresh (never `fork`, which copies the conversation and ignores
+  the model tier), at most two heavy agents in flight, long agent tasks phased to disk.
+
 ### Added
 - `token-economy.md` (always-on): subagent model tiers (Explore/Plan on Sonnet), bounded subagent
   reports, read-once and Edit-tool discipline, session shape (Fable for design, Opus for implementing
