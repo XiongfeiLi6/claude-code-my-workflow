@@ -286,7 +286,7 @@ This workflow is designed as a **single hub for an entire research program** —
 | `/review-pap` *(fork: Backman)* | Pre-analysis plan review (registry standards) |
 | `/review-grant` *(fork: Backman)* | Grant proposal review (funder persona) |
 | `/stata` *(fork: Moore)* | Comprehensive Stata reference — syntax, econometrics, 20 community packages |
-| `/codex` *(fork: oil-oil)* | Delegate coding tasks to Codex CLI |
+| `/codex:review`, `/codex:rescue`, … | Codex through OpenAI's official Claude Code plugin (`codex@openai-codex`, install at user scope); the community `oil-oil` skill was removed 2026-09-28 |
 | `/replicate-paper` *(fork)* | Reproduce an external paper's published numbers from its replication package |
 | `/text-classify` *(fork)* | LLM-classify text at scale into a measured variable |
 | `/audit-estimator` *(fork)* | Builder/tester DGP-recovery test for a custom estimator |
