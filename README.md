@@ -189,7 +189,7 @@ This workflow is designed as a **single hub for an entire research program** —
 ## What's Included
 
 <details>
-<summary><strong>18 agents, 77 skills, 41 rules, 8 hooks</strong> (click to expand; includes this fork's 17 curated third-party/local skills and 4 local rules on top of upstream's 60 / 37)</summary>
+<summary><strong>18 agents, 77 skills, 40 rules, 8 hooks</strong> (click to expand; includes this fork's 17 curated third-party/local skills and 4 local rules on top of upstream's 60 / 37)</summary>
 
 ### Agents (`.claude/agents/`)
 
@@ -336,7 +336,6 @@ Rules use path-scoped loading: **always-on** rules load every session; **path-sc
 | `verification-protocol` | `.tex`, `.qmd`, `docs/` | Task completion checklist |
 | `single-source-of-truth` | `Figures/`, `.tex`, `.qmd` | No content duplication; Beamer is authoritative |
 | `quality-gates` | `.tex`, `.qmd`, `*.R` | 80/90/95 scoring + tolerance thresholds |
-| `manuscript-writing-style` (fork) | `.tex`, `.qmd`, `manuscript/`, `paper/`, `drafts/` | Declarative, not defensive; β/SE in tables not prose; per-SD magnitudes; no result pre-announcement in section openers |
 | `r-code-conventions` | `*.R` | R coding standards + math line-length exception |
 | `tikz-visual-quality` | `.tex` | TikZ diagram visual standards |
 | `beamer-quarto-sync` | `.tex`, `.qmd` | Auto-sync Beamer edits to Quarto |
@@ -354,6 +353,8 @@ Rules use path-scoped loading: **always-on** rules load every session; **path-sc
 | `issue-ledger` (v2.5) | `.github/**` | Evidence standard for an issue: denominator, positive/negative control, explicit non-scope, and a seven-section closure comment |
 | `tikz-measurement` (v1.5.x) | `Slides/**`, `Figures/**`, `Preambles/**`, `scripts/**` | Bézier curve depth math + 6-pass collision protocol (from MixtapeTools) |
 | `content-invariants` (v1.6.x) | `.tex`, `.qmd`, `Preambles/`, `scripts/R/**` | Pre-Flight Reports — proves inputs were read before work |
+
+*Retired 2026-09-28:* the fork's path-scoped `manuscript-writing-style` rule. The manuscript writing rule now has one shared copy in the workflow repo's `writing/` folder (with the exemplars and the grep list), loaded into every project through `~/.claude/CLAUDE.md`.
 | `cross-artifact-review` (v1.7.0) | `master_supporting_docs/`, `.tex`, `.qmd` | Paper ↔ code dependency graph; auto-invokes `/review-r` + `/audit-reproducibility` |
 | `post-flight-verification` (v1.7.0) | Skills generating factual claims | Chain-of-Verification protocol with forked verifier |
 | `summary-parity` (v1.8.x) | `CHANGELOG.md`, `README.md`, `.qmd`, skill/rule/agent `.md` | Anti-whack-a-mole: re-verify summaries against their bodies |

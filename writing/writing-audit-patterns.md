@@ -1,19 +1,19 @@
 # Writing Audit Patterns (grep list)
 
-Moved verbatim from the pre-2026-09-23 `manuscript-writing-style.md` (§7.2). Used by step 5 of the revision checklist in that rule. These catch surface tells only; they are a floor, not the standard.
+Carried over from the pre-2026-09-23 `manuscript-writing-style.md`; section references and the results-opener row updated 2026-09-28 to match the current rule. Used by step 5 of the revision checklist in that rule (§3). These catch surface tells only; they are a floor, not the standard.
 
 ## Over-defensive expressions
 
-Cut or rewrite as a single positive caveat sentence (§4.4):
+Cut or rewrite as a single positive caveat sentence (§1, principle 6):
 
 | Trigger | Why | Fix |
 |---|---|---|
-| `we caution\b`, `we emphasize\b`, `we cannot rule out` | Reader-direction (§1.1). Verb tells the reader how to react. | Drop the verb; state the claim directly. *"We cannot rule out that X"* → *"X is consistent with the data."* |
+| `we caution\b`, `we emphasize\b`, `we cannot rule out` | Reader-direction (§1, principle 6). Verb tells the reader how to react. | Drop the verb; state the claim directly. *"We cannot rule out that X"* → *"X is consistent with the data."* |
 | `it should be noted that`, `it is important to note that`, `it bears emphasizing that` | Empty meta-introduction. | Drop the introduction; state the claim. |
-| `should be interpreted as suggestive rather than\|definitive` | Verbose hedging. | One positive sentence stating the limit. See §4.4. |
+| `should be interpreted as suggestive rather than\|definitive` | Verbose hedging. | One positive sentence stating the limit (§1, principle 6). |
 | `this is suggestive evidence that`, `the results are suggestive of` | The data either identify the parameter or do not. "Suggestive" is reader-direction. | Either commit to the identification claim or rewrite as a partial-correlation statement. |
 | `may / might / could possibly\|could potentially` stacks | Hedge-stacking; one hedge is enough. | Pick one modal. *"may potentially affect"* → *"may affect."* |
-| Trailing repeated-caveat paragraphs after the result | The section-opener caveat already covers this. | Cut the trailing paragraph. Caveats have one home (§4.4). |
+| Trailing repeated-caveat paragraphs after the result | The section-opener caveat already covers this. | Cut the trailing paragraph. Caveats have one home (§1, principle 6). |
 
 ## Inline statistical reporting
 
@@ -22,7 +22,7 @@ These belong in the table, not in the prose:
 | Trigger | Why | Fix |
 |---|---|---|
 | `\(p\s*[<=]\s*0\.[0-9]+\)`, `(p = 0.03)` inline | $p$-values live in the table via significance stars. Inline $p$-values clutter the prose and signal anxiety about the result. | Drop. The reader sees significance from the table. |
-| `\(\\hat\\beta\s*=`, `(β = X, SE = Y)` inline when the table is directly below | Duplicates the table. | Drop, or reserve for cases where the coefficient itself is the argumentative object (§4.2). |
+| `\(\\hat\\beta\s*=`, `(β = X, SE = Y)` inline when the table is directly below | Duplicates the table. | Drop, or reserve for cases where the coefficient itself is the argumentative object (§2, Numbers). |
 | Significance stars in prose: *"the effect is significant\*\*\*"* | Stars are a table convention. | *"statistically significant at the one percent level"* or just *"statistically significant."* |
 | Reporting $t$-statistics or $F$-statistics inline when the table provides them | Same as above. | Drop unless the statistic is the argumentative object. |
 
@@ -40,8 +40,8 @@ These belong in the table, not in the prose:
 | Trigger | Why | Fix |
 |---|---|---|
 | *"We find ... we show ... we document"* in adjacent sentences | One usage per finding is standard top-5; repetition is the violation. | Vary the construction; let one finding stand per paragraph. |
-| Pre-announcing results in section openers: *"We find that X."* in P1 of a Results subsection. | The result belongs in the result paragraph, not the opener. | Subsection opener describes scope and order; the result paragraph delivers the magnitude. See §4.1. |
-| Restating the table column-by-column: *"Column 1 shows X. Column 2 shows Y. Column 3 shows Z."* | The table shows it. The prose interprets it. | One result paragraph per outcome (§4.2); skip the column tour. |
+| Roadmap openers: a Results subsection or paragraph that opens with scope, order, or a table (*"\Cref{tab:x} reports..."*, *"This subsection examines..."*) | The claim comes first; narration of what was done delays it (§1, principle 1). | Open with what the data show, in words about the economy; cite the table in passing. |
+| Restating the table column-by-column: *"Column 1 shows X. Column 2 shows Y. Column 3 shows Z."* | The table shows it. The prose interprets it. | Discuss the numbers the argument needs (§1, principle 5); skip the column tour. |
 | Restating the previous paragraph in different words | Restatement is not argument. | Cut. |
 
 ## Empty intensifiers and transition words
