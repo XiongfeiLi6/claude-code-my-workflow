@@ -156,6 +156,9 @@ It grows through `house-style-exemplars.md` in the shared folder:
   general conventions it lacked: table decimals and scientific notation, citation clusters and quote
   pages, the "Because X, Y" bridge, equation introduction and symbol definition, footnotes, promised
   robustness, the per-SD column in robustness-summary tables.
+- **2026-09-28** — `writing-audit-patterns.md` brought in line: section references remapped to the
+  current numbering; the row that told results openers to describe scope and order (contrary to
+  principle 1) now flags roadmap openers instead.
 
 ## Sources
 
