@@ -155,3 +155,20 @@ the stringency-index paragraph no longer argues for its null; §6.2's number is 
 > At the city level, carbon emissions and ambient particulate concentrations rise. A one-standard-deviation increase in city-level export exposure raises CO$_2$ emissions by approximately 2 percent and satellite PM$_{2.5}$ concentrations by approximately 1 percent (\Cref{tab: city_outcomes}). Both are statistically significant individually; after the Romano--Wolf correction for the family of environmental outcomes, the PM$_{2.5}$ response remains significant and the CO$_2$ response does not (\Cref{tab: app_romano_wolf}). City emissions of NO$_x$, particulates, and wastewater show no statistically significant response. The environmental regulation stringency index does not respond either: its contemporaneous and lagged estimates are positive and statistically indistinguishable from zero (Panel~B). The index is an annual composite of regulatory posture, not a count of enforcement actions.
 >
 > Carbon rises while regulated pollutants do not, the pattern a multitask regulator produces. For most of the sample, local environmental bureaus were accountable for conventional pollutants but not for CO$_2$, so enforcement could hold regulated discharges down while the carbon from expanded production went unchecked. The contrast runs across data sets: estimated on a common city-year sample, the CO$_2$ and regulated-pollutant responses are not statistically different (\Cref{tab: app_asymmetry}). \Cref{sec:policy_leakage_measurement} quantifies realized and counterfactual carbon leakage.
+
+---
+
+## 5. 2026-10-07 · [Regulation Coordination] · §6.1 binscatter sentence · Xiongfei
+
+**Reason (author):** replace the sentence "with an accurate one"; a diagnostic showed the figure contradicts it.
+
+**What changed:** the claim now states what the figure shows (steep at low exposure, flat among the most exposed) instead
+of a reassurance about the upper tail; a sentence written to pre-empt a referee had become a false world-claim.
+
+**Disliked:**
+
+> The relationship holds across the whole range of exposure rather than being concentrated in its upper tail (\Cref{fig:app_binscatter_enforcement}).
+
+**Approved:**
+
+> The response is steepest among lightly exposed city-sectors and flattens among the most exposed, whose penalties stay close to their city-year and sector-year averages (\Cref{fig:app_binscatter_enforcement}).
