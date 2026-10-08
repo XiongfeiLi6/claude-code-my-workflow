@@ -353,8 +353,6 @@ Rules use path-scoped loading: **always-on** rules load every session; **path-sc
 | `issue-ledger` (v2.5) | `.github/**` | Evidence standard for an issue: denominator, positive/negative control, explicit non-scope, and a seven-section closure comment |
 | `tikz-measurement` (v1.5.x) | `Slides/**`, `Figures/**`, `Preambles/**`, `scripts/**` | Bézier curve depth math + 6-pass collision protocol (from MixtapeTools) |
 | `content-invariants` (v1.6.x) | `.tex`, `.qmd`, `Preambles/`, `scripts/R/**` | Pre-Flight Reports — proves inputs were read before work |
-
-*Retired 2026-09-28:* the fork's path-scoped `manuscript-writing-style` rule. The manuscript writing rule now has one shared copy in the workflow repo's `writing/` folder (with the exemplars and the grep list), loaded into every project through `~/.claude/CLAUDE.md`.
 | `cross-artifact-review` (v1.7.0) | `master_supporting_docs/`, `.tex`, `.qmd` | Paper ↔ code dependency graph; auto-invokes `/review-r` + `/audit-reproducibility` |
 | `post-flight-verification` (v1.7.0) | Skills generating factual claims | Chain-of-Verification protocol with forked verifier |
 | `summary-parity` (v1.8.x) | `CHANGELOG.md`, `README.md`, `.qmd`, skill/rule/agent `.md` | Anti-whack-a-mole: re-verify summaries against their bodies |
@@ -365,6 +363,8 @@ Rules use path-scoped loading: **always-on** rules load every session; **path-sc
 | `r-package-conventions` (v1.10.0) | `R/**`, `tests/**`, `DESCRIPTION`, `NAMESPACE`, `man/**` | R package-source standards: no `library()` in `R/`, roxygen NAMESPACE, Imports/Suggests, testthat 3e, CRAN policy |
 | `confidential-data` (v2.0) | `data/**`, `**/*.dta`, `**/restricted/**`, `**/confidential/**` | Restricted/IRB-data protocol: never commit raw data, disclosure clearance before release, restricted-data-safe multi-author git topology |
 | `inference-robustness` (v2.0) | `scripts/**/*.R`, `**/*.do`, `**/*.py` | Multiple-testing (FWER/Romano-Wolf vs FDR/Anderson sharpened-q, pre-register the family) + specification-curve / leave-one-out / wild-cluster-bootstrap robustness |
+
+*Retired 2026-09-28:* the fork's path-scoped `manuscript-writing-style` rule. The manuscript writing rule now has one shared copy in the workflow repo's `writing/` folder (with the exemplars and the grep list), loaded into every project through `~/.claude/CLAUDE.md`.
 
 ### Templates (`templates/`)
 
