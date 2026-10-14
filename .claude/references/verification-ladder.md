@@ -90,7 +90,7 @@ computation rather than on labels.
 
 ---
 
-## Rung 3 — Independence (the fresh-context fork)
+## Rung 3 — Independence (the fresh-context subagent)
 
 A reviewer that has seen the draft cannot un-see it. Three ways to enforce independence, and
 they are **not** interchangeable:
@@ -99,7 +99,7 @@ they are **not** interchangeable:
 |---|---|---|
 | **Critic + fixer** | role tension (critic cannot fix; fixer cannot approve) | presentation and structural defects |
 | **Cross-artifact traversal** | the dependency graph (paper → table → output → script) | paper ↔ code consistency |
-| **CoVe fresh-context fork** | context isolation — the verifier never sees the draft | fabricated citations, wrong numbers, misattribution |
+| **CoVe fresh-context subagent** (its own `Agent` call, never a conversation fork) | context isolation — the verifier never sees the draft | fabricated citations, wrong numbers, misattribution |
 
 Two practices that cost nothing and change outcomes:
 
@@ -107,7 +107,7 @@ Two practices that cost nothing and change outcomes:
   exist before it learns what was promised. Otherwise it grades conformance, not adequacy.
 - **Blind the judge.** Strip revision markers before a comparison, or it grades the diff.
 
-All three mechanisms operate on the **context**. None fences the **environment**: a forked
+All three mechanisms operate on the **context**. None fences the **environment**: a fresh-context
 reviewer with a spotless context still holds the repository checkout — and with it the prior
 round's verdicts and every committed answer key. When the reviewer's output will be compared
 against something, fence the filesystem too:
@@ -264,11 +264,12 @@ source. Verdicts: **CONFIRMED / REFUTED / DOWNGRADED**. Check the proposed *fix*
 reviewer can be right that something reads badly and wrong about why, and its patch can
 introduce a real defect.
 
-**Batch, do not drip.** Apply all confirmed fixes in one pass, re-verify, then run **at most
-one** confirmation round. One-finding-per-round converges linearly and burns rounds.
+**Batch, do not drip.** Apply all confirmed fixes in one pass, then re-verify. One-finding-per-round
+converges linearly and burns rounds. (An expensive external consult — `/oracle-review` — runs **at
+most one** confirmation round; in-house loops use the stopping rule below.)
 
-**Stopping rule.** Stop when a round adds **no new CONFIRMED** defect — only held items and
-exposition taste. Guards: a fallback round cap; a *two-strikes* rule (the same finding
+**Stopping rule.** Stop after **two consecutive** rounds add **no new CONFIRMED** defect — only held
+items and exposition taste ([`orchestrator-protocol.md`](../rules/orchestrator-protocol.md)). Guards: a fallback round cap; a *two-strikes* rule (the same finding
 surviving two rounds escalates to the human rather than being patched a third time); and a
 spend ceiling.
 

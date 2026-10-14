@@ -12,7 +12,7 @@
 
 **Example:** PR #92. `/lit-review`, `/research-ideation`, `/respond-to-referees`, `/interview-me` each documented "spawn `claim-verifier` via the `Agent` tool with `context=fork`" in their body, but none of them had `Task` in `allowed-tools`. Codex + Copilot both caught; deep-audit missed.
 
-**How to catch.** Automated by `scripts/check-skill-integrity.py` (check 1, Task-only pattern). For other tools (Edit, Write, MultiEdit, NotebookEdit), the script has narrower patterns. WebSearch / WebFetch / Read / Grep / Glob / Bash are intentionally excluded — too many prose false positives.
+**How to catch.** Automated by `scripts/check-skill-integrity.py` (check 1: `Agent` spawn patterns, with `Task` kept as a legacy alias). For other tools (Edit, Write, MultiEdit, NotebookEdit), the script has narrower patterns. WebSearch / WebFetch / Read / Grep / Glob / Bash are intentionally excluded — too many prose false positives.
 
 **Why deep-audit missed it.** Agent 3 prompt said "allowed-tools values are sensible" — didn't cross-check against body invocations.
 
@@ -192,7 +192,7 @@
 
 ## 16. Dead config-map entries that mislead maintainers
 
-**Example:** PR #93 (Copilot). `check-skill-integrity.py` had `RULE_KEYWORDS` entries for `cross-artifact-review.md` and `content-invariants.md`, but neither rule's scope frontmatter (one uses `globs:`, both target `.tex`/`.qmd` files not `.claude/skills/*`) actually fires the check. The entries were no-ops. A future maintainer reading the code would reasonably assume the check was exercising those rules.
+**Example:** PR #93 (Copilot). `check-skill-integrity.py` had `RULE_KEYWORDS` entries for `cross-artifact-review.md` and `content-invariants.md`, but neither rule's scope frontmatter (one then used a Cursor-style `globs:` key, both target `.tex`/`.qmd` files not `.claude/skills/*`) actually fires the check. The entries were no-ops. A future maintainer reading the code would reasonably assume the check was exercising those rules.
 
 **How to catch.** When adding an entry to a config map, keyword dict, or registry, verify at least one execution path actually reaches the entry. Dead entries rot in place — they're worse than omitting them because they imply coverage that doesn't exist.
 
@@ -237,7 +237,7 @@ Shipped in v2.0.0: `check-surface-sync.py` TABLE-ROW assertions verify tables ca
 
 **How to catch.** Generalize the parity check: for EVERY tool name mentioned in a skill body (`Task`, `Bash`, `Edit`, `Write`, `Read`, `Grep`, `Glob`, `WebFetch`, `WebSearch`, `Monitor`, `NotebookEdit`, `TodoWrite`, etc.), verify it appears in `allowed-tools`. The script should maintain a list of known tool names rather than hard-coding `Task` only. New Anthropic tools (Monitor in Apr 2026 Week 15) ship faster than the audit script.
 
-**Why deep-audit missed it (until v1.8.0).** `check-skill-integrity.py` Phase 0 check 1 is hard-coded to look for `Task`. Body language like "use the Monitor tool" reads as English; the script doesn't pattern-match it. Audit Agent 3's prompt now explicitly checks for non-`Agent` tool references too — but the right fix is to extend the mechanical script with a known-tool list.
+**Why deep-audit missed it (until v1.8.0).** `check-skill-integrity.py` Phase 0 check 1 matches only a fixed list of tools (`Agent`, legacy `Task`, `Edit`, `Write`, `MultiEdit`, `NotebookEdit`); `Monitor` is not on it. Body language like "use the Monitor tool" reads as English; the script doesn't pattern-match it. Audit Agent 3's prompt now explicitly checks for non-`Agent` tool references too — but the right fix is to extend the mechanical script with a known-tool list.
 
 **When to apply.** When adding a body reference to any Anthropic-shipped tool, add the tool to the skill's `allowed-tools` array as you write the body. When extending `check-skill-integrity.py`, add new tool names to the parity check whenever Anthropic ships a new tool primitive.
 
@@ -248,5 +248,5 @@ Shipped in v2.0.0: `check-surface-sync.py` TABLE-ROW assertions verify tables ca
 - After any PR where a review bot catches something deep-audit missed, append a new entry (or extend an existing one with new evidence).
 - When an entry's class is automated by `scripts/check-skill-integrity.py` or another mechanical check, note it — but keep the entry, it's still useful context for reviewers.
 - Target ≤ 20 entries; if we hit 25, review + merge related classes or archive resolved ones to a `_resolved.md` sibling.
-- Reference this file from `.claude/skills/deep-audit/SKILL.md` so all 4 agents load it.
+- Reference this file from `.claude/skills/deep-audit/references/repo-infrastructure-audit.md` (the step that launches the 4 audit agents) so all 4 agents load it.
 - Link from MEMORY.md `[LEARN:audit]` entries when a specific lesson ties to an entry here.

@@ -21,13 +21,30 @@ Three destinations, and everything goes to exactly one:
 | **The working tree** (`Slides/`, `Quarto/`, `scripts/`, `.claude/`) | the approach you chose and would defend | yes |
 | **An archive** (`master_supporting_docs/`, a dated `explorations/` subdir) | superseded work worth keeping for the record | yes, **with a README saying why** |
 
+## Where each kind of file goes
+
+The layout follows the AEA Data Editor's replication-package advice: inputs, code and results in
+separate places, and one command that rebuilds every result. A project whose `CLAUDE.md` folder
+tree says otherwise wins; this is the default.
+
+| Kind | Location | Committed? |
+|---|---|---|
+| Raw inputs | `data/raw/` — read-only; code never writes here | only if the licence allows; never restricted data ([`confidential-data.md`](confidential-data.md)) |
+| Analysis code | `scripts/<lang>/` — numbered stages (`01_load.R`, …) plus one master script (`00_run_all.R`, `99_run_all.do`) | yes |
+| Package-style functions and tests | `R/`, `tests/testthat/` ([`r-package-conventions.md`](r-package-conventions.md)) | yes |
+| Generated results | top-level `output/`, never inside `scripts/`; subfolders per project (`tables/`, `figures/`, or by analysis) | tables, figures, logs, `sessionInfo*.txt`: yes — after disclosure clearance on restricted data. Regenerable intermediates (`.rds`, `.parquet`, `.dta`, …): no |
+| Hooks | `.claude/hooks/` | yes, when `.claude/settings.json` calls them — a clone would break otherwise; personal hooks go in `settings.local.json` |
+| Plans, session logs | `quality_reports/plans/`, `quality_reports/session_logs/` | whatever the project's `.gitignore` says; this template ignores them (owner work, not template content) — `git add -f` one a collaborator needs |
+| Scratch | the session scratchpad, or `explorations/` under [its protocol](exploration-folder-protocol.md) | scratchpad: no; `explorations/`: yes, cleaned up when the exploration ends |
+
 ## What the checker rejects
 
 - **Root clutter.** A file at the repository root that is not on the allowlist. Top-level space
   is for things a newcomer must see first; everything else lives in a directory.
 - **Draft names.** `untitled`, `tmp`, `temp`, `scratch`, `foo`, `bar`, `baz`, `asdf`, `test123` —
-  as the filename or its prefix (`scratch_x.py` counts; `scratchpad-notes.md` also counts,
-  deliberately: rename it).
+  as the whole name or a prefix ending at a separator (`scratch_x.py`, `tmp.R`, `scratch-notes.md`
+  count; `scratchpad-notes.md` and `template.md` do not — the word must be followed by a
+  non-alphanumeric character).
 - **Superseded copies.** `analysis_old.R`, `deck_backup.tex`, `notes_copy.md`. If it is worth
   keeping, archive it with a reason; otherwise delete it — **git already has the history.**
 - **Version-in-filename.** `model_v2.R`, `paper_final.tex`, `script_fixed.py`. That is what git
@@ -38,6 +55,10 @@ Three destinations, and everything goes to exactly one:
   and `data(1).csv`.
 - **Tracked build artifacts.** `.aux`, `.log`, `.synctex.gz`, `.pyc`. Regenerable output does
   not belong in version control.
+- **Edited append-only records.** A commit that edits or removes a committed line of
+  `quality_reports/replication-log.md` or `quality_reports/spec-ledger.md` — checked against the
+  last commit at pre-commit, and against the base branch in CI. A correction is a new entry;
+  a disclosure redaction is committed with `ALLOW_LOG_REWRITE=1` and the reason in the message.
 - **Undocumented archives.** An archive directory with no README is indistinguishable from
   abandoned clutter. *(The checker enforces this for the named archive roots —
   `explorations/`, `master_supporting_docs/` — not for every directory in the tree.)*

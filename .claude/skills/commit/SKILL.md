@@ -33,21 +33,21 @@ agent spawned in full mode carries its own tier pin.
 python3 scripts/quality_score.py <changed-file-paths>
 ```
 
-- If any file scores below **80**, halt and report the findings. The user must either fix the issues or explicitly override with phrases like *"commit anyway"* or *"skip quality gate"*.
+- If any file scores below **80**, halt and report the findings. The user must either fix the issues or explicitly override with phrases like *"commit anyway"* or *"skip quality gate"*. Once `./scripts/install-hooks.sh` has been run, `.githooks/pre-commit` re-runs the same ≥80 gate on the staged `.qmd`/`.tex`/`.R` files, so carry an approved override into Step 4 as `SKIP_QUALITY_GATE=1 git commit ...` and record the override reason in the commit message. That variable skips only the quality score; the backtest still runs. Never fall back to `git commit --no-verify`.
 - If all files score 80+, continue.
 
 **Full mode only:** spawn the **verifier** agent (via the `Agent` tool with `subagent_type=verifier`) to run compilation/render checks on the changed files. Report pass/fail before committing. (Quick mode relies on the script gates in Steps 0–0c; the verifier runs when work is headed for `main`.)
 
 ### Step 0b: Consistency Gate (Pre-Commit)
 
-**Runs unconditionally.** The full backtest suite — all ten gates (surface-sync count claims like `"18 agents, 77 skills, 41 rules, 8 hooks"` and marked tables, skill integrity, model currency, links, spec conformance, staleness, repo hygiene, derived counts, ledger coverage, hook battery):
+**Runs unconditionally.** The full backtest suite — all ten gates (surface-sync count claims like `"18 agents, 77 skills, 40 rules, 11 hooks"` and marked tables, skill integrity, model currency, links, spec conformance, staleness, repo hygiene, derived counts, ledger coverage, hook battery):
 
 ```bash
 ./scripts/backtest.sh
 ```
 
 - **Exit 0:** all gates green — continue.
-- **Nonzero:** at least one gate is red — print its output and halt. Fix, then re-run. Do NOT proceed past this gate on a red result, even with "commit anyway" — count drift alone produced PRs #70, #76, and #78.
+- **Nonzero:** at least one gate is red — print its output and halt. Fix, then re-run. Do not proceed past this gate on a red result, even with "commit anyway": a red gate is drift that the next reader inherits, and small count drift has repeatedly cost follow-up PRs.
 
 ### Step 0c: Passport Check (Pre-Commit)
 
@@ -97,6 +97,9 @@ git push -u origin <branch-name>
 gh pr create --title "<short title>" --body "$(cat <<'EOF'
 ## Summary
 <1-3 bullet points>
+
+## Changed defaults
+<"None", or each default a forker will notice changing: a setting, a threshold, a hook that now fires, a path that moved>
 
 ## Test plan
 <checklist>
@@ -149,12 +152,18 @@ behavior the check exists to prevent.
 
 ### Step 7: Report
 
-Report the PR URL and what was merged.
+Quick mode: report the commit (hash and subject) and the branch. Full mode: report the PR URL and what was merged.
 
 ## Important
 
 - **Never skip Step 0.** Quality gates catch broken compilation, bad citations, and hardcoded paths before they reach `main`. If the user insists on skipping, record their override reason in the commit message.
 - Never commit directly to `main` — quick mode commits on the current (non-main) branch; full mode always creates a NEW branch.
 - Exclude `settings.local.json` and sensitive files from staging.
-- Use `--merge` (not `--squash` or `--rebase`) unless asked otherwise.
+- In full mode, use `--merge` (not `--squash` or `--rebase`) unless the user says otherwise.
 - If the commit message from `$ARGUMENTS` is provided, use it exactly.
+
+## Flags
+
+| Argument | Effect |
+|---|---|
+| `full` | Full mode: verifier, branch, push, PR, and merge (Steps 0–7). Quick mode is the default. |

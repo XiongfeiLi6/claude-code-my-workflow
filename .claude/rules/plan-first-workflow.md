@@ -1,6 +1,6 @@
 # Plan-First Workflow
 
-**For any non-trivial task, enter plan mode before writing code.**
+**Enter plan mode before tasks that touch more than three files or change a deliverable's substance** (a lecture, a manuscript, an analysis pipeline, a replication package). Small, well-specified edits proceed directly — planning them costs more than it saves.
 
 ## The Protocol
 
@@ -57,9 +57,12 @@ Format: Status (DRAFT/APPROVED/COMPLETED), approach, files to modify, verificati
 ## Context Management
 
 ### General Principles
-- Prefer auto-compression over `/clear`
+- Within a task, let compaction carry you — steer it with `/compact <what to keep>`
+- Between unrelated tasks, `/clear`
 - Save important context to disk before it's lost
-- `/clear` only when context is genuinely polluted
+- To stop or hand off: `/checkpoint`, quit, then start a fresh `claude` — the session-handoff
+  hook hands the newest checkpoint, once, to the next fresh start (not to `--continue` /
+  `--resume`); after that, ask Claude to read the checkpoint file
 
 ### Context Survival Strategy
 
@@ -70,7 +73,7 @@ When approaching context limits, ensure:
 3. Active plan is saved to disk
 4. Open questions are documented in session log
 
-The pre-compact hook will remind you of this checklist.
+The compaction hooks carry state across on their own: `pre-compact.py` saves the active plan, the current task, and recent decisions, and `post-compact-restore.py` re-injects them afterwards. They can only restore what is on disk — keeping the plan and session log current is what makes the restored state accurate.
 
 **After Compression:**
 First message should be: "Resuming after compression. Last task: [read most recent plan + git log]. Status: [next step]."

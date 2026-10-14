@@ -10,9 +10,9 @@ alwaysApply: false
 
 # Post-Flight Verification (anti-hallucination)
 
-Symmetric partner to **Pre-Flight Reports** (`.claude/rules/content-invariants.md` + skill-level `## Phase 0`). Where Pre-Flight proves inputs were read *before* work, Post-Flight proves the output's factual claims hold *after* drafting — before the skill returns to the user.
+Symmetric partner to **Pre-Flight Reports** (skill-level `## Phase 0`, e.g. `/create-lecture`, `/data-analysis`; the fan-out form is the `RUN_CONFIG` echo in `.claude/rules/orchestrator-protocol.md` § "RUN_CONFIG: collect interactivity *before* launch"). Where Pre-Flight proves inputs were read *before* work, Post-Flight proves the output's factual claims hold *after* drafting — before the skill returns to the user.
 
-**Adapted from:** Dhuliawala et al. 2023, "Chain-of-Verification Reduces Hallucination in Large Language Models" ([arXiv:2309.11495](https://arxiv.org/abs/2309.11495)). The **independence trick** — answer verification questions in a context that does not contain the original draft — is architecturally enforced here by running `claim-verifier` via the `Agent` tool with `context: fork`. The forked agent literally cannot self-confirm; it has never seen the draft.
+**Adapted from:** Dhuliawala et al. 2023, "Chain-of-Verification Reduces Hallucination in Large Language Models" ([arXiv:2309.11495](https://arxiv.org/abs/2309.11495)). The **independence trick** — answer verification questions in a context that does not contain the original draft — is architecturally enforced here by running `claim-verifier` as its own `Agent` call, which starts in a fresh context. It literally cannot self-confirm; it has never seen the draft. (A *conversation* fork — `/fork`, a fork-mode subtask — inherits the conversation and would defeat this; never use one for verification.)
 
 ## When this rule applies
 
@@ -60,13 +60,13 @@ For each extracted claim, write one specific, answerable question whose answer c
 
 ### Step 4 — Answer in fresh context, then reconcile
 
-Spawn `claim-verifier` via the `Agent` tool with `subagent_type=claim-verifier` and `context=fork`. Hand it: claims, verification questions, source material pointers. **Do not include the draft** — forking removes the draft from the verifier's context automatically, but don't explicitly pass it either.
+Spawn `claim-verifier` via the `Agent` tool with `subagent_type=claim-verifier` — a named subagent starts in a **fresh context**. Do **not** use a conversation fork (`/fork`, a fork-mode subtask): a fork inherits the conversation, draft included, which defeats the independence CoVe depends on. Hand it: claims, verification questions, source material pointers. **Do not include the draft.**
 
 Receive back a verification report. Three outcomes:
 
-- **PASS** (all claims match): return the draft to the user as-is.
-- **PARTIAL** (some `cannot-verify`, no hard discrepancies): return the draft with explicit uncertainty flags on the unverified claims, so the user knows to double-check them.
-- **FAIL** (at least one claim contradicts the source): **regenerate the affected section** using the verifier's evidence. If regeneration still fails after 2 attempts, return the best draft with discrepancies surfaced as a warning block — do not silently ship a known-wrong claim.
+- **PASS** (no claim contradicted, no retrieval failure): return the draft; any claim whose source was genuinely inaccessible (LOW-WARN, `cannot-verify`) carries an inline uncertainty flag so the user knows to double-check it.
+- **PARTIAL** (a transient retrieval failure — MED-WARN — and no contradiction): return the draft with those claims flagged for a re-check.
+- **FAIL** (at least one claim contradicts the source, or a citation looks fabricated — HIGH-WARN): **regenerate the affected section** using the verifier's evidence. If regeneration still fails after 2 attempts, return the best draft with discrepancies surfaced as a warning block — do not silently ship a known-wrong claim.
 
 ## Output contract
 
@@ -76,7 +76,7 @@ Every skill that applies this rule must include a structured Post-Flight block i
 ## Post-Flight Verification
 
 **Claims extracted:** N
-**Verified independently:** N (forked `claim-verifier` agent)
+**Verified independently:** N (fresh-context `claim-verifier` agent)
 **Outcome:** PASS | PARTIAL | FAIL → regenerated
 
 ### Verified
@@ -102,13 +102,13 @@ Every skill that applies this rule must include a structured Post-Flight block i
 
 ## Opt-out
 
-`--no-verify` flag skips Post-Flight. Useful for speed-critical iterations or when the user is actively reading the source material themselves. Document the opt-out in each skill's argument hints.
+`--no-verify` flag skips Post-Flight in `/lit-review`, `/research-ideation`, `/respond-to-referees` and `/interview-me`. Useful for speed-critical iterations or when the user is actively reading the source material themselves. Document the opt-out in each skill's argument hints. Exception: `/review-paper` has no `--no-verify`; its opt-out is `--no-novelty-check`, which skips the novelty probe entirely. If the probe runs, Post-Flight is mandatory.
 
 ## Cross-references
 
-- `.claude/agents/claim-verifier.md` — the forked verifier.
-- `.claude/rules/review-fencing.md` — the environment side of the same discipline: a forked context does not fence the checkout the reviewer stands in.
+- `.claude/agents/claim-verifier.md` — the fresh-context verifier.
+- `.claude/rules/review-fencing.md` — the environment side of the same discipline: a fresh context does not fence the checkout the reviewer stands in.
 - `.claude/skills/verify-claims/SKILL.md` — user-facing wrapper for ad-hoc verification of any text.
-- `.claude/rules/content-invariants.md` — Pre-Flight (input side).
+- `.claude/rules/orchestrator-protocol.md` — Pre-Flight (input side): the `RUN_CONFIG` Pre-Flight Report and the skills' `## Phase 0` Pre-Flight Reports.
 - `.claude/rules/cross-artifact-review.md` — pattern-based; Post-Flight is draft-based.
 - `.claude/rules/summary-parity.md` — rule against enumerative summaries drifting from their bodies; Post-Flight is the factual equivalent for draft content.

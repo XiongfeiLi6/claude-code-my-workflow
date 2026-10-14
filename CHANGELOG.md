@@ -6,6 +6,348 @@ If you have forked this template, see the **Upgrading** section at the bottom fo
 
 ---
 
+## v2.6.0-fork.1 — 2026-10-14 (XiongfeiLi6 customizations)
+
+Upstream v2.6.0 (with its 2026-09-27 fixes) merged into this fork. On top of upstream this fork
+carries 16 curated third-party/local skills and 3 local rules.
+
+**Inventory: 77 skills, 18 agents, 40 rules, 11 hooks, 10 gates** (upstream v2.6.0: 61 / 18 / 37 / 11 / 10).
+
+### Kept from the fork over upstream
+- `/commit` keeps quick mode by default and `full` mode (verifier, PR, merge) on request; upstream's
+  v2.6 `/commit` never merges and opens a PR only with `--pr`. Upstream's other edits to the skill
+  (quality-gate override via `SKIP_QUALITY_GATE=1`, the "Changed defaults" PR section) are taken.
+- `context-monitor.py` keeps the fork's 50 % save-state / 75 % compress nudges; the 75 % nudge now
+  asks the user to run `/compress-session` or `/checkpoint`, which are user-invoked, following
+  upstream's fix to the same defect in its `/learn` nudge.
+
+---
+
+## v2.6.0 — 2026-09-26
+
+A **currency and consistency release.** Claude Opus 5.5 and Fable 5.1 shipped after v2.5.1: the
+Opus tier's default effort dropped from `high` to `medium`, thinking became always-on, and forced
+tool choice disappeared from both top tiers. This release re-verifies the lineup against
+Anthropic's docs, re-reads every effort pin against the new default, and — because a model that
+follows instructions more literally makes a contradiction between two files more expensive —
+runs Anthropic's prompt-audit method over the skills, agents, rules, and references, re-checks
+every finding against the current tree, and fixes what survived. Dated prompt idioms were nearly
+absent; the debt was drift between files.
+
+### Changed — model refresh
+
+- **Model SSoT** (`model-versions.md`) now reads Fable 5.1 | Opus 5.5 | Sonnet 5 | Haiku 4.5,
+  verified 2026-09-26 and expiring 2026-11-25, with prices, effort defaults, minimum Claude Code
+  versions (the current Opus needs ≥ 2.1.280), the Haiku retirement floor, and a re-verified
+  alias table. Its update protocol gains a step: re-read every `effort:` pin when a default moves.
+- **`model-routing.md`** — the effort section is rewritten for an Opus tier that defaults to
+  `medium` and thinks more per turn at a given level; the Fable section now rests on cost and on
+  Anthropic's own routing advice. The launch-week "28/28 structured-output failures" observation
+  is retired: the forced-tool protocol it measured no longer exists on either top tier.
+- **Effort pins (owner decision, 2026-09-26).** `editor`, both referees, and `claim-verifier` keep
+  `high` — one level above the Opus default, on purpose. `verifier`, `quarto-critic`,
+  `tikz-reviewer`, `sim-reviewer`, and `domain-reviewer` move to `medium`. `/respond-to-eval`,
+  `/teach-from-paper`, `/grant-proposal`, `/respond-to-referees`, and `/new-diagram` drop their
+  pin and inherit the session. `agent-fleet.md` gains an Effort column.
+- README, guide, and TROUBLESHOOTING lineup, effort, and retirement text follow the SSoT; the
+  guide gains a short **"Prompting the current Opus"** callout drawn from Anthropic's Opus 5.5
+  prompting guide.
+
+### Changed — permissions (owner decision, 2026-09-26)
+
+- **`.claude/settings.json` no longer sets `defaultMode: "bypassPermissions"`.** Current Claude
+  Code does not honour a bypass default in project settings — the terminal session starts in
+  Manual mode — so the shipped default was dead configuration; with no override, Claude Code
+  ≥ 2.1.283 starts in auto mode. This supersedes the v2.5.0 ruling that kept the bypass default,
+  whose premise no longer holds for project settings. The allow list is unchanged.
+  `.vscode/settings.json` still carries two bypass keys, but they do not set the VS Code starting
+  mode: the current extension reads `claudeCode.initialPermissionMode` and
+  `claudeCode.allowDangerouslySkipPermissions` from user settings only, and never reads the
+  unprefixed key, so VS Code bypass is configured in user settings.
+- TROUBLESHOOTING, the guide, and `/permission-check` now teach the two override rules (project
+  settings cannot set bypass or auto; the VS Code extension ignores project settings for its
+  starting mode), and the protected-path text matches the docs (Manual prompts, auto routes to
+  the classifier, bypass allows).
+- **Restricted data stays off the model.** A paste-ready deny-rule block, and a new section in
+  `confidential-data.md` covering deny rules, external capture tools, and external-model consults.
+
+### Changed — `/commit` stops at the commit (owner decision, 2026-09-26)
+
+- **`/commit` no longer pushes, opens a pull request, or merges by default.** It runs the gates and
+  commits (on a new branch when on `main`). `--pr`, or asking for a pull request, pushes and opens
+  one. **It never merges**: a merge happens only when you say to merge that pull request, after
+  its CI and reviews (human, Codex, Copilot) have been read. Before, the skill's last step merged
+  the pull request as soon as it was opened, before any reviewer had commented.
+
+### Changed — the external referee
+
+- `external-oracle-process.md` is model-neutral, with a dated targets table (GPT-6 Pro when the
+  account offers it, GPT-5.6 Sol Pro as the validated fallback, the API only with explicit
+  consent, then the manual path), Oracle ≥ 0.21 / Node ≥ 24, the fail-closed `pro` effort tier,
+  recovery commands, and a rule to record the model and effort that actually answered.
+- `/oracle-review` gains a pre-send confidentiality check (restricted data, uncleared outputs,
+  credentials — manuscripts and code are meant to be sent), and `/adjudicate-review`'s `PARTIAL`
+  verdict is renamed `DOWNGRADED`, so both skills and the reference share CONFIRMED / REFUTED /
+  DOWNGRADED.
+
+### Fixed — contracts nothing honoured
+
+- **Reviewer output contract.** `orchestration-schemas.md` required a validated JSON findings
+  array that no reviewer agent was asked to produce — and the reviewers are read-only, so they
+  could not write it or compute its ids. Each reviewer that feeds a reducing skill now ends its
+  response with an id-less JSON block; the dispatching skill fills the ids with the new
+  `validate-findings.py --fill-ids` and validates before reducing. Read-only reviewers are no
+  longer told to save files; the severity map targets the JSON enum.
+- **Skills that could not run as written:** two forked skills that needed the user mid-run; two
+  skills that invoked user-invoked-only skills; three different stopping rules for one
+  loop-until-dry primitive; a `/commit` gate `/verify-claims` promised and nothing implemented; a
+  `/compress-session` hook example whose exit code would have blocked every compaction; a spec
+  path no downstream skill read.
+- **Hooks and status line:** `post-compact-restore.py` and the status line classified plan
+  status by matching words anywhere in the file (and could restore a finished plan); both now
+  read the Status field, like `pre-compact.py`. Restored context is labelled historical. The
+  status line uses Claude Code's native context percentage and shows effort. The
+  `root-of-trust-guard` docstring is now a raw string — its invalid escapes would become a
+  syntax error in a future Python, and the guard fails open.
+- Dead references and stale facts across skills, agents, and rules; pressure language removed
+  from the two critics that run inside convergence loops; a MathJax nesting error in
+  `beamer-translator`'s aligned-math rule.
+
+### Changed — context cost
+
+- `meta-governance.md` and `orchestrator-protocol.md` are path-scoped, so a research or teaching
+  session no longer loads them; always-loaded rules drop by roughly two thirds.
+  `prompt-shaping.md` is a short plain rule; `prompt-formatting-core.md` is retired to a tombstone.
+- `MEMORY.md` keeps every lesson: stale ones gain dated addenda and related entries are merged to
+  hold the 25KB cap, as `meta-governance.md` requires. `/promote-memory` proposes a demotion when
+  the file nears its line or byte cap.
+
+### Changed — output layout and quality rubric (owner decisions, 2026-09-26)
+
+- **Generated results live in a top-level `output/`**, no longer in `scripts/<lang>/_outputs/`.
+  This follows the AEA Data Editor's advice not to commingle code with its results, and it matches
+  the layout `/replication-package` already deposits. R, Stata and Python all write there
+  (Stata's environment record becomes `sessionInfo_stata.txt` so it cannot overwrite R's).
+  Final tables, figures and logs are committed — after disclosure clearance when the data are
+  restricted; `.rds`, `.parquet`, `.dta` and other regenerable intermediates are gitignored.
+  `repo-hygiene.md` gains a "where each kind of file goes" table that states the whole layout.
+- `/audit-reproducibility`, `/replication-package` and `/disclosure-check` default to `output/`
+  and fall back to a pre-v2.6 `scripts/<lang>/_outputs/` when that is all a project has; the
+  `claim-reconcile` hook watches both. **Forks:** `git mv scripts/R/_outputs output` (or re-run
+  `00_run_all.R`), then point any `\input{}` paths at `output/`.
+- **`quality_score.py` is the single source of the quality rubric.** `quality-gates.md` and the
+  script had drifted both ways; the rule now embeds the script's `--print-rubric` tables, marks
+  which rows the script detects and which are a reviewer checklist, and `check-derived-counts.py`
+  fails on any difference. The two rows only the rule had (R domain bug −30, Quarto long line −1)
+  moved into the script, and every deduction now reads its weight from the rubric.
+- **Fixed:** the repo-hygiene gate rejected the top-level folders the new layout recommends
+  (`output/`, `data/`, `R/`, `tests/`); they are now allowed.
+- **Fixed:** `scripts/R/05_figures.R` reported writing `fig_main.pdf` when the PDF device had
+  failed — cairo compiled in but not loadable, as on macOS without XQuartz — and left
+  `Rplots.pdf` in the working directory. It now chooses the device by opening it, and stops,
+  naming the file, if a promised figure was not written (#156).
+- **Fixed:** `/replication-package` wrote Stata's environment to `output/stata_version.txt`; the
+  Stata convention requires `output/sessionInfo_stata.txt`, and the skill now also checks that
+  every `.do` pins `version NN` (#157).
+- **Fixed:** `promote-memory-council`'s description said "forked context" while its body requires
+  a fresh one (#158); the same wording is corrected in seven other files, and the guide.
+- **Fixed:** `slide-qa.py` exited 0 on a deck whose math never typeset (no network, or MathJax
+  blocked); it now fails with exit 2 and says how to fix it (#159). A slide that both overflows and
+  hides clipped content now reports both, instead of only the first (#160).
+- **Fixed:** `quarto-critic` could return APPROVED with major issues open, so `/qa-quarto` never ran
+  its fixer on them; APPROVED now requires every hard gate to pass and no critical or major issue
+  (#161).
+- **Fixed:** 131 statements in the README, the guide, rules, skills and agents disagreed with the
+  repository after the release was assembled (counts, paths, flags, removed features); each was
+  confirmed against the tree and corrected. A second, independent pass over the README, the guide,
+  `CLAUDE.md` and the landing page checked 865 statements and confirmed 44 more, also corrected —
+  among them the guide's worked examples, which showed `/slide-excellence`, `/review-paper` and
+  `/data-analysis` doing steps they do not do (#162).
+- **Fixed:** `/deep-audit` lost `disable-model-invocation: true` when the v2.5 verification skills
+  were merged, so a vague "audit this" could start its repo-wide fix loop; the flag is restored.
+- **Fixed:** the guide no longer has agents argue for one estimator each. Pattern 9's "Agent Debates"
+  told users to debate DiD vs synthetic control vs RDD, which the owner's methods ruling forbids;
+  it is now "Independent Advocates", with a method-neutral example (competing framings), each
+  advocate in its own context and the researcher deciding (#165).
+- **Fixed:** refereed manuscripts stay out. `master_supporting_docs/` no longer invites papers you
+  are refereeing into a committed folder; `/oracle-review`, `confidential-data.md` and
+  `/triage-inbox`'s referee scaffold no longer send or copy in a manuscript or proposal you are
+  reviewing; the guide says which terms (consumer or commercial) cover each kind of account (#166).
+- **Fixed:** `/triage-inbox` digests are gitignored — they hold email subjects, senders and referee
+  manuscript IDs — so inbox triage now runs as a local scheduled task, where the digest and the
+  referee tracker persist, not as a cloud routine (#167).
+- **Fixed:** session advice agrees with itself and with the handoff hook. Within a task, let compaction
+  carry you; between unrelated tasks, `/clear`; to stop or hand off, `/checkpoint`, quit, and
+  start a fresh `claude` — the hook hands the newest checkpoint, once, to the next fresh session
+  (`--continue` and `--resume` do not get it) (#168).
+- **Fixed:** TROUBLESHOOTING said deny rules do not cover shell commands; it now says Claude Code applies
+  them to `cat`, `head`, `tail`, `sed`, `tee` and redirect targets (not to scripts, nor to a command
+  that reads files without naming them, such as `grep -r pattern .`), and how to reach data kept
+  outside the checkout (#169).
+- **Fixed:** `/preregister` looked for a `paper_type:` field that `/interview-me` never writes (it
+  writes a `**Paper type:**` line), so the paper type never reached the style choice.
+- **Fixed:** `check-derived-counts.py` counted `/translate-to-quarto`'s Phase 6.5 as a second
+  Phase 6, so the README's wrong "11 translation phases" passed; it now counts 12.
+- **Fixed:** the hardcoded-path check read R strings that open with an escaped backslash — how R
+  writes LaTeX — as Windows paths, so the template's own `04_tables.R` scored 0.
+- **Fixed:** `check-derived-counts.py` compared the battery-size claim in *published* CHANGELOG
+  entries against today's battery, so adding a case demanded an edit to released history; it now
+  reads only the current release, like the inventory rows.
+
+### Added
+
+- **Slide QA in a real browser** (`scripts/slide-qa.py`). It loads a rendered Quarto deck in
+  headless Chrome and measures what a reader sees on each slide — text, formulas (MathJax or
+  KaTeX), images, chunk output, painted boxes — against the slide edges, in every fragment state
+  and every tab, uncounted slides included. It also flags content hidden inside a scrolling
+  element, and saves one screenshot per slide. `/visual-audit`, `/qa-quarto` and
+  `/slide-excellence` run it, and `quarto-critic` and `slide-auditor` take their overflow findings
+  from the measurement instead of guessing from the source. Needs Playwright for Python in a
+  virtual environment named by `SLIDE_QA_PYTHON` (see Prerequisites); it drives the installed
+  Chrome, and without it the skills fall back to the source.
+- **Replication log.** Every `/audit-reproducibility` run now appends to
+  `quality_reports/replication-log.md`: the commit it checked (marked `-dirty` for uncommitted
+  code), and for each claim the reported and computed values, the exact accessor that produced
+  the number, the tolerance and the verdict. Append-only, so a co-author can review the history
+  instead of the code.
+- **Session handoff** (`.claude/hooks/session-handoff.py`, on `SessionStart[startup]` and
+  `UserPromptSubmit`). A fresh session is handed the newest `/checkpoint` or `/compress-session`
+  file written in the last 7 days, labelled as notes to verify. It counts as used only once you
+  type a prompt, so a session opened and closed unused (or a headless `claude -p` run, which never
+  receives it) leaves it for the next one. `CLAUDE_HANDOFF=off` opts out;
+  `CLAUDE_HANDOFF_MAX_AGE_DAYS` changes the window.
+- **Specification ledger.** `/data-analysis` and `/stata-replication` append every specification
+  they estimate — kept, dropped or failed — to `quality_reports/spec-ledger.md`, with the commit it
+  ran on and, for anything not kept, why. It records the search without advising which
+  specification to run; estimates are optional, and left out on restricted data until cleared.
+- **Replication log and specification ledger are enforced append-only.** The repo-hygiene gate
+  fails a commit that edits or removes a committed line — at pre-commit against the last commit,
+  and in CI against the branch the work merges into, so a rewrite made without the hook is caught
+  too. New lines may go anywhere, so a merge that interleaves two co-authors' entries passes.
+  `ALLOW_LOG_REWRITE=1` covers a disclosure redaction, with the reason in the commit message.
+- **Quote check on reviewer findings** (`validate-findings.py --check-quotes`). A quotation in a
+  finding's evidence must be the text of the cited file, or of another file the evidence names by
+  path — compared with LaTeX markup, dashes, whitespace and case normalised, except that a quote
+  containing a backslash must match the source exactly. A PDF manuscript is read through
+  `pdftotext`; a file that cannot be read as text leaves its quotes unchecked rather than failed.
+  A miss goes back to its reviewer once; still unmatched, the finding is dropped before judging.
+  The reviewer agents and the seven-pass lenses are told to quote verbatim.
+- **Submissions are data, not instructions.** The editor, both referees, the claim verifier, the
+  seven-pass lenses, `/review-paper`, `/adjudicate-review` and `/oracle-review` treat text in a
+  manuscript, report or model reply that addresses an AI reviewer as a finding, never an order.
+- **Slide QA catches broken assets** — images, backgrounds, video and other media that fail to
+  load, local or remote, and local files that load only because the filesystem ignores letter
+  case (they break on Linux and GitHub Pages) — each pinned to the slide that uses it.
+- **`gate:off`** in the status line when the repo's pre-commit gate is not installed.
+- **Faster pre-commit.** The hook battery (most of the suite's run time) is skipped locally when no
+  hook, hook setting or battery file is staged; CI runs every gate on every pull request and on
+  every push to a branch other than main.
+- **"Changed defaults"** is a required section of the PR template and of the PR body `/commit`
+  writes.
+- **`/checkpoint` and `/compress-session` write only what the session established** — no
+  `path:line` they did not read, no padded sections, earlier handoff text carried forward only if
+  re-checked — because the handoff now hands their files to the next session automatically.
+- **GitHub issues as the project's memory.** `CLAUDE.md` now states the practice, and
+  `issue-ledger.md` spells out what gets an issue: every shipped bug (opened before the fix),
+  every improvement deferred for later, every owner decision that blocks work, and one summary
+  issue per review round over an unmerged branch. Issues are closed by hand when the fix lands —
+  a short closing comment for a small fix, the full seven sections for anything that can move a
+  result — and never carry restricted data. A guide section explains the habit for papers.
+- **`/issues`** files findings as issues, lists what is open, and closes an issue with a comment on
+  what was tried and how it was fixed; it shows every draft and posts nothing without a yes, and
+  warns before posting to a public repository. `/review-paper`, `/seven-pass-review` and
+  `/adjudicate-review` offer it at the end.
+- **Duplicate check on every new issue.** `scripts/file-issue.py` searches open and closed issues
+  several ways and creates nothing until each candidate has been reviewed; the issue body records
+  the check. A new hook, `issue-guard.py`, denies a raw `gh issue create` (or a REST or GraphQL
+  create) and points to the script. It is spawned only for `gh` commands (`"if": "Bash(gh *)"`,
+  Claude Code 2.1.85 or later; older versions run it on every Bash call, still correctly).
+  After the PR review (#164) it also sees a create behind shell control words (`if`/`then`,
+  `{ }`, `!`, loops) or in a GraphQL query file, and the issue body records which kinds of search
+  ran rather than their text.
+- **Open issues at startup (opt-in).** With `CLAUDE_ISSUES_AT_START=1`, the new `open-issues.py`
+  hook lists open issues' numbers and titles — by the owner and collaborators only — when a
+  session starts. Off by default: it calls GitHub on every startup.
+- **Guide: adopting the template in an existing project** — six steps, tested end to end on a
+  project with its own README and folders.
+- `check-model-versions.sh` catches superseded **model IDs**, refuses to let a comparison excuse a
+  line that asserts a **default**, and scans `agent-fleet.md` — qualified on seeded defects, with a
+  ledger row. `validate-findings.py --fill-ids`, with a ledger row.
+- README and guide: the mid-2026 Claude Code features worth knowing; TROUBLESHOOTING:
+  deadline-safe updates and the headless credit pool.
+
+- **Small edits borrowed from claudeblattman** (after reading it for ideas; it also turned up the
+  defects above, #165–#169; each was filed as an issue before it was fixed):
+  - **A missing lens is not a dry round** in the review loop (`orchestrator-protocol.md`).
+  - **Restricted data:** deny patterns for data outside the checkout (`//` and `~/` anchors), and
+    Claude Code's own transcripts and file history named as copies a data agreement covers.
+  - **`/lit-review`** reports independent vs apparent study counts and searches for null results.
+  - **`/new-skill`** asks which steps send or cannot be undone, and whether self-critique needs a
+    fresh context.
+  - **`/grant-proposal --call <file>`** reads the program's actual call — its sections, limits and
+    review criteria override the generic funder profile.
+  - **Scanned PDFs:** `/teach-from-paper`, `/respond-to-referees`, `/respond-to-eval` and
+    `/seven-pass-review` compare `pdfinfo`'s page count with the pages that returned text; the extracted text goes to a
+    private temp folder that is deleted when the skill is done (before, a plaintext copy was left behind).
+  - **Guide:** an optional fresh-context read of a plan before approval; read any skill, hook or
+    plugin before installing it.
+
+### Considered, not adopted
+
+- **claudeblattman** (MIT) — beyond the small edits above: assistant and meeting skills, a persona
+  council, completeness and skeptic agents, a causal-language audit (its design ranking is method
+  content), and prompt skills either duplicate what the template has or do not fit it.
+- **ai-memory** — two ideas adapted (labelled restore context; demote near the cap); the tool
+  itself captures prompts and shell output in every repository by default, which conflicts
+  with `confidential-data.md`.
+- **claude-code-tips** — ideas only; the repository is All Rights Reserved.
+- **Scan of ai-memory and awesome-ai-agents (both MIT), 2026-09-26 — owner declined:** an OpenAlex
+  first pass in `/lit-review` (judged a risk to retrieval quality), a paste-ready sandbox block,
+  further `confidential-data.md` additions, gitleaks and pinned CI actions, an author check before
+  push, and a skill-description budget check.
+- **awesome-ai-agents** — no scholarly tools; its restricted-data concern is adopted above,
+  browser-measured slide QA is adopted (see Added), and gate mutation testing goes to the backlog.
+
+**Inventory at release: 61 skills, 18 agents, 37 rules, 11 hooks, 10 gates**
+(v2.5.1: 60 skills, 8 hooks; the rest unchanged).
+
+### Verification of this release
+
+- **Audit before change.** Anthropic's prompt-audit method ran over the skills, agents, rules,
+  references, `CLAUDE.md`, and `MEMORY.md` in four read-only passes; every finding was then
+  re-checked against the released tree before planning, and only survivors were acted on.
+- **Two fresh-context reviews of the diff** (correctness and consistency; prompt quality of the
+  new text): 28 findings, every one checked against the files before fixing — 27 confirmed and
+  fixed, 1 refuted (its claim is in Anthropic's own Opus 5.5 prompting guide; now cited).
+- **A loop-until-dry review** — six lenses (facts, runtime contracts, cross-file consistency,
+  prompt quality, docs, scripts), each finding checked by one verifier trying to reproduce it and
+  one trying to refute it: round 1 confirmed 56 of 61, round 2 confirmed 31 of 39 (many duplicates
+  across lenses); all confirmed findings are fixed. **The loop was stopped after round 2 by
+  owner decision, so convergence (two consecutive rounds with nothing new) is not claimed.**
+- **Gates:** `./scripts/backtest.sh` passes all 10 gates, including the hook battery
+  (312 cases, seconds to run; the new case fails against the hook's old watch pattern).
+  Every checker this release changed was re-qualified on seeded defects with clean controls
+  (ledger rows): `check-model-versions.sh` 5/5 recall, 0/4 false positives;
+  `validate-findings.py --fill-ids` 4/4; `check-derived-counts.py` seven-pass pattern 1/1,
+  rubric parity 4/4 with 0/1 false positives, current-release battery scoping 1/1 with 0/1;
+  `quality_score.py` path check 3/3 with 0/3, and its rubric refactor left every report
+  byte-identical on 13 files; `slide-qa.py` on two regression decks built from an adversarial
+  review (34 slides: 18 planted failures, one per failure mode, and 16 clean controls, MathJax and KaTeX) — every verdict as expected;
+  `session-handoff.py` 8/8 seeded faults, each caught by its own battery case;
+  `validate-findings.py --check-quotes` 24 cases (8 invented or altered quotes caught, 16 genuine
+  quotes passed — LaTeX, PDF, elisions, parity, inline code) plus an unreadable file left
+  unchecked; the append-only check 10 cases in a throwaway repository (edits, deletion, a staged
+  edit, `git rm --cached`, CRLF, a merge, a CI rewrite); slide-qa assets 8 cases plus the 45
+  control slides; the pre-commit battery skip on ten staged-path lists and a 129 KB list.
+- **An adversarial review of the three additions** (slide QA, the replication log, the handoff)
+  confirmed 26 of 27 findings, each reproduced by an independent verifier; all are fixed. A
+  second review, of the ten scan additions, confirmed 44 of 46; all are fixed.
+- The guide is re-rendered and stamped; `quality_score.py` reports no critical issues.
+
+*Note:* the archived external-referee consult in
+`quality_reports/oracle_audits/2026-08-23_v2.5.1-guard-design/` refers to "the v2.6.0 entry" —
+that release was renumbered before shipping and is the **v2.5.1** entry below; this v2.6.0 is a
+different release.
 ## v2.5.1-fork.1 — 2026-09-03 (XiongfeiLi6 customizations)
 
 Fork-level release note so the current inventory line is true for this branch: on top of

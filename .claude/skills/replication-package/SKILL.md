@@ -1,7 +1,7 @@
 ---
 name: replication-package
 description: Assemble a submission-ready replication package to the AEA Data and Code Availability Standard (DCAS) / openICPSR / Social Science Reproduction Platform expectations — standard replication README, dataset manifest, computational-requirements capture, a Table/Figure → script:line map, and a confidential-data deposit plan. Use when user says "build the replication package", "prepare the openICPSR deposit", "make the AEA data and code package", "DCAS compliance", "assemble the deposit for the journal", or after a paper is accepted and the journal's data editor needs the package. NOT a numeric verifier — it calls /audit-reproducibility to confirm claims reproduce before packaging.
-argument-hint: "[manuscript path] [outputs-dir] (outputs-dir defaults to scripts/R/_outputs/)"
+argument-hint: "[manuscript path] [outputs-dir] (outputs-dir defaults to output/)"
 allowed-tools: ["Read", "Grep", "Glob", "Write", "Bash", "Agent", "Task"]
 effort: high
 ---
@@ -22,7 +22,7 @@ Produce the deposit an economist hands a journal at acceptance: a directory tree
 ## Inputs
 
 - `$0` — path to the manuscript (`.tex`, `.qmd`, `.md`, `.pdf`). Required (the source of the Table/Figure inventory).
-- `$1` — outputs directory. Defaults to `scripts/R/_outputs/`. Recognised alternatives: `scripts/stata/_outputs/`, `scripts/python/_outputs/`, `_targets/objects/`.
+- `$1` — outputs directory. Defaults to `output/`, where every language's pipeline writes. Recognised alternative: `_targets/objects/`. If `output/` does not exist but a pre-v2.6 `scripts/<lang>/_outputs/` does, use that and say so.
 
 ## Workflow
 
@@ -49,7 +49,7 @@ Generate the dependency lockfile(s) and an environment snapshot for each detecte
 
 - **R** — `renv::snapshot()` → `renv.lock`; `sessionInfo()` → `output/sessionInfo.txt`.
 - **Python** — `pip freeze` → `requirements.txt` (or export the conda `environment.yml`); record `python --version`.
-- **Stata** — `creturn list` / `about` → `output/stata_version.txt`; confirm every `.do` pins `version NN` (per [`stata-code-conventions.md`](../../rules/stata-code-conventions.md)).
+- **Stata** — `creturn list` / `about` / the `which` list → `output/sessionInfo_stata.txt`, the environment record the Stata convention requires; confirm every `.do` pins `version NN` (per [`stata-code-conventions.md`](../../rules/stata-code-conventions.md)).
 - **Container (recommended by DCAS for non-trivial setups)** — scaffold a `Dockerfile` pinning the base image + language version.
 
 ### Phase 3: Confirm claims reproduce before packaging
@@ -71,7 +71,7 @@ replication_package/
 │   ├── raw/                 # as-obtained (or a pointer + DUA note if restricted)
 │   └── analysis/            # constructed analysis files
 ├── code/                    # numbered scripts + master script (00_run_all.* / 99_run_all.do)
-└── output/                  # tables/, figures/, logs/, sessionInfo.txt, renv.lock / requirements.txt
+└── output/                  # tables/, figures/, logs/, sessionInfo.txt (R) / sessionInfo_stata.txt (Stata), renv.lock / requirements.txt
 ```
 
 Then emit the **DCAS compliance checklist** (`replication_package/DCAS_checklist.md`): Data Availability Statement present · every dataset has source + access + license · master script present and one-command · computational requirements stated · every Table/Figure mapped to program:line · no absolute/machine-specific paths in code · seeds set for any stochastic step · license file (a code license such as BSD/MIT + a data-usage statement). Mark each PASS / FAIL / `[FILL]`.

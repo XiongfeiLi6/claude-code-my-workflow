@@ -34,31 +34,42 @@ Verify with `claude mcp list` — `stata-mcp` should appear with status `connect
 
 ### Claude keeps asking permission for every tool
 
-Default permission mode prompts on every `Bash`, `Edit`, `Write`. Two fixes:
+In Manual mode Claude asks before most edits and shell commands the allow list doesn't cover. Options, from most oversight to least (see the guide's [permission modes section](https://psantanna.com/claude-code-my-workflow/workflow-guide.html#settings---permissions-and-hooks)):
 
-- **Auto-accept edits** — keybinding in Claude Code; see guide's [permission modes section](https://psantanna.com/claude-code-my-workflow/workflow-guide.html#settings---permissions-and-hooks).
-- **Bypass mode** — `claude --permission-mode acceptEdits` (auto-approves edits but still prompts for sensitive ops) or `claude --permission-mode bypassPermissions` (skips prompts entirely — use only on trusted repos).
+- **Auto mode** — the built-in starting mode on Claude Code ≥ 2.1.283 (and on Pro/Max/Team since 2026-08-14 on earlier versions): a classifier approves routine actions and blocks or asks about risky ones.
+- **Accept edits** — `Shift+Tab`, or `claude --permission-mode acceptEdits`: auto-approves file edits and common filesystem commands in the working directory.
+- **Bypass** — `claude --permission-mode bypassPermissions` skips permission prompts and safety checks (deny rules still apply). Anthropic scopes it to isolated containers and VMs, and it takes effect from the CLI flag, `--settings`, or user/managed settings — a `bypassPermissions` in a project's `.claude/settings.json` is not honoured and the session starts in Manual mode. (In VS Code, bypass is a user-settings choice: set `claudeCode.initialPermissionMode` to `bypassPermissions` and turn on `claudeCode.allowDangerouslySkipPermissions` in your VS Code *user* settings. Both are machine-scoped, so the extension ignores workspace values and the template's `.vscode/settings.json` does not change the starting mode.)
 
-The template's `.claude/settings.json` pre-approves ~100 common patterns, so even at default most routine work is unattended.
+The template's `.claude/settings.json` ships broad allow rules (`Edit(**)`, `Write(**)`, `Bash(*)`, …) and no default mode, so in Manual mode most routine work runs unprompted. Auto mode drops the blanket `Bash(*)` rule and sends shell commands through its classifier instead. To keep restricted data off the model in every mode, add deny rules — see ["Keep restricted data off the model"](#keep-restricted-data-off-the-model) below.
 
 ## Models and API
 
-### Sonnet 4 / original Opus 4 retire 2026-06-15
+### `/model` doesn't offer the current Opus, or a pinned model ID fails
 
-Anthropic retires **Sonnet 4** and the **original Opus 4** on **2026-06-15**. If your environment pins one of these, requests will fail after that date.
+The current lineup, minimum Claude Code versions, and retirement floors live in [`model-versions.md`](.claude/references/model-versions.md). Two failure shapes are common after a model launch:
 
-Migration checklist:
+- **The new model is missing from `/model`.** Each model needs a minimum Claude Code version (the current Opus needs ≥ 2.1.280). Run `claude --version`; update with `claude update` or your installer (`npm install -g @anthropic-ai/claude-code@latest` for an npm install). The VS Code extension bundles its own CLI, so the terminal `claude` on your `PATH` can lag behind it.
+- **A pinned model ID fails.** Sonnet 4 and the original Opus 4 retired on 2026-06-15, and the current Haiku model's retirement floor is 2026-10-15. Find pins before they break:
+  - **Environment:** `echo $ANTHROPIC_MODEL $ANTHROPIC_DEFAULT_FABLE_MODEL $ANTHROPIC_DEFAULT_OPUS_MODEL $ANTHROPIC_DEFAULT_SONNET_MODEL $ANTHROPIC_DEFAULT_HAIKU_MODEL $CLAUDE_CODE_SUBAGENT_MODEL`.
+  - **Settings:** a `model` key in `.claude/settings.json`, `.claude/settings.local.json`, or `~/.claude/settings.json`.
+  - **Agents and skills:** `grep -rn "^model:" .claude/agents/ .claude/skills/` — the template pins tier aliases (`opus` / `sonnet` / `haiku`), which follow the current model automatically; a full model ID does not.
+  - **CI:** any workflow that calls `claude -p --model <id>`.
 
-- **Check `ANTHROPIC_MODEL` env:** `echo $ANTHROPIC_MODEL` — if it's `claude-sonnet-4-*` or `claude-opus-4-*` (without a 4.5/4.6/4.7 suffix), update.
-- **Check `.claude/settings.json` and `.claude/settings.local.json`** for any `model:` override at the project layer.
-- **Check agent frontmatter:** `grep -rn "claude-sonnet-4\b\|claude-opus-4\b" .claude/agents/` — agents that pin to retired models will fall through to inherit, which is usually fine, but worth knowing.
-- **Check CI:** any GitHub Actions or other CI that calls `claude -p` with `--model`.
+Prefer tier aliases over full IDs unless you need a frozen snapshot for a reproducibility claim — and if you do, record the ID and date alongside the result.
 
-Recommended replacements: `claude-sonnet-4-6` for Sonnet 4, `claude-opus-4-8` for original Opus 4 (the newest Opus, GA 2026-05-28, same $5/$25 pricing as 4.6/4.7). The 1M-context beta for Sonnet 4.5 / Sonnet 4 retired 2026-04-30 — migrate to Sonnet 4.6 for long-context workflows.
+### An update broke something mid-deadline
 
-### `/coarse-review` and other `claude -p` skills may bill differently after 2026-06-15
+Claude Code updates itself from the `latest` channel by default. For deadline weeks, follow the slower channel in `~/.claude/settings.json`:
 
-Starting **2026-06-15**, headless subprocess calls (`claude -p`, Agent SDK) on subscription plans draw from a **separate Agent SDK credit pool**, decoupled from interactive credits. Skills affected in this template: `/coarse-review` (every pipeline stage runs as a `claude -p` subprocess). If `/coarse-review` fails after the cutover with a credit-exhaustion error even though your interactive session works, check the Agent SDK credit balance separately. See [Anthropic's release notes](https://platform.claude.com/docs/en/release-notes/overview) for the current credit allocation per plan tier.
+```json
+{ "autoUpdatesChannel": "stable" }
+```
+
+`minimumVersion` keeps auto-updates from installing anything below a version you know works. Prefer these to switching the updater off — updates carry security fixes and new-model support (a new model can require a minimum version).
+
+### Headless `claude -p` runs bill from a separate pool on subscription plans
+
+Since **2026-06-15**, headless subprocess calls (`claude -p`, the Agent SDK) on subscription plans draw from a **separate Agent SDK credit pool**, decoupled from interactive credits. In this template that affects `scripts/run-skill-eval.sh` and any scheduled or scripted `claude -p` you add (e.g. a `/triage-inbox` routine). If a headless run fails with a credit-exhaustion error while your interactive session works, check the Agent SDK balance separately. See [Anthropic's release notes](https://platform.claude.com/docs/en/release-notes/overview) for the current allocation per plan tier.
 
 ## Compilation / rendering
 
@@ -82,6 +93,15 @@ You likely invoked `quarto render` from the wrong cwd. Run it from the repo root
 
 Good — the pre-check caught a P3 (bare `scale=`) or P4 (missing directional keyword on an edge label) violation. Fix the offending line in the Beamer source and re-run. See `.claude/rules/tikz-prevention.md`.
 
+### Slide QA "could not run" (exit 2)
+
+`scripts/slide-qa.py` measures a rendered Quarto deck in headless Chrome, and exit 2 means it measured nothing — the skills then fall back to reading the source. The message names the cause:
+
+- **Playwright missing.** A Homebrew or system Python refuses a plain `pip install`, so install it once in a virtual environment and point the skills at it: `python3 -m venv ~/.venvs/slide-qa && ~/.venvs/slide-qa/bin/pip install playwright`, then `export SLIDE_QA_PYTHON=~/.venvs/slide-qa/bin/python` (add the export to your shell profile). `./scripts/validate-setup.sh` checks it.
+- **No browser.** It uses your installed Google Chrome; without one, run `$SLIDE_QA_PYTHON -m playwright install chromium`.
+- **Stale render.** The `.qmd` is newer than its `.html` — re-render first, or the numbers describe the old deck.
+- **"Math was not typeset"** in a report (not an exit 2): MathJax or KaTeX never loaded, usually offline, so formulas were measured as raw TeX.
+
 ## Git / hooks / CI
 
 ### Hook script permission denied
@@ -95,6 +115,10 @@ The PreCompact hook (`.claude/hooks/pre-compact.py`) writes state to `~/.claude/
 - Check the hook's exit code: `echo '{}' | python3 .claude/hooks/pre-compact.py` should exit 0.
 - Check permissions on `~/.claude/sessions/`.
 - Check the session hash matches — compaction logs the hash.
+
+### A handoff appears when a session starts
+
+`session-handoff.py` hands a fresh session the newest `/checkpoint` or `/compress-session` file written in the last 7 days, labelled as notes to verify. It counts as used once you type a prompt in that session, so it appears once. To skip it, set `CLAUDE_HANDOFF=off` (shell, or under `env` in settings); to change the window, `CLAUDE_HANDOFF_MAX_AGE_DAYS`. Headless `claude -p` runs never receive it. If another memory tool also injects context at startup, turn one of them off.
 
 ### `/commit` fails with `quality_score.py` below threshold
 
@@ -120,7 +144,32 @@ You ran `03_analyze.R` directly instead of `00_run_all.R`. Re-run `00_run_all.R`
 
 ### "Prompts fire despite `bypassPermissions`"
 
-Mid-session permission-mode toggles override file settings until session end. The 6-tier stack (VSCode user → VSCode workspace → CLI user `~/.claude/settings.json` → project `.claude/settings.json` → project-local `.claude/settings.local.json` → in-session runtime) is **last-wins**. Run `/permission-check` — it diffs every layer and reports which wins. Then either exit and restart the session, or `/permission-mode bypassPermissions` to set it for the current session.
+Three causes, most common first:
+
+1. **The setting sits in project settings.** A `defaultMode: "bypassPermissions"` in `.claude/settings.json` or `.claude/settings.local.json` is not honoured and the session starts in Manual mode (an `"auto"` there falls back to the built-in default instead). Remove it from the project files, then set bypass in `~/.claude/settings.json`, pass `--permission-mode bypassPermissions`, or (VS Code) set `claudeCode.initialPermissionMode` in your VS Code **user** settings with the extension's *Allow dangerously skip permissions* toggle (`claudeCode.allowDangerouslySkipPermissions`) on — both are machine-scoped, so values in the workspace `.vscode/settings.json` are ignored. The VS Code extension does not read project settings for the starting mode at all.
+2. **A mid-session toggle.** `Shift+Tab` (CLI) or the mode indicator (VS Code) overrides file settings until the session ends.
+3. **A stale session.** Settings changed after the session started; start a new one.
+
+Run `/permission-check` — it lists every layer's value and which one wins.
+
+### Keep restricted data off the model
+
+Every file Claude reads is sent to the model provider. [`confidential-data.md`](.claude/rules/confidential-data.md) says restricted microdata never leaves the machine, and **deny rules hold in every permission mode, including bypass**. If your project has restricted directories, add deny rules — in `.claude/settings.json` to protect every collaborator, or `.claude/settings.local.json` for your machine only — naming the paths your data-use agreement covers:
+
+```json
+{
+  "permissions": {
+    "deny": [
+      "Read(**/restricted/**)",
+      "Read(**/confidential/**)",
+      "Edit(**/restricted/**)",
+      "Edit(**/confidential/**)"
+    ]
+  }
+}
+```
+
+`**/` matches at any depth, but only under the project: a relative pattern cannot reach data kept elsewhere. For data outside the checkout, anchor the pattern with `//` (absolute) or `~/` (home) — `Read(//Volumes/secure-dua/**)`, `Read(~/Dropbox/ProjectX-DUA/**)` — and put such machine-specific lines in `.claude/settings.local.json` or `~/.claude/settings.json`, never the committed `settings.json`. A single leading `/` is not absolute: in `.claude/settings.json` or `.claude/settings.local.json` it anchors at the session's working directory (the project root when you start there), and in `~/.claude/settings.json` at `~/.claude/` — so use `//` for a truly absolute path. Start from the patterns `confidential-data.md` loads on (`data/**`, `**/raw/**`, `**/*.dta`, `**/*.sav`, `**/restricted/**`, `**/confidential/**`) and keep the ones your data-use agreement covers — denying all of `data/**` also blocks public data you may want Claude to read. Read/Edit deny rules cover Claude's file tools, the file commands Claude Code recognizes in Bash (`cat`, `head`, `tail`, `sed`, `tee`) and redirect targets, but not a command that reads files without naming them (`grep -r pattern .`) or a script that opens files itself — so they are a guardrail, not a proof: pair them with the rule's discipline (Claude writes code that runs *on* the data; it does not read the data) and with `/disclosure-check` before anything built on the data leaves the machine.
 
 ### `/permission-check` asks before reading `~/.claude/`
 
@@ -130,33 +179,29 @@ That's intentional. Host-global config can contain unrelated paths and secrets. 
 
 If `/permission-check` confirms your config is permissive but you're still being prompted, the built-in Claude Code skill **`/fewer-permission-prompts`** (Apr 2026) scans your transcripts for common read-only Bash and MCP tool calls and proposes a prioritized allowlist for `.claude/settings.json`. Pairs with our `/permission-check`: `permission-check` diagnoses; `fewer-permission-prompts` remediates.
 
-### Statusline shows `[UNKNOWN]` or blank
+### Statusline shows `?` or is blank
 
-Session JSON parse failure. Check `.claude/scripts/statusline.sh` is executable (`chmod +x`) and that `python3` is on `PATH`. Fallback output is `[?] <model> @ <pwd>` — if you see that, the hook caught a malformed session file. Restart Claude Code.
+Session JSON parse failure. Check `.claude/scripts/statusline.sh` is executable (`chmod +x`) and that `python3` is on `PATH`. Fallback output is `? @ <branch>` (no mode badge, `?` for the model) — if you see that, the script could not parse the session JSON. Restart Claude Code.
 
-### Bypass mode still prompts on edits to `.claude/`, `.git/`, `.vscode/` (v1.8.0)
+### Status line shows `gate:off`
 
-This is **not a bug.** Per Anthropic's [permission-modes docs](https://code.claude.com/docs/en/permission-modes), a small set of paths are *protected* and never auto-approved in any mode except `auto`. The protected list as of Apr 2026:
+The repo ships a pre-commit gate (`.githooks/pre-commit`), but git is not pointed at it, so a plain `git commit` skips every check — only `/commit` runs them. Run `./scripts/install-hooks.sh` once per clone (it sets `core.hooksPath` to `.githooks`) and the badge disappears.
 
-- Directories: `.git`, `.vscode`, `.idea`, `.husky`, `.claude` (carve-outs: `.claude/commands`, `.claude/agents`, `.claude/skills`, `.claude/worktrees` — these *do* auto-approve under bypass).
-- Files: `.gitconfig`, `.gitmodules`, `.bashrc`, `.bash_profile`, `.zshrc`, `.zprofile`, `.profile`, `.ripgreprc`, `.mcp.json`, `.claude.json`.
+### Edits to `.claude/`, `.git/`, `.vscode/` prompt (or go to the classifier)
 
-So edits to `.claude/references/`, `.claude/rules/`, `.claude/hooks/`, `.claude/scripts/` will always prompt under bypass. The only mode that doesn't fire an interactive prompt on protected paths is **auto mode** — which, since 2026-08-14, is the *default* starting mode for new interactive sessions on Pro, Max, and Team — protected-path writes route through a classifier model instead. The classifier is still a gate (it can block) — it's just not human-in-the-loop, so you don't get the click-through interruption. Auto mode is available on Pro, Max, and Team (and is the default starting mode for new interactive sessions there since 2026-08-14), plus Bedrock, Google Cloud's Agent Platform, and Microsoft Foundry with no opt-in flag; toggle visibility in the VSCode mode dropdown by setting `allowDangerouslySkipPermissions: true` in `.vscode/settings.json` and reloading the window.
+This is **not a bug.** Per Anthropic's [permission-modes docs](https://code.claude.com/docs/en/permission-modes) (re-verified 2026-09-26), writes to *protected paths* — `.git`, `.vscode`, `.idea`, `.husky`, `.devcontainer`, `.claude` (except `.claude/worktrees`), shell rc files, `.mcp.json`, `.claude.json`, and a few others — are never auto-approved by an allow rule. What happens depends on the mode: **prompted** in Manual and Accept-edits, **routed to the classifier** in auto mode, **denied** in dontAsk, and **allowed** only in bypass (and in terminal plan-mode sessions with bypass available). When a prompt fires for the project's `.claude/` folder, it offers a session-scoped "allow Claude to edit files in this project's .claude folder" option.
 
-Since **2026-08-14** auto mode is the **default starting mode** for new interactive sessions on Pro, Max, and Team, so most users now have it. If you are on a plan or provider without it, or you have deliberately pinned `bypassPermissions`, two workarounds:
+For batch edits under `.claude/rules/`, `.claude/references/`, `.claude/skills/`, or `.claude/agents/`, a single scripted edit through the Bash tool avoids one prompt per file. The template's own `root-of-trust-guard.py` hook **denies** shell writes into `.claude/settings*.json`, `.claude/hooks/`, and `.githooks/` — use Edit/Write there, so every change to a gate leaves a reviewable diff.
 
-1. **Edit through the Bash tool** — `python3 -c '...'` or `python3 << EOF ... EOF` heredoc patterns can write to `.claude/references/` etc. without firing the protected-paths gate, because Bash isn't subject to it the same way Edit is. Useful for batch refactors.
-2. **Move the edit out of `.claude/`** when possible — keep field-customization content under `templates/` or root-level documentation that's not protected.
+### VS Code: bypass mode doesn't take effect from `.vscode/settings.json`
 
-### `.vscode/settings.json` — `claudeCode.allowDangerouslySkipPermissions` is the wrong key (v1.8.0)
-
-The Claude Code VSCode extension expects **`allowDangerouslySkipPermissions: true`** (no `claudeCode.` prefix). The prefixed form `claudeCode.allowDangerouslySkipPermissions` is silently ignored, leaving the protected-paths gate active even with broad CLI bypass. Fix: drop the `claudeCode.` prefix on that one key (`claudeCode.initialPermissionMode` keeps its prefix). Reload the VSCode window after editing `.vscode/settings.json` for the change to register.
+The Claude Code VS Code extension reads **`claudeCode.allowDangerouslySkipPermissions`**, with the `claudeCode.` prefix; a bare `allowDangerouslySkipPermissions` key is never read. The setting adds Bypass permissions to the mode selector, and while it is off the extension downgrades a `bypassPermissions` start to Manual mode, so writes to protected paths still prompt. Both it and `claudeCode.initialPermissionMode` are machine-scoped: VS Code reads them only from your **user** settings and ignores values in the workspace `.vscode/settings.json`. To start new conversations in bypass, open user settings (`Cmd+,` → Extensions → Claude Code), set `"claudeCode.allowDangerouslySkipPermissions": true` and `"claudeCode.initialPermissionMode": "bypassPermissions"`, then reload the window. Use bypass only in a sandbox with no internet access.
 
 ## Peer-review pipeline (v1.5.0)
 
 ### `/review-paper --peer AER` fails with "journal not found"
 
-The target must be in [`.claude/references/journal-profiles.md`](.claude/references/journal-profiles.md). Ships with AER / QJE / JPE / ECMA / ReStud. To add your field's journal, copy [`templates/journal-profile-template.md`](templates/journal-profile-template.md) into `journal-profiles.md` and fill in the 7 schema sections (focus, bar, domain adjustments, methods adjustments, typical concerns, referee-pool weights, optional table format).
+The target must be in [`.claude/references/journal-profiles.md`](.claude/references/journal-profiles.md). Ships with eight profiles: AER / QJE / JPE / ECMA / ReStud (economics) and APSR / AJPS / JOP (political science). To add your field's journal, copy [`templates/journal-profile-template.md`](templates/journal-profile-template.md) into `journal-profiles.md` and fill in the 7 schema sections (focus, bar, domain adjustments, methods adjustments, typical concerns, referee-pool weights, optional table format).
 
 ### Referees return near-identical reports
 
@@ -164,17 +209,17 @@ They weren't dispositioned. The editor agent should select **two different** dis
 
 ### R&R follow-up loses prior round context
 
-Use `--r2` / `--r3` to continue a prior review. The editor agent reloads the previous `quality_reports/peer_review_*/decision.md` and classifies each revision (addressed / partially / deferred / disagreement). If the prior decision file is missing or renamed, the chain breaks — start fresh with `--peer`.
+Use `--peer <journal> --r2` / `--r3` to continue a prior review. The editor skips the fresh desk review, reloads the prior round's reports (`quality_reports/peer_review_<paper>/desk_review.md`, `referee_domain.md`, `referee_methods.md`), and reuses the same referee dispositions and peeves; each referee then classifies every prior major concern as Resolved / Partial / Not addressed. If those prior-round reports are missing or renamed, the chain breaks — start fresh with `--peer`.
 
 ## Surface-sync gate (v1.6.0)
 
-### `/commit` fails at Step 0b with "count drift detected"
+### `/commit` fails at Step 0b with "DRIFT DETECTED"
 
-`scripts/check-surface-sync.sh` detected a count mismatch (skills / agents / rules / hooks) across docs. The script reports which surface has the stale number. Fix every surface the script flags, then re-run. **Do not bypass** — the gate exists because manual `replace_all` has missed sibling phrasings three times (PRs #70/#76/#78 in v1.5.x).
+Step 0b runs `./scripts/backtest.sh`. Its surface-sync gate (`scripts/check-surface-sync.py`) found that a count claimed in the docs, or the number of rows in a `<!-- surface-sync-table -->` table, does not match what is on disk (skills / agents / rules / hooks). It lists each stale surface as `file:line  asserts N <kind> (actual: M)`. Fix every surface it flags, then re-run `./scripts/backtest.sh` (or `python3 scripts/check-surface-sync.py` alone). If a different gate is red, read that gate's own output. **Do not bypass** — the gate exists because manual `replace_all` has missed sibling phrasings three times (PRs #70/#76/#78 in v1.5.x).
 
 ### Adding a new skill / agent / rule breaks the gate
 
-Expected. The gate counts `.claude/skills/` on disk vs prose assertions. After adding a skill, update the counts in README.md, CLAUDE.md (if mentioned), `guide/workflow-guide.qmd`, `docs/index.html` og:description, and `templates/skill-template.md`. The script tells you which are stale.
+Expected. The gate counts `.claude/skills/` on disk vs prose assertions, and requires each `<!-- surface-sync-table: ... -->` table in README.md to have exactly one row per item on disk. After adding a skill, add its row to the README.md skills table (for an agent, the agents table), then update the counts in README.md, CLAUDE.md (if mentioned), `guide/workflow-guide.qmd` and both rendered copies (`guide/workflow-guide.html`, `docs/workflow-guide.html`), `docs/index.html` (og:description and the "What you get" section), `templates/skill-template.md`, and `.claude/skills/commit/SKILL.md`. The script tells you which are stale; re-run it until it exits 0.
 
 ## Pre-Flight Reports (v1.6.0)
 
@@ -216,15 +261,15 @@ Resolution: supply a canonical source (DOI / arXiv / repo path), or accept the `
 
 If the invoking skill doesn't return after launching `claim-verifier`, check:
 
-1. `Task` tool is available to the invoking skill (check its `allowed-tools` in `SKILL.md`).
-2. The agent's `allowed-tools` include what it needs (`WebFetch`, `WebSearch`, `Read`).
+1. The `Agent` tool (legacy alias `Task`) is available to the invoking skill (check its `allowed-tools` in `SKILL.md`).
+2. The agent's `tools:` frontmatter in `.claude/agents/<name>.md` includes what it needs (`WebFetch`, `WebSearch`, `Read`).
 3. Network access: WebSearch + WebFetch require internet; on an offline fork they must be disabled or the verifier gated behind a check.
 
 If blocked, bypass with `--no-verify` for the current run. File an issue if the hang persists.
 
 ### Opting out of Post-Flight
 
-Every affected skill accepts `--no-verify` to skip the Post-Flight step. Use when:
+Every affected skill except `/review-paper` accepts `--no-verify` to skip the Post-Flight step. `/review-paper` has no `--no-verify`: pass `--no-novelty-check` to turn off the `--peer` novelty probe, which also removes its Post-Flight step (whenever the probe runs, Post-Flight is mandatory). Use when:
 
 - You are iterating rapidly and verifying yourself.
 - You have already fact-checked the sources manually.
@@ -238,11 +283,11 @@ Do **not** opt out when:
 
 ## `check-skill-integrity` failures
 
-The surface-sync gate now chains `check-skill-integrity.py` after the count-sync check. It runs four mechanical parity checks (frontmatter↔body tools, argument-hint↔body flags, internal anchor resolution, rule↔skill keyword parity) and reports P0/P1/P2 findings per file.
+The surface-sync gate now chains `check-skill-integrity.py` after the count-sync check. It runs five mechanical checks (frontmatter↔body tools, argument-hint↔body flags, internal anchor resolution, rule↔skill keyword parity, and completeness of the `RULE_KEYWORDS` registry — every rule scoped to `.claude/skills/` must be registered) and reports P0/P1/P2 findings per file.
 
 ### P0: body invokes tool X but frontmatter allowed-tools is [...]
 
-The skill's Steps/Workflow section says to use a tool (typically `Task` to spawn an agent, or `Edit`/`Write`/`MultiEdit`/`NotebookEdit`) but the frontmatter `allowed-tools` array doesn't list it. Runtime behavior: the skill will hit a tool-permission error or silently skip the step. Fix: add the missing tool to `allowed-tools`.
+The skill's Steps/Workflow section says to use a tool (typically `Agent`, or its legacy alias `Task`, to spawn an agent, or `Edit`/`Write`/`MultiEdit`/`NotebookEdit`) but the frontmatter `allowed-tools` array doesn't list it. Runtime behavior: the skill will hit a tool-permission error or silently skip the step. Fix: add the missing tool to `allowed-tools`.
 
 ### P1: anchor `#foo` not found in path/to/file.md
 

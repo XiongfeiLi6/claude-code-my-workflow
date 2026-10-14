@@ -47,7 +47,7 @@ STATE_THRESHOLDS = [
      "Context usage is approximately {p:.0f}% (coarse proxy). Per token-economy.md §5: append the session log entry and update the active plan's status/phase on disk now, so a later compaction costs a summary rather than a decision."),
     (75, "compress",
      "🗜️ Context ~{p:.0f}% (approx) — finish the current phase, then /compress-session or /checkpoint; do not start a new phase.",
-     "Context usage is approximately {p:.0f}% (coarse proxy). Per token-economy.md §5: finish the current phase with its files written, run /compress-session (or /checkpoint), and do not open a new phase before compaction."),
+     "Context usage is approximately {p:.0f}% (coarse proxy). Per token-economy.md §5: finish the current phase with its files written, suggest that the user run /compress-session (or /checkpoint) — both are user-invoked; you cannot run them yourself — and do not open a new phase before compaction."),
 ]
 LEARN_THRESHOLDS = [t for t, _, _, _ in STATE_THRESHOLDS]   # kept for the cache key format
 THRESHOLD_WARN = 80

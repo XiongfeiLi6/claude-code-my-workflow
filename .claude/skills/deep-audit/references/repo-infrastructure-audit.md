@@ -15,18 +15,20 @@ Run a comprehensive consistency audit across the entire repository, fix all issu
 
 ### PHASE 0: Mechanical checks (run FIRST, cheap, deterministic)
 
-Before spawning agents, run the mechanical parity checks:
+Before spawning agents, run the full mechanical battery, then the skill-integrity gate on its own for per-check detail:
 
 ```bash
-python3 scripts/check-skill-integrity.py --verbose
+./scripts/backtest.sh
+python3 scripts/check-skill-integrity.py --verbose   # backtest gate 2, verbose
 ```
 
-This catches four classes of bug that agent-based audits have historically missed:
+`check-skill-integrity.py` catches five classes of bug that agent-based audits have historically missed:
 
 1. Frontmatter `allowed-tools` ↔ body tool-invocation parity (e.g. body spawns `Task` but `Task` not in `allowed-tools` — the v1.7.0 PR #92 miss).
 2. `argument-hint` ↔ body flag parity (flags documented but not advertised, or vice versa).
 3. Internal markdown anchors resolve (no broken `[text](path#anchor)` links — the `#category-11-numerical-discipline` miss on PR #87).
 4. Rule `paths:` ↔ skill implementation parity (rule claims skill follows protocol but skill body has none of the protocol keywords — the `/interview-me` miss on PR #92).
+5. Rule-keyword registry completeness (check 4 only sees rules registered in `RULE_KEYWORDS`, so any rule scoping itself to `.claude/skills/` must be registered, with keywords or with an explicit `[]` and the reason it is not keyword-checkable).
 
 If Phase 0 reports P0 or P1 findings, fix them (or tune the regex if they are false positives) **before** launching the 4 agents. The mechanical layer is cheaper and more precise than agent prompts for these classes.
 
@@ -44,7 +46,7 @@ Focus: `guide/workflow-guide.qmd`
 - No stale counts from previous versions
 
 #### Agent 2: Executable Code Quality
-Focus: **all** executable code in the repo — `.claude/hooks/*.py`, `.claude/hooks/*.sh`, `scripts/*.py`, `scripts/*.sh`, `.claude/scripts/*.sh`. Not just `.claude/hooks/` — when PR #93 added new code under `scripts/`, the original narrow scope meant Copilot + Codex caught 5 bugs the audit missed.
+Focus: **all** executable code in the repo — `.claude/hooks/*.py`, `.claude/hooks/*.sh`, `scripts/*.py`, `scripts/*.sh`, `.claude/scripts/*.sh`, `.githooks/pre-commit`. Not just `.claude/hooks/` — when PR #93 added new code under `scripts/`, the original narrow scope meant Copilot + Codex caught 5 bugs the audit missed.
 
 Hook-specific checks (Stop/PreToolUse/SessionStart protocols, `CLAUDE_PROJECT_DIR` usage, hash-length consistency) apply only to `.claude/hooks/`. Everything below applies to ALL executable code:
 
@@ -54,24 +56,23 @@ Hook-specific checks (Stop/PreToolUse/SessionStart protocols, `CLAUDE_PROJECT_DI
 - **Docstring-claim ↔ implementation parity.** If a function's docstring describes "bidirectional parity" / "fail-open" / "exits 1 on X", the implementation must match. Common drift: one-directional implementation of a claimed-bidirectional contract; exit codes documented as one thing but returning another.
 - **Config-map entries point at live targets.** Keyword dicts, path maps, and rule registries should not contain dead entries (e.g. rule files that don't exist, fields the script doesn't actually read). Dead entries mislead maintainers.
 - JSON input/output correctness (stdin for input, stdout/stderr for output) [hooks only]
-- Exit code correctness. Two valid blocking protocols for Stop/PreToolUse hooks:
-  (a) **exit 2 + reason on stderr** — legacy, still supported
-  (b) **exit 0 + JSON `{"decision": "block", "reason": "..."}` on stdout** — modern; this is what `log-reminder.py` uses and it works correctly
-  Non-blocking hooks always exit 0. PreCompact hooks MUST exit 0 (stdout is discarded by the harness — use stderr for diagnostics)
+- Exit code correctness. Blocking protocols differ by hook event:
+  - **Stop:** (a) **exit 2 + reason on stderr** — legacy, still supported; (b) **exit 0 + JSON `{"decision": "block", "reason": "..."}` on stdout** — modern; this is what `log-reminder.py` uses and it works correctly
+  - **PreToolUse:** (a) **exit 2 + reason on stderr** — legacy, still supported; (b) **exit 0 + JSON `{"hookSpecificOutput": {"hookEventName": "PreToolUse", "permissionDecision": "deny", "permissionDecisionReason": "..."}}` on stdout** — modern; this is what `git-guardrails.py` and `root-of-trust-guard.py` use. A top-level `{"decision": "block"}` on a PreToolUse hook is the deprecated form, not the modern one
+  - Non-blocking hooks always exit 0. On PreCompact, exit 2 **blocks compaction** — use it only when blocking is the point; plain stdout goes to the debug log, so a user-visible note goes out as a JSON `systemMessage` and diagnostics go to stderr
 - `from __future__ import annotations` for Python 3.8+ compatibility
 - Correct field names from hook input schema (`source` not `type` for SessionStart)
-- PreCompact hooks print to stderr (stdout is ignored)
 
 #### Agent 3: Skills and Rules Consistency
 Focus: `.claude/skills/*/SKILL.md` and `.claude/rules/*.md`
 - Valid YAML frontmatter in all files
-- No stale `disable-model-invocation: true`
+- `disable-model-invocation: true` only on user-invoked skills (side effects, long or interactive runs) — and no other skill's body *invokes* such a skill (it cannot; it must Read that `SKILL.md` and follow it)
 - `allowed-tools` values are sensible
-- **`allowed-tools` actually covers every tool the skill body invokes.** For every `Agent` spawn, `Bash` command, `Write`/`Edit` call mentioned in the skill's Steps / Phases / Workflow body, verify the tool appears in the `allowed-tools` array. Common miss: skill body says "spawn `agent-X` via the `Agent` tool with `context=fork`" but `Task` is absent from `allowed-tools` — runtime permission error or silent bypass. Caught this class of bug after Codex/Copilot flagged it on PR #92 (4 skills promised `Task` in their Post-Flight sections but 3 of 4 had no `Task` permission).
+- **`allowed-tools` actually covers every tool the skill body invokes.** For every `Agent` spawn, `Bash` command, `Write`/`Edit` call mentioned in the skill's Steps / Phases / Workflow body, verify the tool appears in the `allowed-tools` array. Common miss: skill body says "spawn `agent-X` via the `Agent` tool with `context=fork`" but `Agent` (alias `Task`) is absent from `allowed-tools` — runtime permission error or silent bypass. Caught this class of bug after Codex/Copilot flagged it on PR #92 (4 skills promised `Task` in their Post-Flight sections but 3 of 4 had no `Task` permission).
 - **Rule `paths:` scope matches skill implementation.** If rule X lists skill Y in `paths:`, verify skill Y actually implements the protocol rule X mandates. A rule claiming a skill follows a protocol is meaningless if the skill doesn't.
 - Rule `paths:` reference existing directories
 - No contradictions between rules
-- CLAUDE.md skills table matches actual skill directories 1:1
+- README.md's skills table matches the skill directories 1:1 (`check-surface-sync.py` enforces it), and every skill named in CLAUDE.md's quick reference exists
 - All templates referenced in `.claude/rules/*.md` and the guide (`guide/workflow-guide.qmd`) exist in `templates/`
 
 #### Agent 4: Cross-Document Consistency
@@ -116,12 +117,13 @@ If `guide/workflow-guide.qmd` was modified:
 ```bash
 quarto render guide/workflow-guide.qmd
 cp guide/workflow-guide.html docs/workflow-guide.html
+./scripts/stamp-render.sh   # re-stamp .render-stamp, or the staleness gate fails
 ```
 
 ### PHASE 5: Loop-until-dry or Declare Clean
 
 After fixing, launch a fresh set of 4 agents to verify. This is the **loop-until-dry** primitive ([`orchestrator-protocol.md`](../../../rules/orchestrator-protocol.md)):
-- **Converge** when a round surfaces **0 new genuine issues** (deduped on file+issue) — declare clean and report summary.
+- **Converge** after **2 consecutive rounds** surface **0 new genuine issues** (deduped on file+issue) — declare clean and report summary.
 - If new issues found → fix and loop again.
 - **Fallback cap: 5 loops** bounds a non-converging audit (prevents infinite cycling); a finding that survives rounds N and N+2 is escalated to the user rather than re-patched ([`summary-parity.md`](../../../rules/summary-parity.md)).
 
@@ -178,11 +180,19 @@ then cannot write a valid report has wasted the whole pass:
 echo '[]' | python3 scripts/validate-findings.py
 ```
 
-Then, before presenting any summary:
+Reviewer agents are read-only, so **this skill writes the files**. For each reviewer's final
+response: save the prose report to this skill's report path for that reviewer, copy its closing fenced `json` block
+to a scratch file, and fill the ids while validating:
 
 ```bash
-python3 scripts/validate-findings.py <report>.json   # exit 0 required
+python3 scripts/validate-findings.py --fill-ids block.json > <report>.json.tmp \
+  && mv <report>.json.tmp <report>.json || rm -f <report>.json.tmp   # exit 0 required; a failed run keeps no file
+python3 scripts/validate-findings.py --check-quotes <report>.json   # each quote must be the file's own text (orchestration-schemas.md §1)
 ```
+
+A reviewer that returned no `json` block, or a block that does not validate, has not reviewed:
+re-dispatch it once with the validator's error text, then report the lens as missing rather
+than reducing without it.
 
 What the contract forces, and why:
 
@@ -199,5 +209,5 @@ What the contract forces, and why:
 Apply the **per-lens evidence burdens** and the **"does NOT count" filters** in
 [`orchestration-schemas.md` §7](../../../references/orchestration-schemas.md) *before*
 verification, so known false alarms never reach the judge. The verifier pass is
-**refute-biased**: only `verdict: "confirmed"` findings ship; anything it cannot ground is
+**refute-biased** and sets each finding's `verdict` (reviewers leave it unset): only `verdict: "confirmed"` findings ship; anything it cannot ground is
 dropped, not downgraded to a warning.

@@ -3,7 +3,6 @@ name: respond-to-eval
 description: Turn student course evaluations (free-text + numeric) into an actionable teaching-improvement plan — the teaching analogue of /respond-to-referees. Clusters comments into themes, separates signal from noise, classifies each theme Keep / Change / Investigate / Out-of-scope, and drafts concrete changes mapped to the syllabus and slide decks. Use when user says "respond to my evals", "what do these course evaluations tell me", "turn my teaching feedback into a plan", or after a semester's evals arrive.
 argument-hint: "[eval-file(s)] [prior-plan-path] [--min-mentions N] [--no-verify]"
 allowed-tools: ["Read", "Write", "Grep", "Glob", "Bash", "Agent", "Task"]
-effort: high
 ---
 
 # Respond to Evaluations
@@ -18,7 +17,7 @@ Convert a semester's course evaluations into a defensible teaching-improvement p
 - Assembling a teaching dossier / tenure file where you must *show* you acted on feedback.
 - Mid-stream (early-semester feedback) to course-correct before the term ends.
 
-Not for: writing the syllabus from scratch (compose with `/create-lecture` and a course outline), or reviewing one deck's pedagogy (use `/pedagogy-review`).
+Not for: writing the syllabus from scratch (use `/syllabus`), or reviewing one deck's pedagogy (use `/pedagogy-review`).
 
 ## Inputs
 
@@ -28,10 +27,10 @@ Not for: writing the syllabus from scratch (compose with `/create-lecture` and a
 | Format | How to read |
 | --- | --- |
 | `.csv`, `.tsv`, `.txt`, `.md` | `Read` directly; for CSV, note which column is numeric vs free-text. |
-| `.pdf` | `TMP=$(mktemp -t evals).txt && pdftotext "$0" "$TMP"` (poppler). Read/grep `"$TMP"`. |
-| `.docx` | `TMP=$(mktemp -t evals).txt && pandoc "$0" -t plain -o "$TMP"`. |
+| `.pdf` | `TMP=$(mktemp -d)/evals.txt && pdftotext "$0" "$TMP"` (poppler). Read/grep `"$TMP"`. |
+| `.docx` | `TMP=$(mktemp -d)/evals.txt && pandoc "$0" -t plain -o "$TMP"`. |
 
-If extraction fails or a tool is missing, ask for a plain-text export and stop.
+If extraction fails or a tool is missing, ask for a plain-text export and stop. A scanned or partly scanned PDF extracts with exit 0 and blank pages, so also compare `pdfinfo "$0" | grep Pages` with the pages that returned text (`awk 'BEGIN{RS="\f"} NF{n++} END{print n+0}' "$TMP"`); read any blank pages directly with Read, or ask for a text version, and if you go on without them, say which pages were not read. When you are done, delete the extracted copy (`rm -rf "$(dirname "$TMP")"`): it is a plaintext copy of the document.
 
 ## Phases
 
@@ -85,7 +84,7 @@ The plan is a deliverable, not a transient report, so it lives under `quality_re
 
 ### Phase 3.5: Post-Flight Verification (quotes + targets)
 
-The plan's hallucination-prone content is (a) verbatim quotes attributed to students and (b) "edit syllabus §X / LectureNN slide K" targets that must actually exist. Run the forked-verifier protocol in [`.claude/rules/post-flight-verification.md`](../../rules/post-flight-verification.md): spawn `claim-verifier` (`context: fork`) with the quotes + the eval source and the edit-targets + the syllabus/deck paths. Reconcile — a quote that isn't in the source, or a "slide K" that doesn't exist, is corrected or dropped before the plan is final. Opt-out: `--no-verify` (not recommended).
+The plan's hallucination-prone content is (a) verbatim quotes attributed to students and (b) "edit syllabus §X / LectureNN slide K" targets that must actually exist. Run the fresh-context verifier protocol in [`.claude/rules/post-flight-verification.md`](../../rules/post-flight-verification.md): spawn `claim-verifier` (fresh context, never a conversation fork) with the quotes + the eval source and the edit-targets + the syllabus/deck paths. Reconcile — a quote that isn't in the source, or a "slide K" that doesn't exist, is corrected or dropped before the plan is final. Opt-out: `--no-verify` (not recommended).
 
 ## Output / Report
 
@@ -117,7 +116,7 @@ If all themes are classified and every Change names a target, say `All themes cl
 - [`.claude/skills/respond-to-referees/SKILL.md`](../respond-to-referees/SKILL.md) — the research analogue; this skill borrows its map-classify-respond shape and "signal to investigate, not auto-act" posture.
 - [`.claude/skills/pedagogy-review/SKILL.md`](../pedagogy-review/SKILL.md) — once a **Change** targets a specific deck, run pedagogy-review on it before re-teaching.
 - [`.claude/skills/create-lecture/SKILL.md`](../create-lecture/SKILL.md) — to execute deck-level changes the plan proposes.
-- [`.claude/rules/post-flight-verification.md`](../../rules/post-flight-verification.md) — the forked-verifier protocol Phase 3.5 reuses.
+- [`.claude/rules/post-flight-verification.md`](../../rules/post-flight-verification.md) — the fresh-context verifier protocol Phase 3.5 reuses.
 - [`templates/skill-template.md`](../../../templates/skill-template.md) — house style for skills.
 
 ## What this skill does NOT do

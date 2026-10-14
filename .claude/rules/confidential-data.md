@@ -22,6 +22,15 @@ This is a **template** — replace the placeholder thresholds and providers with
 2. **Nothing leaves without disclosure clearance.** Any table, figure, coefficient, or count built on restricted data must pass disclosure-avoidance review *before* it appears in a draft, a slide, a commit, or an email. Pre-screen with [`/disclosure-check`](../skills/disclosure-check/SKILL.md); the data provider's official review is still mandatory and final.
 3. **Access is per-person, per-agreement.** A co-author without the DUA cannot receive the data, the identifiers, or outputs that fail disclosure rules. Handoffs ([`/coauthor-brief`](../skills/coauthor-brief/SKILL.md)) carry *instructions to obtain access*, never the data.
 
+## Keep restricted data off the model
+
+Anything Claude reads is sent to the model provider, so "never leaves the machine" includes the model's context. Claude writes code that runs *on* the data; it does not read the data.
+
+- **Deny rules hold in every permission mode, bypass included.** Add `Read`/`Edit` deny rules for your restricted paths — a paste-ready block is in [TROUBLESHOOTING.md → "Keep restricted data off the model"](../../TROUBLESHOOTING.md#keep-restricted-data-off-the-model). They cover Claude's file tools, not every shell command, so they back up this rule rather than replace it.
+- **External capture tools record your session.** Memory and observability add-ons (e.g. ai-memory, MemPalace, claude-mem, hosted tracing) store prompts, and some store tool output and shell output. On a restricted-data project use none, or one with an explicit allowlist that excludes these paths — and check where its store lives.
+- **Claude Code keeps its own record of the session.** Transcripts, including tool output word for word, sit in `~/.claude/projects/<project>/`, and earlier copies of edited files in `~/.claude/file-history/`, until Claude Code's cleanup (`cleanupPeriodDays`, 30 days by default; sessions from Claude Desktop or Cowork are kept at any age unless `desktopSessionCleanupPeriodDays` is set). Two stores are never swept: your typed and pasted prompts in `~/.claude/history.jsonl` (large pastes also land in `~/.claude/paste-cache/`), and the project's auto memory in `~/.claude/projects/<project>/memory/`. If restricted content entered a session, do not `--resume` or `/checkpoint` it: run `claude project purge <path>` (preview with `--dry-run`), which removes the project's transcripts, file history, auto memory and its lines in `history.jsonl`, then clear `paste-cache/` and the session scratchpad, which it does not touch. Your data-use agreement's destruction terms cover all of these copies.
+- **External-model consults upload what you attach.** [`/oracle-review`](../skills/oracle-review/SKILL.md) sends the files you attach to another vendor — your own paper and code are fine to send; a manuscript or proposal you are reviewing for a journal or funder is not, and neither are restricted microdata or outputs that have not cleared disclosure review.
+
 ## Disclosure avoidance (the short version)
 
 The thresholds your provider enforces — encode them in `/disclosure-check`'s config:
@@ -40,7 +49,7 @@ If the data is human-subjects: record the IRB protocol number, the approved use,
 ## Multi-author git topology (restricted-data-safe collaboration)
 
 - **Feature branches per author**, merged via PR — the same flow the rest of the template uses; no author force-pushes shared history (the [`git-guardrails`](../hooks/git-guardrails.py) hook blocks `--force` and `git add -A`, which is how raw data usually leaks into a commit).
-- **`MEMORY.md` syncs via git; native auto memory (`~/.claude/projects/<project>/memory/`) stays machine-local** (`meta-governance.md`). Machine-specific restricted-data *paths* live in personal-memory, never in committed files.
+- **`MEMORY.md` syncs via git; native auto memory (`~/.claude/projects/<project>/memory/`) stays machine-local** (`meta-governance.md`). Machine-specific restricted-data *paths* live in native auto memory, never in committed files.
 - A collaborator joining a restricted-data project gets a [`/coauthor-brief`](../skills/coauthor-brief/SKILL.md) with environment setup ([`/capture-environment`](../skills/capture-environment/SKILL.md) lockfiles) and **access-request steps**, not a data drop.
 - Enable strict path-leak protection while in restricted dirs: `CLAUDE_STRICT_PATHS=1` makes `git-guardrails` *deny* (not just warn) hardcoded machine paths in code.
 

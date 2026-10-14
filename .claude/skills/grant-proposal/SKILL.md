@@ -1,10 +1,9 @@
 ---
 name: grant-proposal
 description: Scaffold a research grant proposal (NSF, NIH, ERC, or foundation) by composing existing primitives — pulls identification strategy from an `/interview-me` spec, delegates the data-management plan to `/data-management-plan` and the facilities statement to `/capture-environment`, and emits a funder-requirements checklist. Use when user says "draft a grant", "write a proposal", "NSF proposal", "NIH aims", "ERC application", "foundation grant", "specific aims", or "scaffold a grant proposal". NOT a submission tool — produces a draft the user uploads to the sponsor's portal themselves.
-argument-hint: "[--funder nsf|nih|erc|foundation] [--input <spec>] [--out <dir>] [--no-verify]"
+argument-hint: "[--funder nsf|nih|erc|foundation] [--call <file>] [--input <spec>] [--out <dir>] [--no-verify]"
 disable-model-invocation: true
 allowed-tools: ["Read", "Grep", "Glob", "Write", "Agent", "Task"]
-effort: high
 ---
 
 # /grant-proposal — Research Grant Proposal Scaffolder
@@ -28,7 +27,7 @@ Compose a funder-shaped grant proposal draft from primitives you already have: a
 
 ## Funder profiles
 
-Generic across sponsors via placeholder profiles. `--funder` selects the section set + naming; default is `nsf`.
+Generic across sponsors via placeholder profiles. `--funder` selects the section set + naming; default is `nsf`. The profiles are fallbacks for when no call is supplied: the program's own call (`--call`) always wins.
 
 | Funder | Core sections (named per sponsor) | Page/format signals |
 |---|---|---|
@@ -45,8 +44,9 @@ Economics framing is the primary lens (DiD/event-study, IV, RCT, panel; AEA Data
 
 1. Resolve `--funder` (or infer from the request wording; default `nsf`). Echo the chosen profile back before drafting.
 2. Locate the research spec: `--input <path>`, else the most recent `quality_reports/specs/research_spec_*.md` from `/interview-me`. If none exists, **stop and recommend `/interview-me`** — do not invent the science.
-3. From the spec, extract: research question, hypotheses (directional), identification strategy (DiD / IV / RDD / RCT / structural), data sources, sample, expected results, contribution. Record any `paper_type:` field.
-4. Scan `quality_reports/` for adjacent artifacts to reuse: a `/lit-review` synthesis (prior work), a `/preregister` PAP (analysis plan), a `passport.yaml` or `/data-analysis` outputs (preliminary results).
+3. From the spec, extract: research question, hypotheses (directional), identification strategy (DiD / IV / RDD / RCT / structural), data sources, sample, expected results, contribution. Record the spec's `**Paper type:**` value if present (the header line `/interview-me` writes; accept a `paper_type:` field in a hand-written spec too).
+4. **The program's call.** Ask once for the actual solicitation, NOFO, RFP or work-programme text (`--call <file>`, PDF or text — Read handles both). When given, take from it the required sections and documents, the page or word limits, and the review criteria, quoting its wording with a page reference; never paraphrase a limit. When none is given, continue with the generic profile and say so in the output header.
+5. Scan `quality_reports/` for adjacent artifacts to reuse: a `/lit-review` synthesis (prior work), a `/preregister` PAP (analysis plan), a `passport.yaml` or `/data-analysis` outputs (preliminary results).
 
 ### Phase 1 — Scaffold sections from templates + the spec
 
@@ -64,7 +64,7 @@ For every MUST slot the spec did not supply, write `[CLARIFY: <specific question
 
 ### Phase 2 — Compose the DMP and computational statements (delegate)
 
-1. **Data Management (& Sharing) Plan** — invoke [`/data-management-plan`](../data-management-plan/SKILL.md) via the `Agent` tool with the funder + data sources from the spec. It returns the DMP section (repository choice — openICPSR / Dataverse / Zenodo, access/retention, FAIR/DCAS alignment). If any data source is sensitive (restricted-use admin data, PII, IRB-restricted), have it honor [`.claude/rules/confidential-data.md`](../../rules/confidential-data.md) and describe access via a secure enclave / FSRDC rather than open release. **Do not draft a sharing plan that promises to release confidential data.**
+1. **Data Management (& Sharing) Plan** — spawn an `Agent` that reads [`/data-management-plan`](../data-management-plan/SKILL.md)'s `SKILL.md` and follows it with the funder + data sources from the spec (that skill is user-invoked only — `disable-model-invocation` — so it is followed, not invoked). It returns the DMP section (repository choice — openICPSR / Dataverse / Zenodo, access/retention, FAIR/DCAS alignment). If any data source is sensitive (restricted-use admin data, PII, IRB-restricted), have it honor [`.claude/rules/confidential-data.md`](../../rules/confidential-data.md) and describe access via a secure enclave / FSRDC rather than open release. **Do not draft a sharing plan that promises to release confidential data.**
 2. **Facilities / Computational-Environment statement** — invoke [`/capture-environment`](../capture-environment/SKILL.md) via the `Agent` tool to produce the compute/software/dependency statement (cluster, R/Stata/Python toolchain, `renv.lock` / `DESCRIPTION` / `requirements.txt` provenance) for the Facilities section.
 
 If a delegate skill is unavailable, leave a `[DELEGATE: /data-management-plan]` placeholder rather than half-writing its output.
@@ -77,11 +77,11 @@ The differentiating step. Cross-check the assembled draft and report mismatches:
 - **Methods ↔ Budget** — each cost line traces to an aim (e.g. an RCT aim implies a participant-incentives line; admin data implies an acquisition/enclave line; a large simulation implies a compute line).
 - **Aims ↔ Timeline** — every aim has at least one milestone; no milestone is unattributed.
 - **DMP ↔ Methods** — the data named in Methods matches the data described in the DMP; confidential sources are not promised as open.
-- **Page/format budget** — flag sections likely to overflow the funder's page limit (NSF 15-page Project Description, NIH 1-page Aims).
+- **Page/format budget** — flag sections likely to overflow the page limit — the call's own limits when one was given, else the profile's (NSF 15-page Project Description, NIH 1-page Aims). With a call, also confirm every required section is present and every review criterion is addressed somewhere, citing the call's page.
 
 ### Phase 4 — Post-flight verification + output
 
-- **Post-flight (CoVe):** if Background/Significance cites prior literature, run the Post-Flight protocol from [`.claude/rules/post-flight-verification.md`](../../rules/post-flight-verification.md) — spawn `claim-verifier` via the `Agent` tool (`context: fork`) on the citations. Surface PASS / PARTIAL / FAIL. Skip on `--no-verify` or zero citations.
+- **Post-flight (CoVe):** if Background/Significance cites prior literature, run the Post-Flight protocol from [`.claude/rules/post-flight-verification.md`](../../rules/post-flight-verification.md) — spawn `claim-verifier` via the `Agent` tool (fresh context, never a conversation fork) on the citations. Surface PASS / PARTIAL / FAIL. Skip on `--no-verify` or zero citations.
 - **Write** sections to `--out` (default `quality_reports/grants/YYYY-MM-DD_<slug>/`), one Markdown file per section plus `checklist.md`.
 
 ## Output / Report format
@@ -92,6 +92,7 @@ A `proposal_draft.md` (concatenated sections) plus a `checklist.md`:
 # Grant Proposal Draft — [Title]
 **Funder:** NSF | NIH | ERC | foundation     **Date:** YYYY-MM-DD
 **Source spec:** quality_reports/specs/research_spec_<slug>.md
+**Call:** <path> (read YYYY-MM-DD) | NOT PROVIDED — structure from the generic <funder> profile
 
 ## Funder-Requirements Checklist
 | Requirement | Status | Source |
@@ -124,7 +125,8 @@ Claims extracted: N · Verified: N · Outcome: PASS / PARTIAL / FAIL
 ## Flags
 
 - `--funder` `<nsf|nih|erc|foundation>` — Select the funder profile that shapes section structure and the requirements checklist.
-- `--input` `<spec>` — Path to an existing `/interview-me` research spec to seed Aims and Methods (otherwise the skill elicits them).
+- `--call` `<file>` — The program's solicitation / NOFO / RFP (PDF or text). Its required sections, limits and review criteria override the generic profile. Default: none — the generic profile is used and the header says so.
+- `--input` `<spec>` — Path to an `/interview-me` research spec to seed Aims and Methods. Default: the newest `quality_reports/specs/research_spec_*.md`; if none exists, stop and recommend `/interview-me`.
 
 ## Cross-references
 
