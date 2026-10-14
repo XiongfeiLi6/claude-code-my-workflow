@@ -11,7 +11,8 @@ If you have forked this template, see the **Upgrading** section at the bottom fo
 Upstream v2.6.0 (with its 2026-09-27 fixes) merged into this fork. On top of upstream this fork
 carries 16 curated third-party/local skills and 3 local rules.
 
-**Inventory: 77 skills, 18 agents, 40 rules, 11 hooks, 10 gates** (upstream v2.6.0: 61 / 18 / 37 / 11 / 10).
+**Inventory at release: 77 skills, 18 agents, 40 rules, 11 hooks, 10 gates** (upstream v2.6.0: 61 / 18 / 37 / 11 / 10).
+The hook battery runs 312 cases, seconds to run.
 
 ### Kept from the fork over upstream
 - `/commit` keeps quick mode by default and `full` mode (verifier, PR, merge) on request; upstream's
@@ -20,6 +21,9 @@ carries 16 curated third-party/local skills and 3 local rules.
 - `context-monitor.py` keeps the fork's 50 % save-state / 75 % compress nudges; the 75 % nudge now
   asks the user to run `/compress-session` or `/checkpoint`, which are user-invoked, following
   upstream's fix to the same defect in its `/learn` nudge.
+- `check-spec-conformance.py` reports `/review-pap` and `/review-paper-full` (vendored verbatim
+  from Backman) above 500 lines as an advisory, not a violation, so pulling his updates never conflicts
+  with a local split. `check-repo-hygiene.py` allows the fork's top-level `writing/`.
 
 ---
 

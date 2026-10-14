@@ -14,6 +14,10 @@ SPEC_FIELDS = {"name","description","license","compatibility","metadata","allowe
 CC_ONLY = {"when_to_use","argument-hint","arguments","disable-model-invocation","user-invocable",
            "disallowed-tools","model","effort","context","agent","background","hooks","paths","shell"}
 NAME_RE = re.compile(r'[a-z0-9]+(-[a-z0-9]+)*')
+# Fork: vendored skills kept verbatim from claesbackman/AI-research-feedback. Splitting them
+# into references/ would conflict with every update pulled from that repo, and a skill's body
+# loads only when it runs, so their length is reported as an advisory, not a violation.
+LENGTH_EXEMPT = {"review-pap", "review-paper-full"}
 
 def main():
     errs, warns = [], []
@@ -42,7 +46,8 @@ def main():
         if not desc:                       errs.append(f"{rel}: missing required 'description'")
         elif len(desc) > 1024:             errs.append(f"{rel}: description {len(desc)} chars > 1024 spec max")
         n = body.count("\n")
-        if n > 500:                        errs.append(f"{rel}: body {n} lines > 500 (spec guidance: split into references/)")
+        if n > 500 and d in LENGTH_EXEMPT: warns.append(f"{rel}: body {n} lines > 500 (exempt: vendored from Backman, kept verbatim)")
+        elif n > 500:                      errs.append(f"{rel}: body {n} lines > 500 (spec guidance: split into references/)")
         keys = set(re.findall(r'^([a-zA-Z_-]+):', fm, re.M))
         unknown = keys - SPEC_FIELDS - CC_ONLY
         if unknown:
