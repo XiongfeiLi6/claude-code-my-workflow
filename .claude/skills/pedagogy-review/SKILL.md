@@ -17,6 +17,7 @@ Perform a comprehensive pedagogical review.
    - If just a name, look in `Quarto/` or `Slides/`
 
 2. **Launch the pedagogy-reviewer agent** with the full file path
+   - Read [teaching objectives and evidence](../../references/teaching-objectives.md) when reviewing teaching; pass relevant instructor objectives, rubric and these instructions to the reviewer. Mark missing context and keep recommendations provisional.
    - The agent checks 13 pedagogical patterns
    - Performs deck-level analysis (narrative arc, pacing, visual rhythm, notation)
    - Considers student perspective (prerequisites, objections)

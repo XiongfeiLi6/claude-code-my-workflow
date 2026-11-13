@@ -52,6 +52,8 @@ Output block (in your response to the user, before Phase 1):
 
 If any input cannot be read (missing file, unreadable format), stop and ask the user before proceeding.
 
+For ingestion, joins or harmonization, read [data definitions and harmonization](../../references/data-harmonization.md). Record decisions in the existing project codebook and transformation records.
+
 ### Phase 1: Setup and Data Loading
 
 1. Create R script with proper header (title, author, purpose, inputs, outputs)

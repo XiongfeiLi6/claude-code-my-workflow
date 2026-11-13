@@ -1,6 +1,6 @@
 # Strengthen verification while simplifying project setup
 
-Reviewed November 13, 2026. **Keep the existing academic workflow and improve a few specific checks.** The three researchers' materials largely reinforce capabilities already present in the Claude and Codex versions: durable project context, planning, source-grounded review, empirical audits, researcher understanding and explicit verification. The most immediate corrections are to preserve full PDF coverage by default and to describe precisely what formal proof verification establishes. The most useful next additions are concise checks for instruction conflicts, feasibility, actionable feedback and a successful pilot before batch work. None of the reviewed materials requires separate startup prompts for papers, proposals and lectures. A short generic prompt, complete repository copy and project-specific configuration fit the user's preferences; shared manuscript and exhibit rules remain authoritative. This report distinguishes source inspection and recommendations from implementation and runtime validation.
+Reviewed November 13, 2026. The owner subsequently approved incorporation; see [implementation status](#implementation-status) below. **Keep the existing academic workflow and improve a few specific checks.** The three researchers' materials largely reinforce capabilities already present in the Claude and Codex versions: durable project context, planning, source-grounded review, empirical audits, researcher understanding and explicit verification. The most immediate corrections are to preserve full PDF coverage by default and to describe precisely what formal proof verification establishes. The most useful next additions are concise checks for instruction conflicts, feasibility, actionable feedback and a successful pilot before batch work. None of the reviewed materials requires separate startup prompts for papers, proposals and lectures. A short generic prompt, complete repository copy and project-specific configuration fit the user's preferences; shared manuscript and exhibit rules remain authoritative. This report distinguishes source inspection and recommendations from implementation and runtime validation.
 
 ## Bäckman makes verification a research practice
 
@@ -71,3 +71,19 @@ The following mapping is a maintenance proposal grounded in targeted comparisons
 | Optional reference | Teaching rubric evidence and learning objectives; metadata/harmonization; collaborator working copies | Extend existing syllabus/exercise or data references only when relevant. Keep student-data handling and actual build tools project-specific. |
 
 The two accuracy corrections are selected for the current maintenance work; the broader recommendations remain proposals. Actual validation, commit and push status belongs in the maintenance completion record, not in this source review. The next useful experiment is small: try the concise advising checklist or batch-pilot contract on a familiar task, record which substantive mistake it prevented, and retain only the instruction that earned its place. This keeps the entry prompt short while making the durable workflow more dependable.
+
+## Implementation status
+
+Following owner approval, both workflows now incorporate the previously proposed
+checks through existing procedures: context-audit for instruction conflicts and
+evidence-based cleanup; planning for feasibility; orchestration for batch pilots;
+review-paper and review orchestration for actionable feedback; audit-analysis and
+diagnose for unexpected outputs. Pedagogy-review routes to teaching objectives and
+data-analysis routes to data harmonization references when relevant. No new skill
+or automated hook was added, and the starter prompt and shared styles are unchanged.
+
+The proposal table above records the review-stage recommendations. This section
+records their subsequent adoption. Existing runtime/schema gates and isolated
+scenario checks are used for validation; these are not evidence of improved research
+outcomes across live projects. Future usage should determine whether to refine or
+remove instructions that do not help.

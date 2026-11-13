@@ -2,6 +2,24 @@
 
 **Enter plan mode before tasks that touch more than three files or change a deliverable's substance** (a lecture, a manuscript, an analysis pipeline, a replication package). Small, well-specified edits proceed directly — planning them costs more than it saves.
 
+
+## Feasibility before substantial execution
+
+Before committing to a large build or analysis, inspect the required inputs and
+their actual coverage, output requirements, available tools and a suitable check.
+Record these in the existing plan: available evidence, assumptions, missing
+prerequisites and the smallest useful pilot. Metadata or approved summaries may
+be enough; do not load restricted records to prove access. Missing inputs block
+dependent work only. Reuse recent checks when inputs and tools have not changed.
+
+State what validation will establish: a build, a synthetic fixture, source checking,
+numerical reproduction or formal verification. Synthetic success does not establish
+real-data validity. Do not impose this planning ceremony on a small clear edit.
+After changing project instructions, use the instruction-conflict mode of
+[context-audit](../skills/context-audit/SKILL.md) on affected sources and their callers; it is read-only
+and does not trigger cleanup. Preserve decisions already authorized by the owner.
+
+
 ## The Protocol
 
 1. **Enter Plan Mode** — use `EnterPlanMode`

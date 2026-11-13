@@ -37,6 +37,11 @@ State the bug as a falsifiable gap before touching anything:
 
 If expected/actual can't be stated, the task is *understanding*, not diagnosis — stop and clarify first.
 
+A surprising sign or magnitude is a question, not a target the code must be made to
+match. Separate an established invariant from a substantive expectation. Before
+testing a hypothesis, state what each plausible diagnostic outcome would imply;
+keep unexplained observations visible rather than adjusting the sample to erase them.
+
 ### Phase 1 — Reproduce deterministically (get a reliable red)
 
 A bug you can't reproduce on demand can't be fixed, only hidden.
@@ -131,8 +136,12 @@ nrow(merge(panel, feats, by="id"))   # 12,933  <-- inflated! a many-to-many merg
 # join fans those ids out, 12,400 -> 12,933 (+533 rows), re-weighting the MAE
 # toward the duplicated units.
 
-# Phase 5 — minimal fix at the root (dedup the key), NOT a downstream row filter:
-feats <- feats[!duplicated(feats$id), ]
+# Phase 5 — this illustrative case assumes source review confirmed accidental
+# ingestion of identical records and the owner approved their removal.
+# Conflicting records with the same id must remain unresolved, not keep-first.
+feats_candidate <- unique(feats)  # remove exact duplicate records only
+stopifnot(!anyDuplicated(feats_candidate$id))
+feats <- feats_candidate
 # re-run: MAE back to 0.043 within tolerance; full pipeline re-checked, no other number moved.
 
 # Prevention (Joins & shape guard):

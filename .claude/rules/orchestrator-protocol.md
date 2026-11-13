@@ -36,6 +36,29 @@ surface moves up the table the moment its output does**: an exploratory run whos
 to enter a paper is no longer exploratory, and it acquires the row above it *before* the number is
 quoted, not after.
 
+## Pilot before repeated or expensive batches
+
+Before scaling a new or materially changed extraction, transformation, render or
+other repeated workflow, run a representative unit within the authorized scope
+and inspect its substantive output. Include an edge case where units differ
+materially; a convenient trivial example is not evidence for all input types.
+Reuse a verified pilot when its procedure and relevant inputs remain applicable.
+
+Record in the existing plan or executor contract: input/output mapping, selected
+units, success evidence, resource/concurrency bounds, stopping conditions and
+safe resumption behavior. Verify the pilot before starting the batch. Stop affected
+work on unexplained failures, schema/coverage changes or resource-bound breaches;
+report completed, failed and unprocessed units instead of treating a partial run
+as complete. Do not overwrite validated outputs on retry or relaunch existing jobs.
+Keep unresolved substantive research decisions interactive. This is an execution
+check, not authorization for unattended services, paid calls or external writes.
+
+## Review feedback quality
+
+When dispatching an academic review, pass the relevant instructions from
+[actionable feedback](../references/actionable-feedback.md) to reviewers and use
+them when synthesizing findings. Keep the existing evidence gates and schemas.
+
 ## The loop (the contract)
 
 ```

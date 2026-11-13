@@ -6,6 +6,14 @@ If you have forked this template, see the **Upgrading** section at the bottom fo
 
 ---
 
+## Academic procedure refinements — 2026-11-13
+
+Incorporated the owner's approved guideline review into existing skills and rules:
+instruction conflicts, feasibility, actionable feedback, verified batch pilots,
+unexpected-output checks and optional teaching/data references. Context auditing
+now preserves the full library at startup and separates read-only conflict checks
+from authorized cleanup. No new skills, hook changes or shared-style copies.
+
 ## v2.9.2-fork.1 — 2026-11-13
 
 Made Git-fetch copying the startup default, including private repository creation,

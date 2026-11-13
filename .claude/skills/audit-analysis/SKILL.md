@@ -48,6 +48,11 @@ One `Agent` call, `subagent_type: "general-purpose"`. Substitute `BASE` and pass
 > - Estimation: clustering level and cluster count, what the fixed effects
 >   absorb, weights, whether estimation N matches the sample traced above.
 >
+> Also inspect available outputs for unexplained sample losses, missing categories,
+> repeated values or other surprises. Anchor each concern to evidence; an unexpected
+> sign or a clean-looking result alone is not an error. Mark unavailable outputs
+> unverified and propose a discriminating check without changing the analysis.
+>
 > Each finding: file, line, quoted excerpt, what is wrong, consequence for the
 > results. Tag CONFIRMED (visible in the code) or SUSPECTED (needs the data).
 > Style and naming are not findings. Order by consequence, worst first, ten max.
