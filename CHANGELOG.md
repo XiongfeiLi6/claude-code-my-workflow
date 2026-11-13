@@ -6,6 +6,245 @@ If you have forked this template, see the **Upgrading** section at the bottom fo
 
 ---
 
+## v2.9.2-fork.1 — 2026-11-13
+
+Integrated Pedro through fe707746 and Backman through 4c1aef5. Added optional
+explorable Quarto, Beamer and PowerPoint skills, preserving project-selected formats.
+PowerPoint export failures now leave the user's application running. Commit, push,
+pull request and merge remain separate user-authorized actions. Preserved local
+writing sources and curated skills. The obsolete context monitor is removed with
+upstream's native-permission transition. Hook trust and local opt-ins are unchanged.
+
+Inventory at release: 81 skills, 18 agents, 40 rules, 9 hooks, 11 gates.
+The hook battery runs 123 cases, seconds to run. macOS's xcrun cache is excluded from the
+temporary-issue-body cleanup fixture; all issue-body files remain checked.
+
+## v2.9.2 — 2026-11-07
+
+Small fixes found during and after the v2.9.1 work, in compaction, in `/commit` and `/verify`, and in the git pre-commit hook. Nothing to migrate.
+
+### Fixed
+
+- **`pre-compact.py` read `log-reminder.py`'s notes as decisions** (#189).
+  - The newest session log is usually that hook's own `YYYY-MM-DD_auto.md`. Its `Slides/X.tex → no fresh .pdf` lines matched the `→` decision pattern, so a compaction could carry "no fresh .pdf" into the summary and the restored context as a recent decision.
+  - `extract_recent_decisions` now skips `*_auto.md` and reads the newest log a person or Claude wrote. A `→` line in that log still counts.
+  - A `**Decision:** X` line kept the marker's closing `**` in front of X. A small parser (`marker_decision`) now removes the marker's own emphasis and keeps the decision's: `**Decision:** X` and `**Decision: X**` give `X`, while `Decision:**X**` and `**Decision:** **X**` give `**X**`. Three regex-only attempts, each found wanting in the Codex review of #191, ate the decision's emphasis in one of these cases.
+  - Three portability cases pin both: two run the hook on scratch projects, and one checks the parser on every emphasis combination. Each fix, removed alone, fails its own cases. Recorded in the qualification ledger.
+- **The git pre-commit hook skipped the hook battery when only `scripts/file-issue.py` was staged.**
+  - The battery runs that script (section i), but the hook started the battery only for a staged hook, settings file, `.githooks/` file or the battery itself. CI still ran those cases.
+  - `scripts/file-issue.py` is now in the hook's list. A new portability case stages each file the battery runs, one at a time, and fails if one of them does not start the battery, so a battery that starts running another file fails it until the list includes that file.
+
+### Changed
+
+- **`/commit` runs the backtest once per commit** (#190).
+  - Step 0b leaves the run to `.githooks/pre-commit`, which runs the same suite on the staged changes and refuses a red commit, only when three things hold: `core.hooksPath` is `.githooks`, the hook file is executable, and nothing under `.githooks/` is changed, staged or untracked. Otherwise it runs `./scripts/backtest.sh` as before.
+  - Why all three: git skips a hook file that is missing or not executable and still commits, and an edited hook could exit 0 without running the suite. The Codex review of #191 found both cases, and both were reproduced in a scratch repository with git 2.52.0.
+  - `/verify` skipped its run on the `core.hooksPath` check alone, so it had both gaps. It now makes the same three checks.
+  - TROUBLESHOOTING's "DRIFT DETECTED" entry now says the message can come from the git hook.
+
+**Inventory at release: 62 skills, 18 agents, 37 rules, 9 hooks, 11 gates**
+(standing hook battery: 123 cases, seconds to run; portability suite: 134 cases).
+
+---
+
+## v2.9.1 — 2026-11-06
+
+A **lighter hook layer.** The two guard hooks that ran before every Bash call, and a third that ran after it, slowed everyday work and refused ordinary commands too often. They are gone. Claude Code's own permission deny rules now refuse destructive git, and one small hook, started only for a merge, pull or rebase, refuses those while tracked files have uncommitted changes. The template also stops setting the block that kept Claude from editing its own settings files.
+
+### Upgrading — read this before you pull into a fork
+
+This release deletes `git-guardrails.py`, `root-of-trust-guard.py` and `context-monitor.py` from `.claude/hooks/`.
+
+- **If you never changed `.claude/settings.json`,** the pull updates it along with the hooks, and nothing else is needed.
+- **If you changed it,** make the same changes by hand:
+  1. remove the `git-guardrails.py` and `root-of-trust-guard.py` entries under `PreToolUse`, and the `context-monitor.py` entry under `PostToolUse`;
+  2. add the three `dirty-tree-guard.py` entries (`"if": "Bash(git merge *)"`, `"Bash(git pull *)"` and `"Bash(git rebase *)"`; no `onFailure`);
+  3. add the `permissions.deny` list;
+  4. remove `"blockWritesOutsideWorkingDirectories": true` from `permissions`, unless you want to keep that block.
+- **Why it matters:** an old registration of a deleted guard has `"onFailure": "block"`, so Claude Code refuses every Bash, Edit and Write until it is fixed. Claude cannot fix it from inside that session, because its own edit is refused too. Edit the file in a terminal or an editor. Claude Code picks up the change without a restart.
+- **Restart once after the pull.** Claude Code keeps the write block in a running session after its key is removed.
+
+### Removed
+
+- **`git-guardrails.py`** (1,800 lines, on every Bash, Edit and Write).
+  - Its deny list is replaced by native deny rules (below), and its clean-tree rule by `dirty-tree-guard.py`.
+  - Its `CLAUDE_STRICT_PATHS` check on code edits is gone. `scripts/quality_score.py` still deducts 20 points per hardcoded path in an `.R` file, so a script with one such path still passes the commit gate. `confidential-data.md` now says so.
+- **`root-of-trust-guard.py`** (2,200 lines, on every Bash call).
+  - Nothing replaces its tripwire on shell writes into `.claude/settings*.json`, `.claude/hooks/` and `.githooks/`, and `ALLOW_ROOT_OF_TRUST_WRITE` is gone.
+  - The write block that refused file-tool writes to the settings files is removed too (below), so nothing refuses a write to these paths now.
+- **`context-monitor.py`** (after every Bash call). The status line shows Claude Code's own `context_window.used_percentage`, and `/context-status` points to it and to `/context`.
+- **`permissions.blockWritesOutsideWorkingDirectories: true`** (added in v2.7.0).
+  - While it is on, Claude Code's file tools refuse every Claude Code settings file, even inside the repository, so every allow rule, deny rule or hook change had to be made by hand.
+  - A `true` in any settings file applies and a local `false` does not lift it, so it could not be turned off for one machine while the committed file kept it.
+  - **To keep it in a fork,** add the key back under `permissions` (Claude Code ≥ 2.1.314). It also removes the `EnterWorktree` and `ExitWorktree` tools from the session.
+- **Restoring a hook:** each file is at tag `v2.9.0` (`git show v2.9.0:.claude/hooks/<file>`), with its registration in that tag's `.claude/settings.json`. The guide's hook section says how.
+
+### Added
+
+- **Native deny rules** in `.claude/settings.json`. Claude Code checks them itself, with no process and no delay.
+  - **What they refuse:** `git reset --hard`, every `git clean`, `git push --force` and `-f` (`--force-with-lease` still runs), `git add -A`, `--all` and `.` wherever they appear among the arguments, and a checkout or restore of the whole tree (`git checkout .`, `git checkout -- .`, `git checkout HEAD -- .`, `git restore .`, `git restore -- .`; also `git restore --staged .`, which only unstages). Also reads and edits of `.env` files, and reads of `*.pem`, `*.key` and `credentials*`.
+  - **Coverage:** a deny rule applies to every part of a compound command, including a subshell and a `$(…)` substitution, and holds in every permission mode.
+  - **Limit:** it does not match a rewritten spelling, such as `git -C . push --force`, `git -c x=y push` or `bash -c '…'`. Anthropic's permissions docs call Bash deny rules a guard on the usual invocation, not a security boundary.
+  - **Verified live** in a scratch repository after the settings change. Every rule refused its command, including `(git reset --hard)` and `echo "$(git reset --hard)"`. The controls ran. The `.env` rules also refused a shell command that would have written one. Recorded in the qualification ledger.
+  - **Extended after review.** An independent Codex CLI review found variants the removed hook had caught and the first list missed (`git restore -- .`, `git checkout HEAD -- .`, `git add -v -A`, `git add file .`), and two refusals of ordinary commands (`git push origin feature--force`, `git reset -- tracked--hard.txt`). The list now matches each option as a whole word in any argument position. The extended list was verified live the same way.
+- **`dirty-tree-guard.py`.** It refuses a merge, pull or rebase while tracked files have uncommitted changes.
+  - Untracked files do not count, because git refuses an overwrite itself. `--abort`, `--continue`, `--skip`, `--quit` and `--edit-todo` pass. `ALLOW_DIRTY_MERGE=1` overrides it.
+  - Claude Code starts it only for those three commands, through `if` filters. Because a filter that names more than the program also starts it for any command containing `$()`, it checks first that a real merge, pull or rebase is present.
+  - It reads the command the way the shell splits it, so quoted text, comments and heredoc bodies are not commands, and a `--abort` inside a `-m` message is not a resume step. Because the `if` filter also starts it for any command with `$(…)`, backticks or `$VAR`, this is what keeps ordinary commands from being refused.
+  - It fails open: a missing `python3` lets the command run, and its registration starts it through a one-line launcher (`sh -c '[ -f "$1" ] || exit 0; exec python3 "$1"'`) that exits 0 when the file is missing. Without the launcher, Python's exit 2 for a missing script would refuse every command the filter starts the hook for.
+  - It reads the session's directory, so it misses a repository reached by `cd elsewhere &&` or `git -C`.
+  - Twenty-nine battery cases (section j) pin it. Fifteen mutants each fail their own cases. The Windows code-page cases that protected git-guardrails now protect it, and the one meant to catch a locale-decoded `git status` now uses a dirty tree, so it can fail.
+
+### Changed
+
+- **`issue-guard.py` is the only hook left with `"onFailure": "block"`,** and it runs only for `gh` commands. A missing `python3` or hook file no longer refuses every Bash, Edit and Write, so #179 and #180 are resolved by the removal. The launcher patch drafted on #180 is not needed.
+- **The hook battery** drops the 228 cases of the removed hooks and gains section (j): 123 cases. Grading the grader was re-measured: each remaining decision hook, stubbed to always allow, reddens exactly its own cases.
+- **The qualification ledger** moves the removed hooks' rows, reproduction notes and drift record, unedited, to a *Retired at v2.9.1* section. Their counts now read "at the time".
+- **Updated to match:** README, the guide, TROUBLESHOOTING, `docs/index.html`, `MEMORY.md`, `AGENTS.md` (what Codex and Antigravity must do by hand), `.github/SECURITY.md`, `confidential-data.md`, the `commit`, `context-status` and `diagnose` skills, and the status line.
+
+### Fixed
+
+- **Destructive git inside a subshell or a command substitution ran unchecked** (#172). git-guardrails parsed the command line itself and missed `(git reset --hard)` and `$(git reset --hard)`. Native deny rules apply inside both, verified live.
+
+**Inventory at release: 62 skills, 18 agents, 37 rules, 9 hooks, 11 gates**
+(standing hook battery: 123 cases, seconds to run; portability suite: 130 cases).
+
+---
+
+## v2.9.0 — 2026-11-06
+
+An **adoption release** carrying what the 2026-11-06 audit found worth building or linking. Everything in it is additive: a new skill, new scripts and a template, guidance, and links to outside work, each listed below.
+
+### Added
+
+- **The ledger-coverage gate understands an inline hook launcher.** `scripts/check-ledger-coverage.py` reads `sh -c '<code>' <name> <script>` as running `<script>`, so a settings file that starts its hooks through the launcher drafted for #179 and #180 is still checked hook by hook. A typo in the launcher's script path is still caught, and a launcher with no script fails loudly. Qualified in the ledger.
+- **`/verify`** (62nd skill). Since 2.1.286, Claude Code tells Claude to run a project skill named `verify` right before committing; docs-only and tests-only commits are exempt. This one runs the backtest, and the quality score on staged `.qmd`/`.tex`/`.R` files, and stops the commit on a failure. It skips itself when the git pre-commit hook will run the same gates. It is a reminder, not enforcement: the hook and `/commit` remain the gates. It is bridged for Codex and Antigravity.
+- **`templates/triangulation-ledger.md`.** For each robustness check, write down and commit what result would support the claim, weaken it or leave it undecided, before the check runs; the result is filled in afterwards in a new commit. It is method-neutral and joins `spec-ledger.md` on date and `Script:line`.
+- **Template, not fork, for unpublished work** (README and guide, step 1, placed before the clone commands). The repository is now a GitHub template repository, so a copy can be made private; a fork of a public repository cannot.
+- **`scripts/data-inventory.py`: a dataset manifest that never carries a value.** For each file it lists the path, size and SHA-256 and, for tables, the row count, the column names, and the columns whose *names* suggest personal data (name, email, address, birth date, ...).
+  - **CSV and TSV** use the standard library. A first row is listed as column names only with `--header`, your check that every file given has a header, because no rule can tell `Alice,London` from a header. Even with `--header`, a numeric first row is withheld.
+  - **`.dta`, `.sav` and `.sas7bdat`** use pyreadstat's metadata-only read, and **Parquet** uses its footer, when those packages are installed.
+  - **`--no-counts`** drops the row counts.
+  - **On restricted data**, the author runs it, and the whole manifest goes through the agreement's disclosure review before it leaves the machine or reaches a model.
+  - `/replication-package` starts its dataset manifest from it.
+  - Six portability cases pin it, under cp1252 and with non-ASCII file names. Three mutants each fail their own case: one leaks a value, one drops the numeric-row check, and one lists names without `--header`. Codex's review on PR #184 found the all-text-first-row leak and the clearance gap.
+  - The idea follows the World Bank's reproducibility skill; the code is our own.
+- **`scripts/beamer-qa.py`: what a compiled Beamer deck looks like, page by page.** It saves a screenshot of every page, prints the frame and overlay step each page belongs to (from Beamer's `.nav`), and lists the errors and warnings that matter from the `.log` beside the PDF. With `--band-mm FROM TO` it flags every page with ink in a strip just above the footline: a frame whose content runs into the footline often compiles without a warning. The strip depends on the theme, so it is off unless given. It needs poppler and no Python packages. `/visual-audit` runs it for Beamer decks. A full run deletes the page screenshots an earlier run left in its folder, and nothing else, so a deck that lost pages shows no stale ones (Codex's review on PR #185). Errors are caught in `-file-line-error` form too (also from that review). Six portability cases pin it, and eleven mutants each fail their own case. Adapted, with its MIT notice, from `shoot.py` in claesbackman/AI-research-feedback.
+- **`/replication-package`: AI-generated analytical outputs.** When a model produced data, the README records the model ID and date, the prompts, the parameters, the raw outputs, the post-processing and who checked them. AI coding help stays a disclosure matter. The idea follows the World Bank's reproducibility guidance; the wording is our own.
+- **Links:** Brodeur et al. 2026 (*PNAS*: AI-assisted teams reproduce about as often as human-only teams but catch fewer major coding errors; AI-led teams reproduce far less) in `verification-ladder.md`; `paulgp/econ-ai-detector` in `writing-with-ai.md` and the ecosystem section; `posit-dev/skills` in README and the guide.
+- **TROUBLESHOOTING: "Every Bash, Edit and Write is refused, with a hook error"**, covering a missing hook script (recovery from a terminal) and a missing `python3` on Windows.
+
+**Inventory at release: 62 skills, 18 agents, 37 rules, 11 hooks, 11 gates**
+(standing hook battery: 322 cases, seconds to run; portability suite: 245 cases).
+
+---
+
+## v2.8.1 — 2026-11-06
+
+A **currency-correction release.** The template was checked against every Claude Code release from 2.1.257 to 2.1.319 and the current docs, and statements that had become false were fixed. One was a safety claim. Every correction below was checked against the changelog, the docs, or the 2.1.318 settings schema before it was made.
+
+### Fixed — statements that were no longer true
+
+- **"Deny rules hold in every permission mode" had an exception** (`confidential-data.md`, TROUBLESHOOTING, `/permission-check`, the guide's plugins section, README). Since Claude Code 2.1.287 a *mod* (plugin code that runs inside Claude Code) can approve a call that a deny rule refused or a `PreToolUse` hook blocked. Only managed settings or a Team or Enterprise login keep those outcomes in place. Restricted-data projects should install no third-party mods.
+- **Minimum versions were missing.**
+  - The shipped settings need Claude Code ≥ 2.1.314: 2.1.295 for `onFailure` and 2.1.314 for the write boundary. An older version skips them without a warning. This is now stated in the README and guide prerequisites, and Python 3 is listed as needed for the guard hooks, not only the checkers.
+  - The current Sonnet needs ≥ 2.1.284 and the current Haiku ≥ 2.1.293. On an older version `haiku` still means Haiku 4.5, which takes no `effort`.
+- **Effort advice.**
+  - The guide recommended `CLAUDE_CODE_EFFORT_LEVEL` as a session default, but it overrides every skill's `effort:` pin.
+  - `ultracode` no longer forces `xhigh` (2.1.284); `workflowSizeGuideline` caps the fan-out.
+  - `ultrathink` now runs its turn at `xhigh` (2.1.311).
+  - `CLAUDE_CODE_SUBAGENT_MODEL_FORCE` and `CLAUDE_CODE_EFFORT_LEVEL` have joined TROUBLESHOOTING's pin checks.
+- **Cost advice.** On a subscription, only the main conversation gets the 1-hour cache; subagents, workflows and forks get 5 minutes unless `subagentPromptCacheTtl` is set, and this template's reviewers are subagents. `/cost` is now part of `/usage`, whose `Prompt cache (main)` line is what to read.
+- **Fast mode** (`model-versions.md`, a v2.7.0 error): Opus 5.5 fast mode is available, not in preview, on the Claude API, Claude Models on Google Cloud and Microsoft Foundry. Opus 5 and Opus 4.8 fast mode are in research preview, and Opus 4.8's is removed on 2026-11-30.
+- **A cited source did not say what it was cited for.** `model-routing.md` and the guide called Anthropic's "Decoupling the brain from the hands" post the primary-source endorsement of tier routing. The post is about agent-harness design and says nothing about model tiers. The citation is withdrawn, with a note saying so.
+- **Scheduled tasks** (`scheduled-routines.md`). Routines are now *scheduled tasks*. Runs are limited per hour, not per day. A run works in auto mode and can stop on a permission prompt; it is not prompt-free. For local unattended runs, `permissions.denyInsteadOfPrompting` (2.1.319) is now documented.
+- **Smaller corrections:**
+  - Five hook handler types across 33 events, not "three types, 20+ events".
+  - Plugins are found with `/plugin`'s Discover tab, not `/discover-plugins`.
+  - All four built-in output styles are named, with a warning that **Proactive** skips plan mode.
+  - Forks are on by default in `-p`, the SDK, Desktop and VS Code too (2.1.302).
+  - The skill-description limit is 1,536 characters, with `skillOverrides: "name-only"`.
+  - The write boundary also removes the worktree tools.
+  - `AGENTS.md` and the guide now say that Claude Code reads `AGENTS.md` only when there is no `CLAUDE.md` or the *Project instructions* setting asks for both.
+
+### Changed
+
+- **`pre-compact.py` steers the compaction summary.** Claude Code uses a `PreCompact` hook's stdout as instructions for the summary, so the hook now prints the plan, the next task and the recent decisions there too, in UTF-8, labelled as historical records to check rather than instructions, as the restore hook already labels them (Codex review on PR #181). They survive inside the summary as well as through the restore hook. A portability case pins this; the old hook printed nothing.
+- **`/qa-quarto` and `/translate-to-quarto` set `background: false`.** Forked skills run in the background by default, so these two editing loops now wait for their result instead of editing a `.qmd` while you do.
+- `model-versions.md`'s update protocol gains a `/doctor prompt-audit` step.
+- `theory-proving.md` links Anthropic's `math-proof` plugin (Apache-2.0) as a first-party implementation of portfolio search with a judge. The backlog's packaging item links claudeblattman's `marketplace.json` as a working example.
+
+### Repository housekeeping (settings, not in the diff)
+
+- Dependabot alerts and security updates are on, and merged branches are deleted automatically. The twelve merged branches were removed; one unmerged branch is kept.
+- The description and topics are updated.
+- #151 and #171 are closed with closure comments, and PR #152 is closed as superseded, with credit.
+- The deferred Windows `python3` case is now #179.
+
+**Inventory at release: 61 skills, 18 agents, 37 rules, 11 hooks, 11 gates**
+(standing hook battery: 322 cases, seconds to run; portability suite: 233 cases).
+
+---
+
+## v2.8.0 — 2026-11-06
+
+A **second-agent release.** The template can now be worked on from Codex (the Codex CLI, its IDE extensions, or the Codex tab of the ChatGPT desktop app, which absorbed the Codex app) and Google Antigravity as well as Claude Code. Both read skills in the open Agent Skills format from `.agents/skills/`, and Codex reads `AGENTS.md`; this release gives them both, without a second copy of any skill to keep in sync.
+
+### Added
+
+- **`AGENTS.md`** at the root, for agents other than Claude Code. It points to `CLAUDE.md` and turns each of Claude Code's guard hooks, which other agents do not run, into a rule followed by hand: no destructive git, gate files left alone, issues only through `scripts/file-issue.py`, pull requests to the agent's own `origin`. It also states the commit routine (branch, backtest, never merge) and a sourcing rule for facts. That rule comes from PR #177, which passed all eleven gates with three wrong names of real people, a cited source that did not exist, and guessed version numbers.
+- **`.agents/skills/`: 42 generated wrappers**, one per skill that one agent can run end to end (research, data and reproducibility, slides and teaching, `/commit`, `/issues`). Each has its skill's name and `description:` line and sends the agent to the real instructions in `.claude/skills/`, with notes on what does not carry over. Thirteen wrappers also carry `agents/openai.yaml` with `allow_implicit_invocation: false`: the twelve skills Claude Code marks `disable-model-invocation: true`, and `/commit`. Codex runs those only when they are asked for by name. The 19 skills left out are either built on several independent reviewers (`/review-paper --peer`, `/seven-pass-review`, `/verify-claims`, …) or manage Claude Code itself (`/checkpoint`, `/learn`, …). Each one's reason is recorded in the script.
+- **`scripts/sync-agent-skills.py`** regenerates the wrappers. `--check` (or `--dry-run`) changes nothing and exits 1 when they are out of date.
+- **`check-skill-integrity.py` check 6** (inside the existing skill-integrity gate; still eleven gates). A missing or stale wrapper, a wrapper with no source, or a skill in both lists fails the backtest. A skill in neither list is a P2 reminder, so a fork's own new skill stays Claude-only until someone decides. Qualified on seeded copies outside the checkout (ledger row).
+- README, the guide (*Using Codex or Antigravity instead of Claude Code?*), the landing page, `/new-skill`, and `.github/CONTRIBUTING.md` now describe the bridge.
+
+### Changed defaults
+
+- **New root entries:** `AGENTS.md` and `.agents/`, allowlisted in `scripts/check-repo-hygiene.py`.
+- **Editing a bridged skill's `description:` now means re-running `python3 scripts/sync-agent-skills.py`.** Otherwise the backtest fails, and it names the fix.
+- **Repository settings (not in the diff):** the backtest check is now required before a pull request can merge into `main`.
+
+**Inventory at release: 61 skills, 18 agents, 37 rules, 11 hooks, 11 gates**
+(standing hook battery: 322 cases, seconds to run; portability suite: 233 cases).
+
+---
+
+## v2.7.0 — 2026-11-06
+
+A **model-currency, fork-safety, ecosystem, and pedagogical tightening release.** Anthropic completed the Claude 5.5 lineup after v2.6.0 shipped (**Claude Sonnet 5.5** on 2026-09-28 and **Claude Haiku 5.5** on 2026-10-07, succeeding Haiku 4.5, which is still served), and Claude Code added `"onFailure": "block"` for command hooks (2.1.295) and `permissions.blockWritesOutsideWorkingDirectories` (2.1.314). This release updates the model SSoT and routing docs, closes a live fork footgun where `scripts/file-issue.py` and `/commit --pr` could reach the public template from a fork (#174, #175, #176), refreshes the economics ecosystem and MCP coverage, and tightens beginner onboarding in `README.md` and Chapter 4 of the guide.
+
+### Changed defaults
+
+- **`.claude/settings.json` — guards fail closed when they cannot run.** `git-guardrails.py`, `root-of-trust-guard.py` and `issue-guard.py` are registered with `"onFailure": "block"` (Claude Code ≥ 2.1.295): a guard that cannot start, times out, exits with an unexpected code or prints invalid output now blocks the tool call. On a machine without `python3`, Bash, Edit and Write are therefore blocked in this repo until it is installed. An exception *inside* a guard still fails open, by design — each catches its own errors and exits 0 — and Claude Code 2.1.283 was checked to load the file and ignore the key.
+- **`.claude/settings.json` — `permissions.blockWritesOutsideWorkingDirectories: true`** (Claude Code ≥ 2.1.314). `Edit`/`Write`/`NotebookEdit` refuse paths outside the working directories in every permission mode (the session scratchpad, plan files and this project's auto memory stay writable), **and refuse every Claude Code settings file, even inside the repository.** With `root-of-trust-guard` already refusing the common shell writes there, Claude's tools no longer edit `.claude/settings*.json`: allow and deny rules, including the ones `/fewer-permission-prompts` proposes, are now added by hand. It is not a lock — a branch switch or a merge can still replace the file.
+- **`.vscode/settings.json`:** removed the two workspace bypass keys, which the VS Code extension never read from workspace settings.
+- **`scripts/file-issue.py`:** in a clone whose `origin` is not the template on github.com, `--repo` defaults to `origin` as `HOST/OWNER/NAME` instead of the repository gh infers; any `origin` that is neither a local path nor identifiable stops the script (exit 2) instead of falling back.
+- **Pull requests to this repository are limited to collaborators** (GitHub setting, 2026-11-06). Forks kept opening their own coursework and papers here; `.github/CONTRIBUTING.md` and the README now say to propose changes in an issue.
+
+### Changed — model & platform refresh (Oct–Nov 2026)
+
+- **Model SSoT** (`.claude/references/model-versions.md`) now reads `Fable 5.1 | Opus 5.5 | Sonnet 5.5 | Haiku 5.5`, verified 2026-11-06 and expiring 2027-01-05:
+  - **Sonnet 5.5** (`claude-sonnet-5-5`, GA 2026-09-28): $2/$10 per MTok, prompt cache reads halved to $0.10/MTok, 1M context, 128K max output, defaults to `high` effort on the API.
+  - **Haiku 5.5** (`claude-haiku-5-5`, GA 2026-10-07): succeeds Haiku 4.5 (moved to prior generations; still served and not deprecated, but past its 2026-10-15 retirement floor); tiered pricing ($0.10/$0.50 per MTok up to 100K tokens; $0.50/$2.50 over 100K; cache reads $0.01/$0.05), native 1M context (up from 200K), 128K max output (up from 64K), and **the first Haiku with `effort` (`low` through `max`, default `medium`)** — activating `promote-memory-council`'s `effort: low` pin. Unlike Fable 5.1, Opus 5.5 and Sonnet 5.5, it still accepts a forced `tool_choice`.
+- **Headless credential expiry** (`.claude/references/scheduled-routines.md`): documents `loginExpiresAt` (`claude auth status`) and `credential_expires_at` (`claude -p` JSON results), both Claude Code ≥ 2.1.318, for overnight runs; the guide documents `CLAUDE_CODE_SUBAGENT_EFFORT` (≥ 2.1.316).
+
+### Fixed — fork safety & portability reviews (#173, #174, #175, #176)
+
+- **`scripts/file-issue.py`, `/issues`, and `/commit --pr` no longer send a fork's issues and PRs to the template (#174, #175, #176).** A bare `gh` in a fork can resolve to the template, and #174 — a forker's paper issue — was filed there by this script. `scripts/file-issue.py` now reads `git remote get-url origin` in any spelling (`GitHub.com`, `host:/owner/name`, an ssh-config alias resolved with `ssh -G`, a GitHub Enterprise host) and pins `--repo` to it as `HOST/OWNER/NAME` — the host too, so `GH_HOST` cannot redirect it — unless it is the template on github.com or a local path. Any other `origin` it cannot identify stops it, and the error never repeats the URL, which can carry a token. The duplicate follow-ups it prints (`gh issue view/comment/reopen`) carry the same `--repo`, and it prints instructions to enable Issues on the fork if GitHub refuses the query. Hook-battery cases i11–i20 pin the forms, with each argument logged separately so a fused `--repo X` cannot pass; the battery's `gh` calls run with an unusable token, so a real `gh` reached by mistake creates nothing. An external review (GPT-6 Pro, archived in `quality_reports/oracle_audits/2026-11-06_pr177-fork-safety/`) found the gaps in the first repair. `/issues` and `/commit` run the same `origin` check in pre-flight.
+- **Portability review follow-ups (#173):** `scripts/check-links.py` preserves exact index byte spellings for link resolution while keeping NFC folding for diagnostics; `.githooks/pre-commit` reads `git diff -z` into NUL-safe bash arrays without `tr '\0' '\n'`; `tests/portability/_winsim.py` removes the duplicate `load()` definition.
+
+### Added & refreshed — economics ecosystem & pedagogical tightening
+
+- **`/coauthor-brief --quiz` (Seminar Defense Check):** optional 3–5 question comprehension check on recent sample filters, merge keys, and specification changes (inspired by `clo-author` 26.09's `/explain` understanding gate).
+- **Starter MCP configuration (`templates/mcp.example.json`, versions pinned) and expanded guide MCP callout:** documents `SepineTam/mcp-for-stata` (`v1.25.2`), Posit's `mcptools` for live R sessions in RStudio/Positron, official/community FRED, World Bank Data360, and U.S. Census Bureau MCPs, and Context7.
+- **Ecosystem section (`#sec-ecosystem` & `README.md`):** updated `clo-author` to release 26.09 (25 agents, 18 skills, `/coherence`, `/explain`, `/deepread`, `/paper-format`), `SepineTam/mcp-for-stata`, `aspi6246/Claude-Code-Presentation` (Alessandro Spina), MixtapeTools (Referee 2 and Blindspot), and community adoption counts (3,145+ forks, 1,680+ stars as of 2026-11-04); added Paul Goldsmith-Pinkham's tools (`claude-container`, `exhibit-review`, `margin`, DuckDB + Parquet pattern), Anton Korinek's *AI Agents for Economic Research*, and Lu Han's `awesome-ai-for-economists`.
+- **Pedagogical tightening:** removed dead workspace bypass keys from `.vscode/settings.json`, trimmed the permission and hook-parser disclaimers in `README.md` and Chapter 4 of `guide/workflow-guide.qmd` into collapsible deep-dive blocks, added a *"Start here on Day 1"* box (research, data, review and teaching commands) above the 61-skill reference table, and pruned shipped history from `.claude/references/v2.0-backlog.md`.
+
+**Inventory at release: 61 skills, 18 agents, 37 rules, 11 hooks, 11 gates**
+(standing hook battery: 322 cases, seconds to run; portability suite: 233 cases).
+
+---
+
 ## v2.6.0-fork.1 — 2026-10-14 (XiongfeiLi6 customizations)
 
 Upstream v2.6.0 (with its 2026-09-27 fixes) merged into this fork. On top of upstream this fork
@@ -24,8 +263,6 @@ The hook battery runs 312 cases, seconds to run.
 - `check-spec-conformance.py` reports `/review-pap` and `/review-paper-full` (vendored verbatim
   from Backman) above 500 lines as an advisory, not a violation, so pulling his updates never conflicts
   with a local split. `check-repo-hygiene.py` allows the fork's top-level `writing/`.
-
----
 
 ## v2.6.0 — 2026-09-26
 
@@ -198,6 +435,42 @@ absent; the debt was drift between files.
   entries against today's battery, so adding a case demanded an edit to released history; it now
   reads only the current release, like the inventory rows.
 
+### Fixed — portability: paths, encodings, line endings and git output (#171, #151, #172)
+
+A stress test of every gate, hook and script found 78 defects in 17 root causes, each reproduced
+by a separate verifier. The 74 fixed here are each pinned by a case that fails on the old code (see
+the qualification ledger). Four are not closed by this change: three need a launcher that finds
+Python on Windows (a separate change), and the PowerShell tool, which the guards cannot read, is
+documented rather than blocked (owner decision).
+PR #152 (JonOM123) had fixed two of #151's three claims; its sound parts are taken here, credited
+as co-author.
+
+- **The root-of-trust guard could be bypassed on every platform.** Its scope check compared raw
+  strings, so the project path spelled in another case (reproduced on macOS), an NFC/NFD spelling,
+  a symlinked `.claude`, a Unicode long s (`ſ`) or a project at `/` put a write into the hooks
+  "outside the project". It now compares case-folded, normalised paths, by file identity, named or
+  resolved.
+- **On Windows the guards could be bypassed or fail open:** stdin decoded with the ANSI code page,
+  backslash and `/c/` drive spellings, `-C .claude -C hooks` (#151), `git.exe` / `rm.exe` /
+  `gh.exe`, and a CR inside a word. All hooks now read stdin as UTF-8 bytes; `issue-guard` is also
+  registered for `gh.exe`.
+- **Accented file names confused the gates:** `git ls-files` / `diff` are read with `-z` and UTF-8,
+  so quoted names no longer create phantom folders, hide draft names, or mark tracked hooks
+  untracked (#151). Tracked paths that differ only by case or Unicode form are flagged.
+- **The quality gate skipped files silently:** renamed files, staged files it cannot find, and
+  `.r` files now count; the R file path is passed as an argument, not pasted into R source.
+- **Links were judged against the disk, not the index:** an untracked or wrong-case target no
+  longer passes; `%20` and `<a b.md>` links resolve; a BOM no longer hides frontmatter or a heading.
+- **Line endings and encodings:** `* text=auto eol=lf`, with `data/` exempt so raw inputs keep their
+  bytes (an existing clone checked out with `core.autocrlf=true` needs a one-time renormalise — see
+  TROUBLESHOOTING); the staleness gate and the render stamp
+  hash LF-normalised text; gates and scripts read and write UTF-8 and no longer crash on a cp932
+  console; `validate-setup` and `install-hooks` act on their own repository, not the caller's
+  folder; the hook battery no longer depends on the folder it is run from.
+- **Windows and PowerShell:** the guards are wired to the Bash tool, and on Windows the PowerShell
+  tool is on by default — TROUBLESHOOTING says how to keep shell work on the guarded route (owner:
+  document, do not deny).
+
 ### Added
 
 - **Slide QA in a real browser** (`scripts/slide-qa.py`). It loads a rendered Quarto deck in
@@ -280,6 +553,12 @@ absent; the debt was drift between files.
 - README and guide: the mid-2026 Claude Code features worth knowing; TROUBLESHOOTING:
   deadline-safe updates and the headless credit pool.
 
+- **Portability suite, the eleventh backtest gate** (`scripts/portability-tests.py`,
+  `tests/portability/`). Windows behaviour is simulated by loading the real modules with `ntpath`
+  swapped in, so a Windows defect fails on Linux CI. It adds about 20 s to a pre-commit backtest
+  when no hook, hook setting or battery file is staged (its two full re-runs of the hook battery are
+  skipped there, under the battery's own rule); a direct `./scripts/backtest.sh`, a commit that
+  stages a hook, and CI run them, adding about a minute.
 - **Small edits borrowed from claudeblattman** (after reading it for ideas; it also turned up the
   defects above, #165–#169; each was filed as an issue before it was fixed):
   - **A missing lens is not a dry round** in the review loop (`orchestrator-protocol.md`).
@@ -312,7 +591,7 @@ absent; the debt was drift between files.
 - **awesome-ai-agents** — no scholarly tools; its restricted-data concern is adopted above,
   browser-measured slide QA is adopted (see Added), and gate mutation testing goes to the backlog.
 
-**Inventory at release: 61 skills, 18 agents, 37 rules, 11 hooks, 10 gates**
+**Inventory at release: 61 skills, 18 agents, 37 rules, 11 hooks, 11 gates**
 (v2.5.1: 60 skills, 8 hooks; the rest unchanged).
 
 ### Verification of this release
@@ -328,8 +607,8 @@ absent; the debt was drift between files.
   one trying to refute it: round 1 confirmed 56 of 61, round 2 confirmed 31 of 39 (many duplicates
   across lenses); all confirmed findings are fixed. **The loop was stopped after round 2 by
   owner decision, so convergence (two consecutive rounds with nothing new) is not claimed.**
-- **Gates:** `./scripts/backtest.sh` passes all 10 gates, including the hook battery
-  (312 cases, seconds to run; the new case fails against the hook's old watch pattern).
+- **Gates:** `./scripts/backtest.sh` passes all 11 gates, including the hook battery
+  (312 cases, seconds to run) and the portability suite; each fix was shown to fail on the old code.
   Every checker this release changed was re-qualified on seeded defects with clean controls
   (ledger rows): `check-model-versions.sh` 5/5 recall, 0/4 false positives;
   `validate-findings.py --fill-ids` 4/4; `check-derived-counts.py` seven-pass pattern 1/1,

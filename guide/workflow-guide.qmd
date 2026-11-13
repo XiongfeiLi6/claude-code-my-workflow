@@ -2,8 +2,8 @@
 title: "My Claude Code Setup"
 subtitle: "A Comprehensive Guide to AI-Assisted Academic Workflows: Slides, Papers, Analysis, and Beyond"
 author: "Pedro H. C. Sant'Anna"
-date: "2026-09-27"
-version: "2.6.0"
+date: "2026-11-07"
+version: "2.9.2"
 date-modified: last-modified
 format:
   html:
@@ -154,13 +154,13 @@ Most of the time, you just describe what you want and Claude handles the rest. E
 ::: {.callout-important}
 ## The Bottom Line
 
-**You talk, Claude orchestrates.** The 18 agents, 77 skills, and 40 rules exist so you don't have to think about them. Describe your goal, approve the plan, and let the system work.
+**You talk, Claude orchestrates.** The 18 agents, 81 skills, and 40 rules exist so you don't have to think about them. Describe your goal, approve the plan, and let the system work.
 :::
 
 ::: {.callout-note}
 ## You Don't Need All of This on Day One
 
-This guide describes the full system --- 18 agents, 77 skills, 40 rules. That is the ceiling, not the floor. **Start with just CLAUDE.md and 2--3 skills** (`/compile-latex`, `/proofread`, `/commit`). Add rules and agents as you discover what you need. The template is designed for progressive adoption: fork it, fill in the placeholders, and start working. Everything else is there when you're ready.
+This guide describes the full system --- 18 agents, 81 skills, 40 rules. That is the ceiling, not the floor. **Start with just CLAUDE.md and 2--3 skills** (`/compile-latex`, `/proofread`, `/commit`). Add rules and agents as you discover what you need. The template is designed for progressive adoption: fork it, fill in the placeholders, and start working. Everything else is there when you're ready.
 :::
 
 ---
@@ -187,7 +187,7 @@ You need four things: install Claude Code, fork the repo, run `./scripts/install
 
 | Requirement | What It Is | How to Get It |
 |-------------|-----------|---------------|
-| **Claude Code** | The AI tool that powers this workflow | `curl -fsSL https://claude.ai/install.sh | bash` ([docs](https://code.claude.com/docs/en/overview)) |
+| **Claude Code** | The AI tool that powers this workflow — **2.1.314 or later** for the template's shipped settings (an older version skips them without a warning) | `curl -fsSL https://claude.ai/install.sh | bash` ([docs](https://code.claude.com/docs/en/overview)) |
 | **Node.js 18+** | Only for the npm install route — the recommended native installer bundles its own runtime | [nodejs.org](https://nodejs.org) |
 | **Claude account** | Authentication for Claude | [Claude Pro or Max subscription](https://claude.ai) or [Anthropic API key](https://console.anthropic.com) (pay per token) |
 | **git** | Version control (for fork/clone) | Pre-installed on Mac; `brew install git` or [git-scm.com](https://git-scm.com) |
@@ -200,6 +200,7 @@ You need four things: install Claude Code, fork the repo, run `./scripts/install
 | [Quarto](https://quarto.org) | Web slides | [quarto.org/docs/get-started](https://quarto.org/docs/get-started/) |
 | R | Figures & data analysis | [r-project.org](https://www.r-project.org/) |
 | [gh CLI](https://cli.github.com/) | PR workflow | `brew install gh` (macOS) |
+| poppler | Beamer page screenshots and log digest (`scripts/beamer-qa.py`) | `brew install poppler` (macOS), `apt install poppler-utils` (Debian) |
 | Playwright for Python | Slide overflow measured in a real browser (`scripts/slide-qa.py`) | `python3 -m venv ~/.venvs/slide-qa && ~/.venvs/slide-qa/bin/pip install playwright`, then `export SLIDE_QA_PYTHON=~/.venvs/slide-qa/bin/python` (uses your installed Chrome) |
 
 ::: {.callout-note}
@@ -237,7 +238,7 @@ That's it. Everything else — agents, hooks, rules — runs automatically in th
 
 **Claude seems to ignore the configuration files:** Make sure you ran `claude` from inside the project directory (not a parent folder). Claude reads `.claude/` and `CLAUDE.md` from the current working directory.
 
-**Hooks not firing (no notifications, no reminders):** Check that Python 3 is installed (`python3 --version`) and hook files are executable (`chmod +x .claude/hooks/*`).
+**Hooks not firing (no notifications, no reminders):** Check that Python 3 is installed (`python3 --version`) and the shell hooks are executable (`chmod +x .claude/hooks/*.sh`; the Python hooks run as `python3 <file>` and need no executable bit).
 
 **"What does plan approval look like?"** Claude presents a numbered plan and asks for your input. Say "approved", "looks good", or "revise step 3". That's it --- no special commands needed.
 
@@ -250,7 +251,7 @@ For more, see [Troubleshooting](#troubleshooting) in the Appendix.
 The fastest way to *believe* the verification layer is to watch it catch you. From a fresh clone:
 
 ```bash
-./scripts/backtest.sh          # all ten gates green on a clean tree
+./scripts/backtest.sh          # all eleven gates green on a clean tree
 sed -i '' -E 's/[0-9]+ skills/99 skills/' README.md   # plant a lie (Linux: sed -i -E, no '')
 ./scripts/backtest.sh          # surface-sync goes RED: README claims 99 skills, disk has fewer
 git checkout -- README.md      # undo
@@ -261,6 +262,8 @@ That loop — green, seeded defect, red, restore, green — is the whole philoso
 :::
 
 ## Step 1: Fork & Clone
+
+**Unpublished work? Choose before you copy.** GitHub keeps a fork of a public repository public, and its visibility cannot be changed. For a paper, data or anything not yet public, click **Use this template** on the repository page instead, set the new repository to **Private**, and clone that one: `git clone https://github.com/YOUR_USERNAME/YOUR_REPO.git my-project`. Fork only for work that can be public.
 
 ```bash
 # Fork this repo on GitHub (click "Fork" on the repo page), then:
@@ -280,6 +283,22 @@ Open your terminal in the project directory, run `claude`, and paste the followi
 Everything in this guide works the same in any Claude Code interface. In **VS Code**, open the Claude Code panel (click the Claude icon in the sidebar or press Cmd+Shift+P → "Claude Code: Open"). In **Claude Desktop**, open your project folder and start a local session. Then paste the starter prompt below.
 
 The guide shows terminal commands because they are the most universal way to explain things, but every skill, agent, hook, and rule works identically regardless of which interface you use.
+:::
+
+::: {.callout-note collapse="true"}
+## Using Codex or Antigravity instead of Claude Code?
+
+The template is built for Claude Code, but two other agents can use much of it. Codex — the Codex CLI, its IDE extensions, and the Codex tab of the ChatGPT desktop app — reads [`AGENTS.md`](https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/AGENTS.md) at the repository root, and both Codex and Google Antigravity read skills in the open Agent Skills format from `.agents/skills/`. That folder holds generated wrappers, one per skill that a single agent can run end to end: each has the same name and description as its Claude Code skill and sends the agent to the real instructions in `.claude/skills/`. In the ChatGPT app, type `@` to pick a skill; in the Codex CLI or an IDE extension, mention one with `$name` or list them with `/skills`; in Antigravity, type `/name`.
+
+Three things do not carry over, and `AGENTS.md` says what to do instead:
+
+- **The guards.** The deny rules in `.claude/settings.json` and the `dirty-tree-guard` and `issue-guard` hooks belong to Claude Code, so another agent is not stopped from running `git reset --hard` or a raw `gh issue create`. `AGENTS.md` turns each one into a rule the agent follows by hand. The git pre-commit gate (`./scripts/install-hooks.sh`) and CI apply to every agent's commits.
+- **Independent reviewers.** Skills whose value is several reviewers who do not see each other's work — `/review-paper --peer`, `/seven-pass-review`, `/verify-claims` — are not bridged: one agent playing every referee is not the same check. Where a bridged skill hands one step to a Claude Code agent, the other agent does that step where it appears, so a gate still gates. A step that needs a context that has not seen the work, such as `/lit-review`'s claim verifier, runs in a separate session. If the agent cannot start one, it marks those results *not independently verified* and tells you to repeat the check in Claude Code.
+- **Claude Code's own machinery.** Skills that manage Claude Code sessions, memory or permissions are not bridged.
+
+Claude Code itself reads `CLAUDE.md`, not `AGENTS.md`, unless a repository has no `CLAUDE.md` or its **Project instructions** setting is `claude-md-and-agents-md`; leave that setting at its default here, because `AGENTS.md` tells other agents to do by hand what Claude Code's deny rules and hooks already do. `scripts/sync-agent-skills.py` lists every skill as bridged or excluded, with the reason, and regenerates the wrappers after a skill changes; the backtest fails while a wrapper is out of date.
+
+**Keep reviewing agent-written changes.** A pull request written with another agent once passed every backtest gate with three wrong names of real people, a cited source that did not exist, and guessed version numbers. The gates check that the repository agrees with itself, not that it is true; `AGENTS.md` asks agents to source every fact, and a second model's review before merge is what caught the rest.
 :::
 
 ::: {.callout-tip appearance="simple"}
@@ -341,7 +360,7 @@ You don't have to start from a fork. To bring the workflow into a repository you
 2. **Rewrite `CLAUDE.md` for your project** — name, folder tree, current state. It is the first file Claude reads. Its link to the template README's skills table (`README.md#skills-claudeskills`) will not resolve in your repo; point it at your own index or drop it.
 3. **Tell the hygiene gate about your folders and root files.** Add each top-level folder of yours (`paper/`, `code/`, …) to `ROOT_ALLOW_DIRS` in `scripts/check-repo-hygiene.py`, and each file at the root that is not already allowed (a `Makefile`, an `.Rproj`, …) to `ROOT_ALLOW`, each with a one-line reason. The layout folders (`output/`, `data/`, `R/`, `tests/`) and the common R and Python environment files (`DESCRIPTION`, `renv.lock`, `requirements.txt`, …) are allowed already.
 4. **Remove the two checks that read the template's own documentation.** Delete the `run "surface-sync"` and `run "derived-counts"` lines from `scripts/backtest.sh`: they count skills, gates and battery cases in the template's README, guide and changelog, which your project does not have. Every other check applies to your work as-is.
-5. **Stage the copied files by name** — `git add .claude .githooks scripts templates Preambles CLAUDE.md MEMORY.md TROUBLESHOOTING.md CHANGELOG.md quality_reports .gitignore`. The ledger check needs the hook files tracked, and the template's own guard refuses a blanket `git add -A`.
+5. **Stage the copied files by name** — `git add .claude .githooks scripts templates Preambles CLAUDE.md MEMORY.md TROUBLESHOOTING.md CHANGELOG.md quality_reports .gitignore`. The ledger check needs the hook files tracked, and the template's deny rules refuse a blanket `git add -A`.
 6. **Run** `./scripts/validate-setup.sh`, then `./scripts/install-hooks.sh`, then `./scripts/backtest.sh`.
 
 We tested these steps on a project with its own README, `paper/` and `code/` folders and a root `Makefile`. As copied, five of the suite's checks failed. After steps 1–5, the full suite passed, the hook battery included.
@@ -534,17 +553,17 @@ A skeptical reader should distinguish "Claude was told to check" from "a determi
 
 | Check | Mechanism | Scope | Fail behavior | Bypass | Evidence left |
 |---|---|---|---|---|---|
-| Backtest (10 gates) | scripts, pre-commit + CI | repo-wide consistency/currency, **plus the gate layer itself** — ledger coverage and hook wiring (gate 9), the guard hooks re-fired against their target failures (gate 10) | **closed** — commit blocked | `--no-verify` | gate output, CI log |
+| Backtest (11 gates) | scripts, pre-commit + CI | repo-wide consistency/currency, **plus the gate layer itself** — ledger coverage and hook wiring (gate 9), the guard hooks re-fired against their target failures (gate 10) | **closed** — commit blocked | `--no-verify` | gate output, CI log |
 | Quality score ≥ 80 | script, pre-commit | staged `.tex`/`.qmd`/`.R` | **closed**; render checks best-effort → `UNVERIFIED` noted, not failed | `SKIP_QUALITY_GATE=1` | score report |
-| Destructive-git guard | PreToolUse hook | `git` commands in-session | **closed** — call blocked | run it yourself in a terminal | hook message |
-| Root-of-trust guard | PreToolUse hook (`Bash`) | *silent shell* writes into `.claude/settings*.json`, `.claude/hooks/`, `.githooks/` in-session (a best-effort tripwire; `Edit`/`Write` still pass) | **closed** — call blocked | `ALLOW_ROOT_OF_TRUST_WRITE=1` | hook message |
+| Destructive-git deny rules | permission `deny` rules in `.claude/settings.json`, checked by Claude Code | `git reset --hard`, `git clean`, `git push --force`/`-f`, `git add -A`/`--all`/`.` in any argument position, a checkout or restore of the whole tree (`git checkout HEAD -- .`, `git restore -- .`) in-session, as Claude usually spells them (a guard, not a security boundary: `git -C . …` and `bash -c '…'` are not matched) | **closed** — call refused | run it yourself in a terminal | the refusal in the transcript |
+| Dirty-tree guard | PreToolUse hook (`Bash`, started only for `git merge`, `pull`, `rebase`) | a history operation while tracked files have uncommitted changes, in the session's directory | **closed** — call blocked; the hook itself fails open | `ALLOW_DIRTY_MERGE=1` | hook message |
 | Issue guard | PreToolUse hook (`Bash`, spawned only for `gh` commands) | `gh issue create`, or a REST/GraphQL issue create, in-session (a best-effort tripwire, not a security boundary) | **closed** — call blocked, pointed to `scripts/file-issue.py` | run `gh` yourself in a terminal | hook message; the duplicate check recorded in the issue body |
 | Numeric-claim passport | script + skill | claims declared per paper | FAIL/STALE = must-fix at `/commit` | named override, recorded | `passport.yaml` rows |
 | `/verify-claims` | fresh-context verifier agent | citations, numbers in a draft | HIGH-WARN fails the report closed (never reported as verified); **not** a commit gate — the author decides | explicit `--no-fail-closed` | verification report |
 | Review agents / referees | model reviewers | manuscripts, slides, code | **advisory** — reports, never auto-gates | n/a | report files |
 | `/humanize`, proofread | model auditors | prose | **advisory**, detect-only | n/a | report files |
 
-Two design rules behind this table: everything **closed** is deterministic (scripts, not model judgment), and model judgment is never a gate — it produces reports a human adjudicates. And deliberately, this template does **not** pile on session-time enforcement hooks beyond its three `PreToolUse` guards — the destructive-git guard, the root-of-trust tripwire, and the issue guard. A guard that runs on every call slows every single interaction, and the cost lands on you every minute you work; that is why the issue guard is spawned only for `gh` commands.
+Two design rules behind this table: everything **closed** is deterministic (scripts, not model judgment), and model judgment is never a gate — it produces reports a human adjudicates. And deliberately, this template keeps session-time enforcement small: native deny rules, which start no process, and two `PreToolUse` hooks that Claude Code starts only for the commands they check, the dirty-tree guard for `git merge`, `pull` and `rebase` and the issue guard for `gh`. A hook that runs on every call slows every interaction, and the cost lands on you every minute you work; v2.9.1 removed the three that did.
 
 ## Don't Skip Verification
 
@@ -683,11 +702,11 @@ These references carry it, loaded on demand rather than living in every session'
 And one command runs the mechanical half of all of it:
 
 ```bash
-./scripts/backtest.sh    # ten gates: consistency, skill integrity, currency, links, spec, staleness,
-                         # hygiene, derived counts, ledger coverage, hook battery
+./scripts/backtest.sh    # eleven gates: consistency, skill integrity, currency, links, spec, staleness,
+                         # hygiene, derived counts, ledger coverage, hook battery, portability
 ```
 
-The final pair check the checking layer rather than the content. **Ledger coverage** reads
+Gates 9 and 10 check the checking layer rather than the content. **Ledger coverage** reads
 the qualification ledger and the set of checks that actually run, and requires them to agree in
 both directions: a registered check with no ledger row fails the build, a row naming a checker
 that no longer exists fails the build, and a row parked under *Not yet qualified* warns — visible
@@ -696,6 +715,11 @@ points at a file that exists, is invocable, and is tracked in git. The **hook ba
 each active guard hook with synthetic events and requires it to still go red on the failure it was
 written for, alongside clean controls that must stay green. Gate 9 proves a hook is wired; gate 10
 proves it still acts.
+
+Gate 11, the **portability suite**, covers what differs on other people's machines: Windows paths,
+code pages and line endings (simulated on Linux by loading the real modules with `ntpath` swapped
+in), non-ASCII and quoted file names from git, case-varied paths. Each defect it covers is pinned
+by a case that failed on the code before its fix.
 
 Findings themselves are machine-checked rather than described: reviewers emit a JSON array
 validated against
@@ -947,12 +971,12 @@ argument-hint: "[filename without .tex extension]"
 | `/qa-quarto` | Adversarial Quarto QA | After translating Beamer to Quarto |
 | `/slide-excellence` | Full multi-agent review | Before major milestones |
 | `/create-lecture` | New lecture from scratch | Starting a new topic |
-| `/commit` | Stage + commit (quick, default); `full` adds PR + merge | After any completed task; `full` at milestones |
+| `/commit` | Run checks and commit; external actions require separate requests | When explicitly asked to commit |
 
 ::: {.callout-note}
 ## Built-In Skills
 
-Claude Code ships with built-in skills beyond this template's 77 (as of Aug 2026): `/batch` orchestrates parallel refactoring across your codebase (using git worktrees for isolation), `/simplify` reviews recent changes for simplification opportunities, and `/debug` helps troubleshoot sessions. These complement the academic skills above.
+Claude Code ships with built-in skills beyond this template's 81 (as of Aug 2026): `/batch` orchestrates parallel refactoring across your codebase (using git worktrees for isolation), `/simplify` reviews recent changes for simplification opportunities, and `/debug` helps troubleshoot sessions. These complement the academic skills above.
 :::
 
 ## Agents --- Specialized Reviewers {#agents---specialized-reviewers}
@@ -1014,13 +1038,13 @@ Claude Code also offers experimental **Agent Teams** --- multiple independent se
 ### Multi-Model Strategy: Cost vs. Quality {#multi-model-strategy-cost-vs-quality}
 
 ::: {.callout-note}
-## Current Anthropic lineup (re-verified 2026-09-26; expiry-gated via the model SSoT)
+## Current Anthropic lineup (re-verified 2026-11-04; expiry-gated via the model SSoT)
 
-The **Fable tier** (alias `fable`) is the top Claude Code tier — opt-in via `/model fable` or the `best` alias, built for tasks larger than a single sitting; it investigates before acting and verifies its own work more often than smaller models. It is **not** the default on any account type and costs a multiple of the Opus price. The **Opus tier** is the Claude Code default and what this template routes referees, editors, and verifiers to; its adaptive thinking is always on and it defaults to `medium` effort. **Sonnet** is the workhorse mid-tier; **Haiku** is the fast/mechanical tier. Anthropic's own routing advice: start with the current Opus, and move to Fable when evals at a higher Opus effort still fall short.
+The **Fable tier** (alias `fable`) is the top Claude Code tier — opt-in via `/model fable` or the `best` alias, built for tasks larger than a single sitting; it investigates before acting and verifies its own work more often than smaller models. It is **not** the default on any account type and costs a multiple of the Opus price. The **Opus tier** is the Claude Code default and what this template routes referees, editors, and verifiers to; its adaptive thinking is always on and it defaults to `medium` effort. **Sonnet** is the workhorse mid-tier (cache reads dropped 50% to `\$0.10/MTok` on the 5.5 generation); **Haiku** is the fast/mechanical tier (now with a `1M` context window and configurable `effort`). Anthropic's own routing advice: start with the current Opus, and move to Fable when evals at a higher Opus effort still fall short.
 
 Alias resolution is **provider-dependent**, and point versions move faster than any guide can. The single source of truth is [`model-versions.md`](https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/.claude/references/model-versions.md), which carries the current versions, the per-provider alias table, and a `verified_on` date with an expiry — `scripts/check-staleness.py` fails the build when that expiry passes, and `scripts/check-model-versions.sh` catches any superseded version presented as current. **Do not hard-code a point version here.**
 
-**Retirement watch:** Sonnet 4 and the original Opus 4 retired on 2026-06-15; the current Haiku model's retirement floor is 2026-10-15 (see the SSoT). If your environment pins a model string (`ANTHROPIC_MODEL`, `ANTHROPIC_DEFAULT_*_MODEL`, hard-coded IDs in CI), re-check it against the SSoT. The current Opus needs Claude Code ≥ 2.1.280 — run `claude update` (or `claude --version`) if `/model` does not offer it.
+**Retirement watch:** Sonnet 4 and the original Opus 4 retired on 2026-06-15, the current Haiku tier shipped on 2026-10-07, and prior-generation Haiku 4.5 is still served but past its retirement floor (not sooner than 2026-10-15), so a retirement can now be announced at 60 days' notice (see the SSoT). If your environment pins a model string (`ANTHROPIC_MODEL`, `ANTHROPIC_DEFAULT_*_MODEL`, hard-coded IDs in CI), re-check it against the SSoT. The current Opus needs Claude Code ≥ 2.1.280 — run `claude update` (or `claude --version`) if `/model` does not offer it.
 :::
 
 ::: {.callout-tip}
@@ -1094,7 +1118,7 @@ Cost is invisible until you look at the monthly invoice. Three levers, in order 
 
 **1. Prompt caching.** Anthropic's prompt cache lets repeated prefix tokens (system prompt, CLAUDE.md, large context blobs) hit a cached path at a fraction of the input price. Two things forkers should know:
 
-- **The default TTL dropped from 60 min to 5 min** in early 2026. A long `/review-paper --peer` pipeline that took 12 minutes between turns now starts the second turn with a cold cache. For long pipelines on API / Bedrock / Vertex / Foundry plans, the opt-in `ENABLE_PROMPT_CACHING_1H` environment variable restores 1-hour TTL. On Claude Pro / Max subscriptions, Claude Code requests the 1-hour TTL automatically at no extra cost.
+- **The default TTL dropped from 60 min to 5 min** in early 2026. A long `/review-paper --peer` pipeline that took 12 minutes between turns now starts the second turn with a cold cache. For long pipelines on API / Bedrock / Vertex / Foundry plans, the opt-in `ENABLE_PROMPT_CACHING_1H` environment variable restores 1-hour TTL. On Claude subscriptions within plan usage, Claude Code requests the 1-hour TTL automatically, but only for the main conversation: subagents, workflows and forks get 5 minutes unless you set `subagentPromptCacheTtl` to `"1h"` (Claude Code ≥ 2.1.242; `promptCacheTtl` sets the main conversation's). That matters here, because this template's reviewers run as subagents.
 - **`cache_miss_reason`** (Anthropic public beta, 2026-05-13) is now exposed on Messages requests. Use it to diagnose why a long-running pipeline isn't getting cache hits (most often: a hook injected a timestamp that broke the prefix; or system-prompt drift between turns).
 
 The Apr 2026 [TTL change cost analysis](https://dev.to/whoffagents/claude-prompt-caching-in-2026-the-5-minute-ttl-change-thats-costing-you-money-4363) estimates a 30–60% effective cost increase for long-running pipelines that don't opt into the 1-hour TTL. Worth a Saturday hour to instrument your most expensive skill (`/review-paper --peer` is typically the worst offender).
@@ -1103,21 +1127,21 @@ The Apr 2026 [TTL change cost analysis](https://dev.to/whoffagents/claude-prompt
 
 | Model | Share of subagent calls | Use for |
 |---|---|---|
-| **Haiku 4.5** | ~70% | Mechanical work: TikZ extraction, citation reformatting, bib validation, proofread fixes, simple file lookups |
+| **Haiku tier** | ~70% | Mechanical work: TikZ extraction, citation reformatting, bib validation, proofread fixes, simple file lookups |
 | **Sonnet tier** | ~20% | Review and critique: r-reviewer, slide-auditor, proofreader, quarto-fixer |
 | **Opus tier** | ~10% | High-judgment work: editor, domain-referee, methods-referee, claim-verifier, manuscript review |
 
-Set per-agent via `model:` in `.claude/agents/<name>.md` frontmatter. Typical savings vs. all-Opus in our use: **50–80% on routed skills**, with no quality loss observed on the mechanical tier (heuristic, not a benchmark). The community-converged ratio is documented in [Augment Code's routing data](https://augmentcode.com) and aligns with Aider's architect/editor split; we cite Anthropic's [Apr 8 2026 "Decoupling brain from hands"](https://www.anthropic.com/engineering) as the primary-source endorsement of the pattern.
+Set per-agent via `model:` in `.claude/agents/<name>.md` frontmatter. Typical savings vs. all-Opus in our use: **50–80% on routed skills**, with no quality loss observed on the mechanical tier (heuristic, not a benchmark). The community-converged ratio is documented in [Augment Code's routing data](https://augmentcode.com) and aligns with Aider's architect/editor split. (An earlier version cited Anthropic's "Decoupling the brain from the hands" post as the primary-source endorsement; that post is about agent-harness design and does not discuss routing work across model tiers.)
 
-**3. Effort budgeting.** The [Effort Levels](#sec-effort) section below covers the `low | medium | high | xhigh | max` ladder. **The current Opus tier defaults to `medium`** — and its `medium` matches or beats the prior Opus generation at `high` (Anthropic's evaluations), while at any given level it thinks more per turn. So: let `medium` be the default; pin `high` only on gates where a false PASS is expensive (the template does this for the editor, both referees, the claim verifier, and verification-gate or correctness-critical skills such as `/audit-reproducibility`, `/seven-pass-review`, and `/simulation-study` — the full list is in `model-routing.md`); drop to `low` for mechanical work; reach for `xhigh` only for extended exploration (deep search, big refactors, the hardest `/review-paper` runs); `ultracode` (xhigh + dynamic workflows) for repo-scale autonomous tasks. On a fixed grant budget, `maxEffortLevel` in settings caps effort everywhere.
+**3. Effort budgeting.** The [Effort Levels](#sec-effort) section below covers the `low | medium | high | xhigh | max` ladder. **The current Opus tier defaults to `medium`** — and its `medium` matches or beats the prior Opus generation at `high` (Anthropic's evaluations), while at any given level it thinks more per turn. So: let `medium` be the default; pin `high` only on gates where a false PASS is expensive (the template does this for the editor, both referees, the claim verifier, and verification-gate or correctness-critical skills such as `/audit-reproducibility`, `/seven-pass-review`, and `/simulation-study` — the full list is in `model-routing.md`); drop to `low` for mechanical work; reach for `xhigh` only for extended exploration (deep search, big refactors, the hardest `/review-paper` runs); the `ultracode` toggle (dynamic workflows; since Claude Code 2.1.284 it no longer forces `xhigh`) for repo-scale autonomous tasks, with `workflowSizeGuideline` to cap the fan-out. On a fixed grant budget, `maxEffortLevel` in settings caps effort everywhere.
 
 ::: {.callout-tip}
 ## Monitoring: `/cost` and `/usage`
 
-- **`/cost`** (Apr 2026 Week 15) — current session breakdown by model and cache hit-rate.
+- **`/cost`** (Apr 2026 Week 15) — now a shortcut that opens a tab of `/usage` (Claude Code 2.1.118 merged them).
 - **`/usage`** (Apr 2026 Week 16) — month-to-date totals + per-plan-tier remaining quota.
 
-Run `/cost` after any `/review-paper --peer` pipeline. If your cache hit-rate is under 60% for the second/third turn, you're almost certainly being bitten by the 5-min TTL.
+Run `/usage` after any `/review-paper --peer` pipeline and read its `Prompt cache (main)` line (Claude Code ≥ 2.1.251). If the hit rate is under 60% for the second or third turn, the 5-minute TTL is the likely cause, and the referees, as subagents, are on 5 minutes even on a subscription.
 :::
 
 ::: {.callout-warning}
@@ -1128,7 +1152,7 @@ Since 2026-06-15, `claude -p` headless subprocess calls (used by `scripts/run-sk
 
 ## Settings --- Permissions and Hooks {#settings---permissions-and-hooks}
 
-`.claude/settings.json` controls what Claude is allowed to do. The template ships a catch-all allow list rather than a curated one: seven wildcard rules, with no deny rules and no default mode. Here is the permissions block plus one of its hooks:
+`.claude/settings.json` controls what Claude is allowed to do. The template ships a catch-all allow list rather than a curated one: seven wildcard allow rules, a deny list for destructive git commands and secret files, and no default mode. Here is the permissions block plus one of its hooks:
 
 ```json
 {
@@ -1142,7 +1166,48 @@ Since 2026-06-15, `claude -p` headless subprocess calls (used by `scripts/run-sk
       "WebSearch",
       "Read(**)"
     ],
-    "deny": []
+    "deny": [
+      "Bash(git reset --hard *)",
+      "Bash(git reset * --hard)",
+      "Bash(git reset * --hard *)",
+      "Bash(git clean *)",
+      "Bash(git push --force *)",
+      "Bash(git push * --force)",
+      "Bash(git push * --force *)",
+      "Bash(git push -f *)",
+      "Bash(git push * -f)",
+      "Bash(git push * -f *)",
+      "Bash(git add -A *)",
+      "Bash(git add * -A)",
+      "Bash(git add * -A *)",
+      "Bash(git add --all *)",
+      "Bash(git add * --all)",
+      "Bash(git add * --all *)",
+      "Bash(git add . *)",
+      "Bash(git add * .)",
+      "Bash(git add * . *)",
+      "Bash(git checkout -- . *)",
+      "Bash(git checkout . *)",
+      "Bash(git checkout * .)",
+      "Bash(git restore . *)",
+      "Bash(git restore * .)",
+      "Bash(git restore * . *)",
+      "Read(.env)",
+      "Read(.env.*)",
+      "Read(**/.env)",
+      "Read(**/.env.*)",
+      "Read(**/*.pem)",
+      "Read(**/*.key)",
+      "Read(**/credentials*)",
+      "Edit(.env)",
+      "Edit(.env.*)",
+      "Edit(**/.env)",
+      "Edit(**/.env.*)",
+      "Write(.env)",
+      "Write(.env.*)",
+      "Write(**/.env)",
+      "Write(**/.env.*)"
+    ]
   },
   "hooks": {
     "Stop": [
@@ -1158,7 +1223,7 @@ Since 2026-06-15, `claude -p` headless subprocess calls (used by `scripts/run-sk
 }
 ```
 
-In Manual mode almost nothing prompts. Auto mode drops the blanket `Bash(*)` and routes shell commands through its classifier. To tighten this, for example to keep restricted data off the model, add `deny` rules: see "Keep restricted data off the model" in [TROUBLESHOOTING.md](https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/TROUBLESHOOTING.md#keep-restricted-data-off-the-model).
+In Manual mode almost nothing prompts. Auto mode drops the blanket `Bash(*)` and routes shell commands through its classifier. The deny rules hold in every mode; the push rules leave `--force-with-lease` allowed, and what the git rules do not catch is in [Hooks](#hooks---automated-enforcement). To tighten this further, for example to keep restricted data off the model, add more `deny` rules: see "Keep restricted data off the model" in [TROUBLESHOOTING.md](https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/TROUBLESHOOTING.md#keep-restricted-data-off-the-model).
 
 **Permission modes.** Claude Code has six permission modes that control how much autonomy Claude gets:
 
@@ -1169,7 +1234,7 @@ In Manual mode almost nothing prompts. Auto mode drops the blanket `Bash(*)` and
 | **Don't ask** | `dontAsk` | Auto-denies tools unless pre-approved in allowlist | Restricted environments where only allowlisted tools run |
 | **Plan** | `plan` | Read-only --- edits blocked until you approve the plan (except in interactive terminal sessions where bypass is available: there the block is not enforced) | Exploring code, reviewing before acting |
 | **Auto** | `auto` | Classifier-gated; everything runs unless flagged risky. **The built-in starting mode on Claude Code ≥ 2.1.283** for interactive terminal and VS Code sessions (on earlier versions, Pro/Max/Team since 2026-08-14), and it needs no opt-in flag on Bedrock, Google Cloud's Agent Platform, or Microsoft Foundry | Long autonomous tasks with safety net --- the recommended mode for trusted repos when bypass is too permissive |
-| **Bypass** | `bypassPermissions` | Skips **all** permission prompts and safety checks (deny rules still apply) — including writes to protected paths (`.git`, `.vscode`, `.idea`, `.husky`, `.claude`). Anthropic's docs advise reserving it for isolated environments | CI/CD, headless scripts, and — eyes open — trusted-repo daily driving: nothing prompts, so pair it with plan-first and the shipped `git-guardrails` hook — which narrows the common accidents rather than replacing the prompt you turned off |
+| **Bypass** | `bypassPermissions` | Skips **all** permission prompts and safety checks (deny rules still apply) — including writes to protected paths (`.git`, `.vscode`, `.idea`, `.husky`, `.claude`). Anthropic's docs advise reserving it for isolated environments | CI/CD, headless scripts, and — eyes open — trusted-repo daily driving: nothing prompts, so pair it with plan-first and the shipped deny rules, which still apply in bypass and narrow the common accidents rather than replacing the prompt you turned off |
 
 Set via CLI flag (`claude --permission-mode plan`), the `/config` command, or `permissions.defaultMode` in `settings.json`.
 
@@ -1209,7 +1274,7 @@ Plan mode and a low-prompt execution mode — **auto mode**, or bypass if you ru
 
 Approving a plan via `ExitPlanMode` hands the session to the mode set at the approval prompt — current Claude Code versions present explicit choices there (approve into auto mode, approve with manual edit review, keep planning); on a bypass setup the approved plan proceeds without per-tool prompts. Once there, any subsequent tool call (Edit, Write, Bash) executes under the full allowlist in your `settings.json`, not a scope derived from the plan. A mistaken implementation can still edit unrelated files or run destructive shell commands with no second checkpoint.
 
-Treat this flow as a convenience pattern, not a security control. If you need a hard enforcement boundary, set `permissions.defaultMode: "default"` (Manual — the template's `.claude/settings.json` sets no default mode, so on Claude Code ≥ 2.1.283 sessions start in auto) and remove the template's wildcard `Bash(*)`, `Edit(**)` and `Write(**)` allows, or add `ask`/`deny` rules for high-risk tools, so each one prompts individually. In VS Code, also delete the two bypass keys from `.vscode/settings.json`. Alternatively, run the whole session in `plan` mode and copy actions out manually.
+Treat this flow as a convenience pattern, not a security control. If you need a hard enforcement boundary, set `permissions.defaultMode: "default"` (Manual — the template's `.claude/settings.json` sets no default mode, so on Claude Code ≥ 2.1.283 sessions start in auto) and remove the template's wildcard `Bash(*)`, `Edit(**)` and `Write(**)` allows, or add `ask`/`deny` rules for high-risk tools, so each one prompts individually. Alternatively, run the whole session in `plan` mode and copy actions out manually.
 :::
 
 The flow:
@@ -1263,8 +1328,8 @@ A handful of commands cut friction in the actual editing loop. Worth knowing bef
 
 **Also new since mid-2026** (Claude Code release notes, Jun–Sep 2026):
 
-- **Subagents run in the background, and fork mode is on by default** in interactive sessions — Claude keeps working while subagents run, and `/fork` copies the conversation into a background session. A fork *inherits the conversation*, so reviews that must be independent (claim verification, referees) use fresh-context subagents, never a fork.
-- **Output styles:** `/output-style` switches how Claude writes. **Concise** leads with the result and skips preamble; **Learning** leaves parts for you to write — a good fit next to `/scaffold-exercises` for teaching.
+- **Subagents run in the background, and fork mode is on by default** — in interactive sessions and, since Claude Code 2.1.302, in `claude -p`, the Agent SDK, the desktop app and VS Code (`CLAUDE_CODE_FORK_SUBAGENT=0` turns forks off for a headless review run) — Claude keeps working while subagents run, and `/fork` copies the conversation into a background session. A fork *inherits the conversation*, so reviews that must be independent (claim verification, referees) use fresh-context subagents, never a fork.
+- **Output styles:** `/output-style` switches how Claude writes. **Concise** leads with the result and skips preamble; **Learning** leaves parts for you to write — a good fit next to `/scaffold-exercises` for teaching. **Explanatory** adds short *Insight* notes on its choices. **Proactive** starts implementing at once and does not enter plan mode unless you ask for a plan, which works against this template's plan-first habit; keep it for small, well-specified work.
 - **`/skill-doctor`** shows each skill's context cost and usage; **`claude plugin eval`** scores a plugin against test cases versus a no-plugin baseline.
 - **Deadline-safe updates:** `"autoUpdatesChannel": "stable"` (and `minimumVersion`) in `~/.claude/settings.json` — see TROUBLESHOOTING; `maxEffortLevel` caps effort for a fixed budget.
 
@@ -1305,14 +1370,14 @@ Claude Code lets you control how deeply it reasons about each task. Higher effor
 - **Per-session:** Type `/effort high` for a demanding session (the current Opus default is `medium`) or `/effort xhigh` for the hardest runs. Typing `/effort` on its own opens an **interactive slider** (Apr 2026 Week 16).
 - **Per-skill:** Add `effort: high` to skill frontmatter (see [Skill Frontmatter Reference](#skill-frontmatter))
 - **Keyboard toggle:** `Option+T` (Mac) / `Alt+T` (Windows/Linux) toggles thinking on models where it can be switched off; on the current Opus and Fable tiers thinking is always on, so `/effort` is the control
-- **In prompts:** on always-thinking tiers, raise `/effort` for a hard turn rather than relying on a keyword such as `ultrathink`; phrases like "think hard" are treated as regular instructions and do *not* allocate extra thinking
-- **Environment variable:** `CLAUDE_CODE_EFFORT_LEVEL=high` for all sessions
+- **In prompts:** `ultrathink` in a terminal prompt runs that one turn at `xhigh` on the current Opus, Sonnet, Haiku and Fable tiers (Claude Code ≥ 2.1.311; `CLAUDE_CODE_DISABLE_ULTRATHINK` turns it off). Other phrases like "think hard" are treated as regular instructions and do *not* allocate extra thinking
+- **Environment variable:** `CLAUDE_CODE_SUBAGENT_EFFORT=medium` (Claude Code ≥ 2.1.316) sets the effort for subagents that name none. Avoid `CLAUDE_CODE_EFFORT_LEVEL` as a session default: it overrides every skill's `effort:` pin, so the template's `high` gates and `medium` cost caps collapse to one level. Use `/effort` or the `effortLevel` setting instead
 - **Hooks can read it:** As of Apr 2026 Week 19, hook input includes `effort.level` and `$CLAUDE_EFFORT` is set in Bash subprocess env --- useful for skipping expensive verification on low-effort runs
 
 ::: {.callout-tip}
 ## Composing Effort with Model Choice
 
-Effort levels compose with model selection for fine-grained cost control. For example, `Sonnet + high effort` costs less than `Opus + high effort` and may produce comparable results for bounded tasks like formatting, and the Haiku tier (which takes no effort setting) is cheaper still. Use `Opus + max` only for tasks that genuinely require deep multi-step reasoning --- complex proofs, intricate data pipeline debugging, or comprehensive paper critique.
+Effort levels compose with model selection for fine-grained cost control. For example, `Sonnet + high effort` costs less than `Opus + high effort` and may produce comparable results for bounded tasks like formatting, while `Haiku + low effort` (configurable on the current Haiku tier, where `promote-memory-council` pins `effort: low`) is cheaper still. Use `Opus + max` only for tasks that genuinely require deep multi-step reasoning --- complex proofs, intricate data pipeline debugging, or comprehensive paper critique.
 :::
 
 ## Memory --- Cross-Session Persistence {#memory---cross-session-persistence}
@@ -1420,7 +1485,7 @@ The first five layers are your safety net. Anything written to disk survives ind
 
 The session log reminder above is one example of a broader pattern: using **hooks** to enforce rules that Claude might otherwise forget during long sessions. Rules live in context and can be compressed away. Hooks live in `.claude/settings.json` and fire every time, regardless of context state.
 
-The template includes 11 hooks for logging, notifications, context survival, git safety, issue tracking, and protection of the configuration that defines the gates (plus a real git pre-commit hook, `.githooks/pre-commit`, installed via `./scripts/install-hooks.sh`):
+The template includes 9 hooks for logging, notifications, context survival, git safety, and issue tracking (plus a real git pre-commit hook, `.githooks/pre-commit`, installed via `./scripts/install-hooks.sh`). Destructive git commands are refused by permission deny rules rather than by a hook:
 
 | Hook | Event | What It Does |
 |------|-------|-------------|
@@ -1429,32 +1494,24 @@ The template includes 11 hooks for logging, notifications, context survival, git
 | Context state capture | `PreCompact` | Saves plan state before auto-compaction |
 | Context restoration | `SessionStart[compact|resume]` | Restores context after compaction or resume |
 | Session handoff | `SessionStart[startup]` + `UserPromptSubmit` | Hands a fresh session the newest checkpoint written in the last 7 days; used up only once you type a prompt (`CLAUDE_HANDOFF=off` to skip) |
-| Context monitor | `PostToolUse[Bash|Agent|Task]` | Progressive warnings at 40%/55%/65%/80%/90% context |
-| Git guardrails | `PreToolUse[Bash|Write|Edit|MultiEdit]` | Blocks destructive git (`reset --hard`, `clean -f`, `push --force`, `add -A`), and refuses a merge, rebase, or pull while the tree is dirty — including chains that would clean it first; on `Write`/`Edit`/`MultiEdit` of code files (`.R`, `.Rmd`, `.qmd`, `.do`, `.py`) it warns on hardcoded machine paths (`/Users/…`, `/home/…`), and denies them when `CLAUDE_STRICT_PATHS=1` |
+| Dirty-tree guard | `PreToolUse[Bash]`, started only for `git merge`, `git pull` and `git rebase` (`"if": "Bash(git merge *)"` and the like) | Refuses the operation while tracked files have uncommitted changes; untracked files do not count, `--abort`/`--continue`/`--skip`/`--quit`/`--edit-todo` pass, and `ALLOW_DIRTY_MERGE=1` overrides |
 | Claim reconcile | `PostToolUse[Write|Edit|MultiEdit]` | Flags stale numeric claims when analysis scripts change |
-| Issue guard | `PreToolUse[Bash]`, spawned only for `gh` commands (`"if": "Bash(gh *)"`) | Denies a new GitHub issue created without the duplicate check (`gh issue create`/`new`, or a REST or GraphQL create) and points to `scripts/file-issue.py`, which searches open and closed issues first |
+| Issue guard | `PreToolUse[Bash]`, spawned only for `gh` commands (`"if": "Bash(gh *)"`, and `Bash(gh.exe *)` for Windows) | Denies a new GitHub issue created without the duplicate check (`gh issue create`/`new`, or a REST or GraphQL create) and points to `scripts/file-issue.py`, which searches open and closed issues first |
 | Open issues (opt-in) | `SessionStart[startup]` | With `CLAUDE_ISSUES_AT_START=1`, lists the open issues' numbers and titles — by the owner and collaborators only — so a session starts knowing the to-do list; off by default |
-| Root-of-trust guard | `PreToolUse[Bash]` | A tripwire, not a lock: denies *silent shell* writes into `.claude/settings*.json`, `.claude/hooks/`, and `.githooks/` — the files that define every other gate — and applies the destructive-git deny list to `bash -c` / `env -S` payloads. `Edit`/`Write`, a branch switch, or a bug in the hook can still replace them |
 
-Two of these deserve a note, because both encode a lesson rather than a preference. **Git guardrails** refuses a merge, rebase, or pull while the working tree is dirty: the operation either aborts mid-way or quietly folds uncommitted work into the result, and neither outcome announces itself. Stash with a label first, or set `ALLOW_DIRTY_MERGE=1` if you mean it. `--abort` and `--continue` are exempt outright — they are how you get *out* of a dirty in-progress operation. `--autostash` is not: it is allowed only when `git status --porcelain` reports no untracked entry, because `git stash` does not stash untracked files, so an autostash over a `??` line leaves that line exactly where it was.
+One of these deserves a note, because it encodes a lesson rather than a preference. The **dirty-tree guard** refuses a merge, rebase, or pull while tracked files have uncommitted changes: the operation either aborts mid-way or quietly folds uncommitted work into the result, and neither outcome announces itself. Commit, or stash with a label, then run the operation as its own command; set `ALLOW_DIRTY_MERGE=1` if you mean it. `--abort` and `--continue` pass, because they are how you get *out* of a dirty in-progress operation. Only the issue guard is registered with `"onFailure": "block"` (Claude Code ≥ 2.1.295), so a missing `python3` refuses `gh` commands and no longer blocks Bash, Edit and Write. The dirty-tree guard has no such setting and fails open.
 
-It refuses **even when the same command line would have cleaned the tree first** — `git stash push -m wip && git merge` is denied, and you run the two steps separately instead. That looks pedantic until you see what the alternative cost. The check originally tried to *predict*, from the text of a chained command, whether the tree would still be dirty by the time the merge ran. Round after round of adversarial review found one more thing the prediction got wrong — stash flags, then stash subcommands, then intervening segments, then output redirection, then command substitution, and finally the plain fact that `git stash` does not stash untracked files at all, so even a correctly-parsed "this cleans the tree" was sometimes false. The rule now reads the tree as it *actually is* and refuses.
+::: {.callout-note collapse="true"}
+## What the deny rules and the dirty-tree guard catch, and what they miss
 
-The reading has to be earned, though, and that is **rule 0: standalone or nothing.** A `PreToolUse` hook decides before bash runs the line, so a reading taken now says nothing about the tree the op will actually start from — `printf '\n# note\n' >> analysis.R && git merge main` reads clean at hook time and executes dirty. So an identified merge, rebase, or pull reaches the tree reading only as a *standalone simple command*. A second shell segment, a pipeline, a redirection, a command or process substitution in its arguments, a grouping, a `cd`, or a variable assignment on the same line is denied outright, without the tree being read at all. That closes every write-then-op ordering by construction instead of by enumeration, and it also denies ordinary trailing conveniences — `git pull | tail -5`, `git pull > log 2>&1`, `git merge x && npm install`. **Deleting the prediction took the whole class of defect with it** — at the cost of one extra tool call, with its own hook cycle and agent round trip.
+**Denied natively.** The `deny` list in `.claude/settings.json` (shown in [Settings](#settings---permissions-and-hooks)) is checked by Claude Code itself, so it starts no process and adds no delay. It refuses `git reset --hard`, every `git clean` (dry runs included), `git push --force` and `-f` (`--force-with-lease` still runs), `git add -A`, `--all` and `.` wherever they appear among the arguments, and a checkout or restore of the whole tree (`git checkout .`, `git checkout -- .`, `git checkout HEAD -- .`, `git restore .`, `git restore -- .`; also `git restore --staged .`, which only unstages). It also refuses reads and edits of `.env` files, including a Bash command that reads or writes a `.env` path, and reads of `*.pem`, `*.key` and `credentials*` files. Per the Claude Code permissions docs (read 2026-11-06), a deny rule applies to every subcommand of a compound command, including one inside a subshell, a command substitution or a control-flow body; it strips wrappers such as `timeout`, `nice`, `nohup` and leading `VAR=` assignments; and it holds in every permission mode. Each rule was checked live on 2026-11-06 in a scratch repository, including `(git reset --hard)` and `echo "$(git reset --hard)"`, the forms issue #172 recorded the old hook missing. `git reset --soft`, `git add <named files>`, `git restore --staged <file>` and `git checkout -- <file>` still run.
 
-The hook did not end up smaller, and the reason is the useful part of the lesson. What replaced the prediction was *parsing* — working out which part of a command line is a git invocation, and whether a flag is really a flag or just a word inside a message. That is a harder-looking job that is nonetheless **finite and checkable**: shell grammar can be read correctly, and when the reading is wrong a test says so. Predicting what a command will *do* to the working tree has no such floor. Trading an unbounded problem for a bounded one is worth paying code for; the mistake was ever being on the unbounded side.
+**The dirty-tree check.** Claude Code starts `dirty-tree-guard.py` only for a command that contains `git merge`, `git pull` or `git rebase`, and, by the `if` filter's documented fallback, for any command containing `$(…)`, backticks or `$VAR`. So the hook first checks that a real merge, pull or rebase is present, reading the command the way the shell splits it: quoted text, comments and heredoc bodies are not commands, and `--abort` or `--continue` inside a message is not a resume step. A one-line launcher in the registration skips the hook if its file is missing, so a missing file refuses nothing. The hook runs `git status --porcelain --untracked-files=no` in the session's directory and refuses if a tracked file has uncommitted changes. Untracked files do not count, because git itself refuses a merge that would overwrite one. The hook reads the tree before the command line runs, so `git stash && git merge` on a dirty tree is refused too: run the two as separate commands.
 
-What it still cannot see is written down rather than implied away. Its docstring enumerates the forms it has been probed against — a `git merge` carried inside `bash -c`, an interpreter, an alias, a script, or a Makefile; and a write by **another process** in the milliseconds between the reading and git starting — and then says plainly that the list reports where the parser *has been probed*, not where it is complete. One form sits under that catch-all rather than on the list, and is worth naming because it is easy to assume covered: an op hidden *inside* a command substitution — `echo $(git merge main)`, `x=$(git merge main)`, the backtick spelling — never reaches the parser as a segment at all, so the hook is **silent** on it where the bare spelling denies (measured against the shipped hook on a dirty fixture, 2026-08-23). Rule 0 denies a substitution in an *identified* op's arguments; one that *carries* the op is never identified, which is a different thing. A `cd` into a different repository was on the docstring's list until rule 0 arrived and denied it, along with every other multi-segment form — which is also what closes the case of the same command line doing the dirtying. The second hook — the file is `root-of-trust-guard.py`, and the honest description is a **silent-shell-write tripwire** — exists because the settings file and the hook directory decide whether any other gate runs at all: a shell one-liner can disable every gate in the repo in a single redirect, and nothing in the transcript looks unusual afterwards. Reads pass, and `Edit` / `Write` stay allowed so a change to a gate arrives as a reviewable diff rather than an invisible overwrite; the hatch is `ALLOW_ROOT_OF_TRUST_WRITE=1`.
+**What neither catches.** A deny rule does not match a rewritten spelling: `git -C . push --force`, `git -c x=y push`, `git 'push'`, `/usr/bin/git`, or a command inside `bash -c '…'`. The docs call Bash deny rules a guard on the invocation Claude usually produces, not a security boundary. The dirty-tree guard reads the session's directory, so it misses a repository reached by `cd elsewhere &&` or `git -C`, and it does not look inside `bash -c`, an alias, a script or a Makefile. It fails open: if git cannot answer or the hook has a bug, the command runs. Nothing refuses a write into `.claude/settings*.json`, `.claude/hooks/` or `.githooks/`: no hook watches them, and the template no longer sets `blockWritesOutsideWorkingDirectories`. And none of this recovers anything: `git reflog` restores a moved commit pointer, but not an uncommitted edit or an untracked file, which is what `reset --hard` and `clean` destroy.
 
-Because that hook already unwraps `bash -c` and `env -S` payloads to find writes hidden inside them, it now hands the unwrapped payload to git-guardrails' *own* destructive-git deny list as well — imported, not copied, so the two hooks cannot drift apart on what counts as destructive. That closes a gap the two of them had left open between each other: `bash -c 'git reset --hard'` and `bash -c 'git clean -fdx'` named no protected path for the first hook to test and looked like one opaque word to the second, so neither denied them, while the unwrapped spellings had been denied all along. The clean-tree check is *not* shared, so `bash -c 'git merge main'` on a dirty tree is still seen by neither.
-
-Now the part the name gets wrong. A repo-local, mutable, fail-open textual scan is not a root of trust, and the file name is a filename rather than a claim. The scan reads the command line as text, so it catches the direct forms — redirects, `tee`, `cp`/`mv`/`rm`, in-place edits — and the payload carriers it knows about, including behind common wrappers. It cannot see inside an interpreter it does not read (`python3 -c`, `perl -e`), a path piped into a deleter, or an execution form nobody has enumerated yet. More to the point, the files it watches stay replaceable through four channels the template deliberately allows, none of which trips it: an `Edit` / `Write` / `MultiEdit` on those same files — including one that deletes the hook's own registration from `.claude/settings.json`; an ordinary `git switch` onto a branch whose tree carries different hooks; a clean merge or pull that imports the same change; and a bug in the hook itself, which fails open and becomes a no-op.
-
-So state its value exactly: **it changes the channel a modification arrives through — a reviewable diff instead of an invisible overwrite — and nothing more.** It is not a lock, and in a fresh fork there may be no other control behind it: a visible diff is retrospective visibility rather than authorisation, choosing `bypassPermissions` is a posture rather than a control, and a machine-wide hook in `~/.claude/hooks/` is optional and lives outside the repository. If you want a real one, it has to sit outside the worktree — a non-empty `deny` list in the permission system, or a machine-level hook — and it has to cover `Edit`/`Write` and branch transitions too. Note also what the audit trail is not: the transcript records that a loss happened, and `git reflog` / `ORIG_HEAD` recover a moved commit pointer, but neither holds the bytes of an uncommitted edit, an untracked file, or an ignored one — which is exactly what `reset --hard` and `clean -fdx` destroy. A guard whose advertised coverage exceeds its actual coverage is worse than none, because you stop looking.
-
-There is a further lesson here, and it is the one most likely to transfer to whatever you are guarding. A path can be written many ways that all reach the same file — a glob, a different case on a case-insensitive filesystem, a quote or a backslash sitting inside the name, a variable, a command substitution. Successive review rounds each turned up another one. That is simply what a text scan over shell syntax is: useful for the direct forms, and not a closed set. So the practical advice is not to give up on the guard — it still costs an accident a denial — but to be honest in the docstring about which forms it has actually been tested against, and to say that there are others. If you need a guarantee rather than a speed bump, the mechanism has to stop being a text scan: a real `deny` rule in the permission system, or a wrapper the operation cannot go around.
-
-One distinction inside that is worth keeping, because it changes what a fix can even do. Most of those forms are just **text** — the information is in the command line, so a scanner can be taught to read it, and another round of parsing is a reasonable answer. A symbolic link is not: it is a fact about the filesystem, and reading the command line cannot recover it. A link named anything at all, pointing at the directory you protect, is invisible to a text scan while the shell writes straight through it. That one is written down as out of reach rather than chased — and when you build your own guard, the same question tells you which gaps are worth more parsing and which mean the mechanism is the wrong shape for the guarantee you wanted.
+**Restoring a removed hook.** v2.9.1 removed `git-guardrails.py`, `root-of-trust-guard.py` and `context-monitor.py`. They ran on every Bash call, and together they slowed work and refused too often. To bring one back, copy it from the `v2.9.0` tag (`git show v2.9.0:.claude/hooks/git-guardrails.py > .claude/hooks/git-guardrails.py`) and register it again in `.claude/settings.json` the way it was at that tag (`git show v2.9.0:.claude/settings.json`).
+:::
 
 Verification and Beamer-Quarto sync are enforced via auto-loaded rules, which are the right tool for nuanced judgment. Hooks are reserved for enforcement that *must* survive context compression.
 
@@ -1492,7 +1549,7 @@ But a wired hook is not yet a working hook. A guard can keep its path, keep firi
 denying — an over-broad exception, a regex loosened during a debugging session, an early
 `return allow` left in. Gate 10, the hook battery, drives each active guard with synthetic events
 and requires it to still go red on the failure it was written for, and to stay green on the clean
-controls. 312 cases, and it finishes in seconds.
+controls. 123 cases, and it finishes in seconds.
 :::
 
 **Hook handler types.** The examples above use `command` hooks (shell scripts), but Claude Code supports five handler types:
@@ -1538,6 +1595,8 @@ Session running → context fills up → PreCompact fires
                                     • Claude knows where it left off
 ```
 
+`pre-compact.py` also prints the plan, the next task and the recent decisions to stdout, which Claude Code uses as instructions for the compaction summary itself, so they survive inside the summary as well as through the restore hook. Both label them as historical records to check against the current files, not as instructions. Long idle sessions can be compacted too (`idleCompaction: false` turns that off).
+
 #### What Gets Saved
 
 | State | Location | Purpose |
@@ -1549,17 +1608,9 @@ Session running → context fills up → PreCompact fires
 
 #### Context Monitoring
 
-The `context-monitor.py` hook tracks approximate context usage and provides progressive warnings:
+Claude Code reports context use itself. The status line shows `ctx NN%` from Claude Code's own `context_window.used_percentage`, and shows nothing while that field is empty early in a session. The built-in `/context` command shows the exact breakdown, and `/context-status` adds the active plan, the newest session log and whether the compaction hooks are configured.
 
-| Threshold | Message | Purpose |
-|-----------|---------|---------|
-| 40%, 55%, 65% | Suggest `/learn` | Capture non-obvious discoveries before compaction |
-| 80% | Info message | Auto-compact approaching, no rush |
-| 90% | Caution | Complete current task with full quality |
-
-Use `/context-status` to check current session health at any time.
-
-Note: the monitor estimates context from transcript size (falling back to a tool-call count), so warnings may appear earlier or later than actual compaction; the status line prefers Claude Code's own `context_window.used_percentage` where available.
+Until v2.9.1 a `context-monitor.py` hook estimated the percentage after every Bash call and printed nudges at set thresholds. It was removed with the other per-command hooks.
 
 #### Recovery After Compaction
 
@@ -1972,7 +2023,7 @@ Phase 4: QUALITY GATE
 
 #### When to Use /learn
 
-The context monitor suggests `/learn` at 40%, 55%, and 65% context usage. Consider extracting a skill when you encounter:
+Run `/learn` before compaction, while the discovery is still in context; the status line's `ctx` reading tells you how close that is. Consider extracting a skill when you encounter:
 
 | Trigger | Example |
 |---------|---------|
@@ -2300,7 +2351,7 @@ Strong statisticians hit these six walls more than any others; each has a one-li
 3. **"What is staged?"** — `git status`; only the green (staged) files enter the next commit.
 4. **"Why did `git checkout main` fail?"** — a branch can be checked out in only ONE worktree at a time; `cd` back to the primary worktree instead.
 5. **"Why does `git branch -d` refuse after my squash merge?"** — a squash merge copies the changes but not the ancestry, so git can't see the branch as merged; use `-D` once the squash commit is in.
-6. **"How do I undo without `reset --hard`?"** — `git checkout -- <file>` for one file, `git stash` to shelve everything; the template's git guard blocks the destructive forms for exactly this reason.
+6. **"How do I undo without `reset --hard`?"** — `git checkout -- <file>` for one file, `git stash` to shelve everything; the template's deny rules block the destructive forms for exactly this reason.
 :::
 
 Git worktrees create a **separate working directory** linked to the same repository. Each directory has its own branch but shares commit history. Subagents can use worktrees via the `isolation: worktree` field (see [Advanced Agent Configuration](#sec-agent-config)).
@@ -2325,8 +2376,8 @@ your-project/                     ← main branch (stays clean)
 ```
 1. CREATE WORKTREE
    echo ".worktrees/" >> .git/info/exclude   # once per clone, BEFORE the first worktree:
-                                             # otherwise porcelain always shows `?? .worktrees/`,
-                                             # no stash clears it, and every merge below is denied
+                                             # otherwise the primary's status always
+                                             # shows `?? .worktrees/`
    git worktree add .worktrees/lecture-06-quarto -b quarto/lecture-06
    cd .worktrees/lecture-06-quarto
          ↓
@@ -2340,9 +2391,9 @@ your-project/                     ← main branch (stays clean)
 4. SYNC TO MAIN (when ready)
    cd ../..                # back to the primary worktree (main is checked out THERE;
                            # `git checkout main` inside the secondary worktree fails)
-   git status --porcelain  # git-guardrails denies a merge into a dirty tree, and
-                           # "kept working on main" is the whole point of a worktree,
-                           # so expect this NOT to be empty — clear it first
+   git status --porcelain  # dirty-tree-guard refuses a merge while tracked files have
+                           # uncommitted changes, and "kept working on main" is the
+                           # whole point of a worktree, so expect this NOT to be empty
    git stash push -u -m "pre-merge: in-flight edits"   # skip if porcelain was empty
    git merge --squash quarto/lecture-06
    git commit -m "feat: add Lecture 6 Quarto version"
@@ -2374,43 +2425,27 @@ git branch -D [branch-name]   # -D needed after --squash (no merge ancestry)
 
 # Squash-merge into main
 cd [primary-worktree]         # main lives in the primary worktree
-git status --porcelain        # empty, or the merge is denied — clear it first (below)
+git status --porcelain        # a tracked change here means the merge is refused — clear it first (below)
 git merge --squash [branch-name]
 git commit -m "feat: description of changes"
 
-# ...if the primary worktree is dirty, either stash around the merge:
+# ...if the primary worktree is dirty, stash around the merge, one command at a time:
 git stash push -u -m "pre-merge: in-flight edits"   # -u, or untracked files stay behind
 git merge --squash [branch-name]
 git commit -m "feat: description of changes"
 git stash pop
-
-# ...or, ONLY if porcelain shows no `??` lines, let git stash the tracked changes:
-git status --porcelain        # no `??` entries, or --autostash is denied too
-git merge --squash --autostash [branch-name]
-git commit -m "feat: description of changes"
 ```
 
 **The primary worktree is normally dirty when you reach the sync step, and that is the pattern
 working, not failing.** You used a worktree so you could keep editing on `main` while the other
-branch ran; those edits are still sitting there. The `git-guardrails` hook denies `git merge` on a
-non-empty `git status --porcelain`, so the merge is refused exactly when the pattern did its job.
-Clear the tree first — stash with a label, merge, pop. That sequence clears in-flight edits
-whether they are tracked or untracked, which is why it is the recipe above rather than the
-fallback. It cannot clear the worktree directory itself: a worktree nested at `.worktrees/` shows
-in the primary's porcelain as `?? .worktrees/`, `git stash push -u` skips it (*"Ignoring path
-.worktrees/lecture-06-quarto/"*), and the merge is then denied — which is why step 1 excludes
-`.worktrees/` before it creates the worktree. `--autostash` is the shorter
-route on a tree whose dirt is *only tracked*: the hook reads porcelain and allows it when there is
-no `??` entry, and denies it when there is, because `git stash` does not stash untracked files —
-so an autostash over a `??` line would start the merge on the same dirty tree the check exists to
-refuse. Two consequences follow. When porcelain is free of `??` lines, `--autostash` is allowed
-and the merge result comes back *staged* while your restored in-flight edits are *unstaged*, so
-the plain `git commit` above records the merge and leaves your work alone. When porcelain shows
-any `??` line — the ordinary case for a worktree you have been editing in — use the explicit `-u`
-stash; git's own behaviour agrees, since a branch that adds a file at a path you are holding
-untracked aborts with *"untracked working tree files would be overwritten"* after the autostash
-has already been taken. Both forms have to be **standalone** commands either way: chaining the
-stash and the merge onto one line is denied under rule 0, whichever route you pick.
+branch ran; those edits are still sitting there. The `dirty-tree-guard` hook refuses `git merge`
+while tracked files have uncommitted changes, so the merge is refused exactly when the pattern did
+its job. Clear the tree first: stash with a label, merge, pop. Untracked files do not trigger the
+refusal, but `-u` stashes them as well, so a branch that adds a file at a path you hold untracked
+does not stop the merge with git's *"untracked working tree files would be overwritten"*. Run the
+stash and the merge as separate commands. The hook reads the tree before the command line runs, so
+`git stash push -u … && git merge …` is still refused while tracked files are dirty, and so is
+`git merge --autostash`.
 
 ::: {.callout-note}
 ## `worktree.baseRef` (Apr 2026 Week 19)
@@ -2852,7 +2887,7 @@ clo-author reorients the entire workflow from slides to **research papers**. The
 
 **What it adds:**
 
-- **17 specialized agents** organized as 6 worker-critic pairs (Librarian, Explorer, Strategist, Coder, Writer, Storyteller --- each with a dedicated critic) plus standalone agents (data-engineer, domain-referee, methods-referee, orchestrator, verifier)
+- **25 specialized agents and 18 skills** organized around adversarial worker-critic pairs (Librarian, Explorer, Strategist, Coder, Writer, Storyteller --- each with a dedicated critic) plus standalone referees, data-engineer, orchestrator, and verifier
 - **Phase-based severity gradient** --- critics are encouraging during Discovery, constructive during Strategy, strict during Execution, and adversarial during Peer Review
 - **Weighted aggregate scoring** with component minimums: Literature 10%, Data 10%, Identification 25%, Code 15%, Paper 25%, Polish 10%, Replication 5%. Submission gate (≥ 95) requires every component independently ≥ 80
 - **Simulated blind peer review** --- two independent Referee agents plus an Editor making an editorial decision (Accept / Minor / Major / Reject)
@@ -2863,15 +2898,16 @@ clo-author reorients the entire workflow from slides to **research papers**. The
 **When to use it:** Your primary output is research papers and you want production-grade infrastructure for the full lifecycle --- from literature review through journal submission and revise-and-resubmit.
 
 ::: {.callout-note}
-## clo-author v26.05 (May 2026)
+## clo-author 26.09 (October 2026 — "Rebuilt for Opus 5.5: scripts enforce the gates")
 
-clo-author has shipped substantial post-v4 architecture. The current release (v26.05, 2026-05-10) adds:
+clo-author's current release (26.09, 2026-10-15; building on the v26.05 MAS v2 / skill-centric restructure and self-contained HTML dashboard) expands to **25 agents and 18 skills** and adds:
 
-- **MAS v2** --- second-generation multi-agent system with clearer worker/critic boundaries and phase-aware severity gradients
-- **Skill-Centric Restructure** --- repository reorganised around 13 skills + 18 agents (up from 17 in the v4.x line)
-- **HTML Dashboard** --- self-contained visual interface for tracking pipeline state across phases (no server required)
+- **Script-enforced gates + `"onFailure": "block"`** --- deterministic scripts and fail-closed `PreToolUse` hook handlers enforce submission invariants rather than relying on prompt reminders
+- **`/coherence`** --- combined deterministic + reasoning audit checking internal consistency across manuscript sections, tables, and appendix claims
+- **`/explain` (Understanding Gate `INV-26`)** --- 5-question author comprehension check so researchers can explain and defend every AI-written pipeline step in a seminar or referee report (adapted here as [`/coauthor-brief --quiz`](#sec-appendix))
+- **`/deepread` and `/paper-format`** --- deep technical paper reading and journal-format verification (`INV-23/24/25`)
 
-Patterns like `/checkpoint` (originally adapted with permission from clo-author v4.2.0) trace to the earlier line; if you're forking clo-author directly today, you get the MAS v2 / skill-centric layout.
+Patterns like `/checkpoint` (originally adapted with permission from clo-author v4.2.0) and `/review-paper --peer` trace to this collaboration; if you're forking clo-author directly today, you get the 26.09 layout.
 :::
 
 ## claudeblattman: Workflows for Non-Technical Academics
@@ -2916,14 +2952,15 @@ This paper formalizes many principles that this workflow uses intuitively. It de
 **Repository:** [scunning1975/MixtapeTools](https://github.com/scunning1975/MixtapeTools)
 **Author:** Scott Cunningham (Baylor University), author of *Causal Inference: The Mixtape*
 
-MixtapeTools provides the philosophical and practical framework for academic presentation design (see Pattern 14). Beyond the Rhetoric of Decks, it includes:
+MixtapeTools provides the philosophical and practical framework for academic presentation design (see Pattern 14) and empirical replication auditing. Beyond the Rhetoric of Decks, it includes:
 
-- **Referee 2** --- a systematic 5-audit adversarial protocol for reviewing and replicating empirical work
+- **Referee 2** --- a systematic 5-audit adversarial protocol for reviewing and replicating empirical work; one of its audits is an R ↔ Stata ↔ Python cross-language replication
+- **Blindspot** --- a "peripheral vision" audit of empirical output
 - **Deck generation prompt** --- a tested, customizable multi-agent prompt for creating Beamer decks (builder → rhetoric reviewer → graphics specialist)
 - **Example decks** with professional color palettes, custom ggplot2 themes (`theme_rhetoric()`), and complete Beamer templates
 - **Zero-warning compilation standard** --- even 0.5pt overfull hbox must be fixed
 
-**When to use it:** You want to make your presentations genuinely beautiful and rhetorically effective, or you want a tested deck generation workflow for Claude Code.
+**When to use it:** You want to make your presentations genuinely beautiful and rhetorically effective, or you want a tested deck generation and cross-language replication audit workflow for Claude Code.
 
 ## AEA Data Editor Template
 
@@ -2967,28 +3004,42 @@ An autonomous research agent that runs continuous experiments --- modifying code
 RMSE of ATT estimate. Lower is better. Report coverage rate alongside.
 ```
 
-## stata-mcp: MCP server for Stata execution
+## mcp-for-stata (formerly `stata-mcp`): MCP server for Stata execution
 
-**Repository:** [SepineTam/stata-mcp](https://github.com/SepineTam/stata-mcp)
-**Author:** SepineTam (171+ stars, 91 releases, v1.17.3 as of May 2026)
+**Repository:** [SepineTam/mcp-for-stata](https://github.com/SepineTam/mcp-for-stata)
+**Author:** Song Tan (`SepineTam`; 274+ stars, v1.25.2 as of Oct 2026)
 
-A mature MCP server that lets Claude Code execute Stata `.do` files via a command-guarded interface — refuses destructive shell ops (`!/shell/erase` etc.), monitors RAM, and pairs with the Stata Language Server. **Install once per user:** `claude mcp add stata-mcp --scope user -- uvx stata-mcp` (requires `uv` and a local Stata install).
+A mature MCP server that lets Claude Code execute Stata `.do` files via a command-guarded interface — refuses destructive shell ops (`!/shell/erase` etc.), monitors RAM, and pairs with the Stata Language Server. *(Note: Lu Han (Bank of Canada) maintains a separate VS Code/MCP extension at [`hanlulong/stata-mcp`](https://github.com/hanlulong/stata-mcp); either can drive Stata `.do` pipelines, and `templates/mcp.example.json` shows the `uvx` wiring.)* **Install once per user:** `claude mcp add stata-mcp --scope user -- uvx stata-mcp` (requires `uv` and a local Stata install).
 
 **Why it matters for this template:** v1.9.0 added [`/stata-replication`](#sec-appendix) for Stata-first projects, which depends on this MCP server. R-first projects (the original template focus) continue to use [`/data-analysis`](#sec-appendix); the two skills are parallel — same pipeline shape, different source language. AEA submissions where the original replication package is in Stata are the canonical use case.
 
 For end-to-end Stata workflows, see [`.claude/rules/stata-code-conventions.md`](https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/.claude/rules/stata-code-conventions.md) (header scaffold, numbered pipeline, esttab tables, clustering discipline, AEA Data Editor compliance).
 
-## ClaudeCodeTools: The Editor Persona
+## Claude-Code-Presentation (formerly `ClaudeCodeTools`): The Editor Persona
 
-**Repository:** [aspi6246/ClaudeCodeTools](https://github.com/aspi6246/ClaudeCodeTools)
+**Repository:** [aspi6246/Claude-Code-Presentation](https://github.com/aspi6246/Claude-Code-Presentation)
+**Author:** Alessandro Spina (University of Technology Sydney)
 
-A collection of Claude Code personas, including "The Editor" --- a deeply structured academic paper reviewer that runs seven sequential audit passes (see [Pattern 15](#pattern-15-sequential-audits)). Notable features:
+A collection of Claude Code personas and academic presentation materials, including "The Editor" --- a deeply structured academic paper reviewer that runs seven sequential audit passes (see [Pattern 15](#pattern-15-sequential-audits)). Notable features:
 
 - **R&R mode** --- tracks referee reports and cross-references each concern against revisions
 - **Blunt, specific feedback** --- "This paragraph is incoherent" not "might benefit from clarity"
 - **"So What" litmus test** --- five questions every paper must answer clearly
 
 **When to use it:** You want a structured pre-submission paper review, or you're responding to referee reports and need systematic tracking of which concerns have been addressed.
+
+## Paul Goldsmith-Pinkham (`paulgp`), Anton Korinek, and Economics Tooling
+
+Several economists have published open-source building blocks and methodological guides that complement this repository:
+
+- **Paul Goldsmith-Pinkham (Yale University, [*A Causal Affair*](https://paulgp.substack.com)):**
+  - **[`paulgp/claude-container`](https://github.com/paulgp/claude-container)** --- Dockerized container environment for running Claude Code in `bypassPermissions` mode safely isolated from your host filesystem (the container pattern Anthropic recommends when you want zero permission prompts without host exposure).
+  - **[`paulgp/exhibit-review`](https://github.com/paulgp/exhibit-review) and [`paulgp/margin`](https://github.com/paulgp/margin)** --- lightweight tools for spatial review of paper tables/figures and source-first manuscript annotation.
+  - **DuckDB + Parquet for large administrative panels** --- converting multi-gigabyte CSV/DTA extracts to partitioned Parquet and querying out-of-core via `duckdb` in R (`duckplyr`/`arrow`) or Python (`duckdb`/`polars`) before passing summary objects to estimation scripts, keeping raw microdata out of memory and out of LLM context.
+- **Anton Korinek (University of Virginia & NBER):** *"Generative AI for Economic Research"* (*Journal of Economic Literature*) and *"AI Agents for Economic Research"* (NBER Working Paper series) --- the canonical disciplinary references tracing the progression from single-turn chatbots (System 1) to reasoning models (System 2) to multi-agent verification workflows.
+- **[`paulgp/econ-ai-detector`](https://github.com/paulgp/econ-ai-detector)** (MIT) --- an open detector of AI-generated text in economics working papers, built alongside Goldsmith-Pinkham's Pangram study of NBER papers; a free way to *measure*, in the sense of `writing-with-ai.md`, not a score to write towards.
+- **[`posit-dev/skills`](https://github.com/posit-dev/skills)** (Posit, MIT) --- skills for R packages, Quarto and accessibility; its `alt-text` skill writes figure alt text for Quarto documents.
+- **[`hanlulong/awesome-ai-for-economists`](https://github.com/hanlulong/awesome-ai-for-economists)** (Lu Han, Bank of Canada; 700+ stars) --- curated directory of AI workflows, MCP servers, literature tools, and replication utilities across economics (where this repository is also indexed).
 
 ## Anthropic-Shipped Apr 2026 Utilities
 
@@ -3007,7 +3058,7 @@ These are external to this template --- invoke directly, no installation needed.
 
 ## Community Adoption {#sec-community}
 
-Research groups across multiple disciplines have forked and adapted this workflow for their own projects — **15+ research groups at the March 2026 survey**; the repository has since passed **2,900 forks** and 1,500 stars (GitHub, 2026-08-24). A fork is not a research group — the survey figure and the fork count measure different things, and only the first was checked by hand:
+Research groups across multiple disciplines have forked and adapted this workflow for their own projects — **15+ research groups at the March 2026 survey**; the repository has since passed **3,145 forks** and 1,680 stars (GitHub, 2026-11-04). A fork is not a research group — the survey figure and the fork count measure different things, and only the first was checked by hand:
 
 - **Economics** --- China innovation policy, mental health and layoffs, AIGC and stock prices, capital/labor shares in healthcare
 - **Energy** --- Nepal and global energy economics, PV module reliability
@@ -3082,7 +3133,7 @@ The template includes matching LaTeX and Quarto palettes. To customize:
 
 ## Step 4: Creating Custom Skills {#sec-create-skills}
 
-The guide includes 77 [skills](#skills---reusable-slash-commands) for common academic tasks. But if you have repetitive workflows specific to your domain, you can create your own.
+The guide includes 81 [skills](#skills---reusable-slash-commands) for common academic tasks. But if you have repetitive workflows specific to your domain, you can create your own.
 
 ### When to Create a Skill
 
@@ -3141,6 +3192,7 @@ The YAML frontmatter controls how your skill behaves. The most-used fields:
 | `arguments` | Named positional arguments for `$name` substitution | `[infile, outfile]` |
 | `effort` | Override reasoning effort level | `high` |
 | `context` | Set to `fork` to run in an isolated subagent | `fork` |
+| `background` | With `context: fork`, `false` waits for the forked skill's result instead of running it in the background (the default) | `false` |
 | `agent` | Link to an agent definition in `.claude/agents/` | `proofreader` |
 | `hooks` | Skill-specific hooks (same syntax as settings.json) | `{PreToolUse: [...]}` |
 | `model` | Force a specific model | `haiku` |
@@ -3235,7 +3287,7 @@ description: Helps with citations
 - [ ] Has a "Use when:" clause naming 2--4 situations.
 - [ ] Includes at least one verbatim phrasing a user might literally type.
 - [ ] Disambiguates from any sibling skills in the same domain.
-- [ ] Fits in roughly 2--4 lines (longer descriptions get truncated in Claude's skill index).
+- [ ] Fits in roughly 2--4 lines. The skill listing truncates a description at 1,536 characters, and a long list of skills can be shortened further; `skillOverrides` can list a rarely used skill by name only (`"name-only"`).
 
 ### Domain-Specific Examples
 
@@ -3323,11 +3375,17 @@ This is the `/learn` lifecycle in action: discover a repeating workflow → extr
 ::: {.callout-note collapse="true"}
 ## Extending with MCP Servers
 
-For capabilities beyond file editing and shell commands --- web search during literature review, database queries for replication, or reference manager integration (Zotero, Mendeley) --- Claude Code supports [MCP servers](https://modelcontextprotocol.io). Add them with `claude mcp add` (use `--scope project` to write a shared `.mcp.json` at the repo root, or `--scope user` to make a server available in all your projects; the default `local` scope keeps it private to you in this project). Start with skills and agents first; add MCP when you need external integrations.
+For capabilities beyond file editing and shell commands --- live statistical sessions, economic data retrieval, package documentation lookup, or reference manager integration (Zotero) --- Claude Code supports [MCP servers](https://modelcontextprotocol.io). Add them with `claude mcp add` (use `--scope project` to write a shared `.mcp.json` at the repo root, or `--scope user` to make a server available across all your projects; the default `local` scope keeps it private to you in this project). A ready-to-copy starter config is in [`templates/mcp.example.json`](https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/templates/mcp.example.json):
+
+- **Statistical sessions:** [`SepineTam/mcp-for-stata`](https://github.com/SepineTam/mcp-for-stata) (`uvx stata-mcp`) for command-guarded Stata execution; Posit's **[`mcptools`](https://posit-dev.github.io/mcptools/)** (`Rscript -e "mcptools::mcp_server()"`) to connect Claude Code directly to a live R session in RStudio or Positron.
+- **Economic & public data APIs:** Official/community MCP servers for **FRED** (Federal Reserve Economic Data), **World Bank Data360**, and the **U.S. Census Bureau Data API** let `/data-analysis` pull series metadata and public extracts reproducibly (always save the raw pull via an R/Python/Stata script rather than pasting MCP output straight into a table).
+- **Documentation & literature:** **[Context7](https://github.com/upstash/context7)** (see `templates/mcp.example.json`) for version-accurate R/Python package docs (`fixest`, `did`, `ggplot2`, `polars`, `pyfixest`).
+
+Start with skills and agents first; add MCP servers when you need external integrations, and never attach write-enabled third-party MCP servers to a restricted-data project.
 
 ## Extending with Plugins
 
-Claude Code supports **plugins** --- bundled collections of skills, agents, hooks, and MCP servers that can be installed from git repositories. Use `/plugin` to browse and manage plugins (it has a Discover tab for finding new ones). Plugins are a newer extension point; start with skills and rules (which you control entirely) before adopting third-party plugins. **Read before you install:** a skill, agent, hook or plugin from another repository is instructions your session will carry out. Under this template's broad allow rules (`Bash(*)`, `WebFetch(*)`) it can reach your files or the network without a prompt, and a hook runs without being invoked at all. Read every file first, and add nothing unread to a restricted-data project.
+Claude Code supports **plugins** --- bundled collections of skills, agents, hooks, and MCP servers that can be installed from git repositories. Use `/plugin` to browse and manage plugins (it has a Discover tab for finding new ones). Plugins are a newer extension point; start with skills and rules (which you control entirely) before adopting third-party plugins. **Read before you install:** a skill, agent, hook or plugin from another repository is instructions your session will carry out. Under this template's broad allow rules (`Bash(*)`, `WebFetch(*)`) it can reach your files or the network without a prompt, and a hook runs without being invoked at all. Read every file first, and add nothing unread to a restricted-data project. **Mods are different again:** since Claude Code 2.1.287 a plugin can ship a *mod*, code that runs inside Claude Code and can approve a tool call that a deny rule refused or a `PreToolUse` hook blocked, this template's guards included, unless managed settings are on the machine or you sign in with a Team or Enterprise account. Install no third-party mods in a restricted-data project.
 :::
 
 ---
@@ -3381,6 +3439,7 @@ Claude Code supports **plugins** --- bundled collections of skills, agents, hook
 | `/verify-artifact` | `.claude/skills/verify-artifact/` | Prove the file you are about to send IS the thing you mean — rebuild, verify integrity, diff against source |
 | `/voice-profile` | `.claude/skills/voice-profile/` | Extract a written voice profile from your own prior papers, then audit drafts against it — the positive counterpart to `/humanize`, which only detects AI tells |
 | `/validate-bib` | `.claude/skills/validate-bib/` | Bibliography validation |
+| `/verify` | `.claude/skills/verify/` | The gates before a commit: backtest plus quality score on staged files; Claude Code tells Claude to run it before committing (2.1.286+), a reminder next to the enforcing pre-commit hook |
 | `/devils-advocate` | `.claude/skills/devils-advocate/` | Design challenge questions |
 | `/create-lecture` | `.claude/skills/create-lecture/` | Full lecture creation |
 | `/commit` | `.claude/skills/commit/` | Run the gates and commit; `--pr` pushes and opens a pull request; never merges |
@@ -3422,6 +3481,25 @@ Claude Code supports **plugins** --- bundled collections of skills, agents, hook
 | `/new-skill` | `.claude/skills/new-skill/` | Scaffold a convention-compliant skill (interview → write `SKILL.md` with gate-passing frontmatter) (v2.0) |
 | `/diagnose` | `.claude/skills/diagnose/` | Root-cause a wrong or failing empirical result — reproduce → minimise → hypothesise → instrument (bisect) → fix; `--no-fix` localizes without editing (v2.0) |
 | `/submission-disclosures` | `.claude/skills/submission-disclosures/` | Submission-time disclosure block: journal-matched AI-use, CRediT roles, conflict-of-interest, and data-availability statements (v2.1) |
+| `/audit-analysis` | `.claude/skills/audit-analysis/` | Curated academic workflow; read the skill for scope |
+| `/audit-estimator` | `.claude/skills/audit-estimator/` | Curated academic workflow; read the skill for scope |
+| `/context-audit` | `.claude/skills/context-audit/` | Curated academic workflow; read the skill for scope |
+| `/explain-diff` | `.claude/skills/explain-diff/` | Curated academic workflow; read the skill for scope |
+| `/explorable-beamer` | `.claude/skills/explorable-beamer/` | Curated academic workflow; read the skill for scope |
+| `/explorable-deck` | `.claude/skills/explorable-deck/` | Curated academic workflow; read the skill for scope |
+| `/explorable-pptx` | `.claude/skills/explorable-pptx/` | Curated academic workflow; read the skill for scope |
+| `/paper-version` | `.claude/skills/paper-version/` | Curated academic workflow; read the skill for scope |
+| `/pdf-to-markdown` | `.claude/skills/pdf-to-markdown/` | Curated academic workflow; read the skill for scope |
+| `/question-quality` | `.claude/skills/question-quality/` | Curated academic workflow; read the skill for scope |
+| `/replicate-paper` | `.claude/skills/replicate-paper/` | Curated academic workflow; read the skill for scope |
+| `/review-grant` | `.claude/skills/review-grant/` | Curated academic workflow; read the skill for scope |
+| `/review-pap` | `.claude/skills/review-pap/` | Curated academic workflow; read the skill for scope |
+| `/review-paper-checks` | `.claude/skills/review-paper-checks/` | Curated academic workflow; read the skill for scope |
+| `/review-paper-code` | `.claude/skills/review-paper-code/` | Curated academic workflow; read the skill for scope |
+| `/review-paper-full` | `.claude/skills/review-paper-full/` | Curated academic workflow; read the skill for scope |
+| `/review-paper-light` | `.claude/skills/review-paper-light/` | Curated academic workflow; read the skill for scope |
+| `/stata` | `.claude/skills/stata/` | Curated academic workflow; read the skill for scope |
+| `/text-classify` | `.claude/skills/text-classify/` | Curated academic workflow; read the skill for scope |
 
 ## All Rules
 
@@ -3481,12 +3559,10 @@ Claude Code supports **plugins** --- bundled collections of skills, agents, hook
 | Context state capture | PreCompact (command) | `.claude/hooks/pre-compact.py` — saves plan/task/decisions; the DRAFT-block is opt-in (`CLAUDE_PRECOMPACT_BLOCK_ON_DRAFT=1`) |
 | Context restoration | SessionStart[compact\|resume] (command) | `.claude/hooks/post-compact-restore.py` |
 | Session handoff | SessionStart[startup] + UserPromptSubmit (command) | `.claude/hooks/session-handoff.py` — hands a fresh session the newest `/checkpoint` or `/compress-session` file written in the last 7 days; it counts as delivered at the session's first prompt, never in headless runs; `CLAUDE_HANDOFF=off` opts out |
-| Context monitor | PostToolUse[Bash\|Agent\|Task] (command) | `.claude/hooks/context-monitor.py` |
-| Git guardrails | PreToolUse (command) | `.claude/hooks/git-guardrails.py` — blocks `reset --hard` / `clean -f` / `push --force` / `add -A`; refuses merge / rebase / pull on a dirty tree, including chains that would clean it first (`ALLOW_DIRTY_MERGE=1`) |
+| Dirty-tree guard | PreToolUse[Bash], only for `git merge` / `pull` / `rebase` (`if: Bash(git merge *)` and the like) (command) | `.claude/hooks/dirty-tree-guard.py` — refuses the operation while tracked files have uncommitted changes; untracked files do not count; fails open (`ALLOW_DIRTY_MERGE=1`) |
 | Claim reconcile | PostToolUse (command) | `.claude/hooks/claim-reconcile.py` — flags stale numeric claims when scripts change, including edits to a declared `appears_in` display |
-| Issue guard | PreToolUse[Bash], only for `gh` commands (`if: Bash(gh *)`) (command) | `.claude/hooks/issue-guard.py` — denies a raw `gh issue create`/`new`, or a REST/GraphQL issue create, and points to `scripts/file-issue.py`, which checks for duplicates first |
+| Issue guard | PreToolUse[Bash], only for `gh` commands (`if: Bash(gh *)` and `Bash(gh.exe *)`) (command) | `.claude/hooks/issue-guard.py` — denies a raw `gh issue create`/`new`, or a REST/GraphQL issue create, and points to `scripts/file-issue.py`, which checks for duplicates first |
 | Open issues (opt-in) | SessionStart[startup] (command) | `.claude/hooks/open-issues.py` — with `CLAUDE_ISSUES_AT_START=1`, lists open issues' numbers and titles (owner and collaborators only) at startup; off by default |
-| Root-of-trust guard | PreToolUse (command) | `.claude/hooks/root-of-trust-guard.py` — best-effort tripwire against *silent* shell writes to `.claude/settings*.json`, `.claude/hooks/`, `.githooks/`, plus the destructive-git deny list applied to `bash -c` / `env -S` payloads; reads and `Edit`/`Write` still pass, so it changes the channel rather than locking the files (`ALLOW_ROOT_OF_TRUST_WRITE=1`) |
 
 **Additional hook events** available in Claude Code (not used in this template but available for custom hooks):
 
@@ -3525,7 +3601,7 @@ Claude Code supports **plugins** --- bundled collections of skills, agents, hook
 
 ### Hooks Not Firing
 
-**Symptom:** No context warnings, no auto-written session log, no git guardrails firing.
+**Symptom:** No notifications, no auto-written session log, no dirty-tree or issue guard firing.
 
 **Fix:**
 1. Check hooks are configured: `cat .claude/settings.json | grep hooks`

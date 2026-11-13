@@ -18,10 +18,16 @@ INPUT="$(cat)"
 
 # Parse every field in a single python3 invocation. Status line renders
 # on every turn; avoid several forks when one suffices.
+# The JSON is UTF-8 bytes and bash reads the fields back as UTF-8 bytes, so both
+# ends are pinned: Windows Python decodes and encodes a pipe with the ANSI code
+# page, and on a CJK one (cp932/936/950) a multibyte character swallowed the
+# backslash of the next JSON escape — the parse failed and the [BYPASS] badge,
+# the model and ctx % all vanished. newline='\n' keeps a CR off each field.
 parsed="$(printf '%s' "$INPUT" | python3 -c "
 import sys, json
+sys.stdout.reconfigure(encoding='utf-8', newline='\n')
 try:
-    d = json.load(sys.stdin)
+    d = json.loads(sys.stdin.buffer.read().decode('utf-8', 'replace'))
 except Exception:
     d = {}
 pct = (d.get('context_window') or {}).get('used_percentage')
@@ -81,8 +87,10 @@ fi
 # Most-recent plan's status (DRAFT / APPROVED / COMPLETED), read from its
 # Status FIELD — the same rule as pre-compact.py / post-compact-restore.py. A
 # whole-file grep mis-read a DRAFT plan whose body mentioned "COMPLETED".
+# Looked up from the repo top, like the gate above: from the session cwd, a
+# session sitting in Slides/ or scripts/R/ lost the badge.
 plan_badge=""
-latest_plan="$(ls -t "$cwd"/quality_reports/plans/*.md 2>/dev/null | head -1)"
+latest_plan="$(ls -t "${top:-$cwd}"/quality_reports/plans/*.md 2>/dev/null | head -1)"
 if [ -n "$latest_plan" ]; then
     pstatus="$(grep -m1 -oiE '^[[:space:]]*\**[[:space:]]*status[[:space:]]*\**[[:space:]]*:[[:space:]]*\**[[:space:]]*(draft|approved|completed|implemented|in[ -]?progress)' "$latest_plan" 2>/dev/null \
                | sed -E 's/.*:[[:space:]]*\**[[:space:]]*//' | tr '[:upper:]' '[:lower:]')"
@@ -93,21 +101,11 @@ if [ -n "$latest_plan" ]; then
     esac
 fi
 
-# Context % — prefer the native field Claude Code passes on stdin; fall back to
-# the estimate context-monitor.py persists under the session dir keyed by
-# md5(project_dir)[:8] (older Claude Code versions, or null early in a session).
+# Context % — the native field Claude Code passes on stdin. It can be null early
+# in a session; then nothing is shown. (Until v2.9.1 this fell back to an
+# estimate context-monitor.py wrote; that hook was removed.)
 ctx=""
 [ -n "$native_pct" ] && ctx="ctx ${native_pct}%"
-# Mirror context-monitor.py's get_session_dir() EXACTLY: CLAUDE_PROJECT_DIR set →
-# hash it; unset/empty → the writer falls back to sessions/default/, so do the same
-# (hashing the git toplevel here would point at the wrong folder on that path).
-if [ -n "${CLAUDE_PROJECT_DIR:-}" ]; then
-    hash="$(printf '%s' "$CLAUDE_PROJECT_DIR" | python3 -c 'import sys,hashlib; print(hashlib.md5(sys.stdin.read().encode()).hexdigest()[:8])' 2>/dev/null)"
-else
-    hash="default"
-fi
-pct_file="$HOME/.claude/sessions/${hash}/context-pct.txt"
-[ -z "$ctx" ] && [ -f "$pct_file" ] && ctx="ctx ~$(cat "$pct_file" 2>/dev/null)%"
 set -e
 
 line="$model"

@@ -12,7 +12,7 @@
   <!-- Open Graph / social sharing -->
   <meta property="og:type" content="website">
   <meta property="og:title" content="Claude Code Academic Workflow Template">
-  <meta property="og:description" content="A ready-to-fork Claude Code template for academic research — slides, papers, data analysis, and Monte Carlo simulation studies: 77 skills, 18 specialized agents, 40 rules, adversarial QA, and quality gates.">
+  <meta property="og:description" content="A ready-to-fork Claude Code template for academic research — slides, papers, data analysis, and Monte Carlo simulation studies: 81 skills, 18 specialized agents, 40 rules, adversarial QA, and quality gates.">
   <meta property="og:url" content="https://psantanna.com/claude-code-my-workflow/">
 
   <!-- Structured data for Google rich snippets -->
@@ -191,7 +191,7 @@
   <div class="byline">Pedro H. C. Sant'Anna &middot; Emory University</div>
 
   <div class="wip">
-    <strong>Actively developed and maintained.</strong> This summarizes how I use Claude Code for academic work &mdash; slides, papers, data analysis, and more. Adopted by research groups across economics, energy, political science, and engineering — 15+ research groups at the March 2026 survey; the repository has since passed 2,900 forks and 1,500 stars (GitHub, 2026-08-24). A fork is not a research group &mdash; those two figures measure different things. I keep learning and updating these files.
+    <strong>Actively developed and maintained.</strong> This summarizes how I use Claude Code for academic work &mdash; slides, papers, data analysis, and more. Adopted by research groups across economics, energy, political science, and engineering — 15+ research groups at the March 2026 survey; the repository has since passed 3,145 forks and 1,680 stars (GitHub, 2026-11-04). A fork is not a research group &mdash; those two figures measure different things. I keep learning and updating these files.
   </div>
 
   <p>A foundation for AI-assisted academic work using <a href="https://code.claude.com/docs/en/overview">Claude Code</a>. You describe what you want &mdash; lecture slides, a research paper, a data analysis, a replication package &mdash; and Claude plans the approach, runs specialized agents, fixes issues, verifies quality, and presents results &mdash; goal-first and gate-enforced. Like a contractor who handles the entire job, with you as the auditor of the disagreements the review loop surfaces. It is deliberately not an autonomous daemon: every loop is started by you or a skill, never on its own.</p>
@@ -284,21 +284,26 @@ is almost always speaking about the first and being heard about the last.</p>
 
 <h2>What you get</h2>
 
-<p><strong>18 agents, 77 skills, 40 rules, 11 hooks</strong> — and ten gates, run before every commit once the pre-commit hook is installed, and in full in CI.</p>
+<p><strong>18 agents, 81 skills, 40 rules, 9 hooks</strong> — and eleven gates, run before every commit once the pre-commit hook is installed, and in full in CI.</p>
 
 <ul>
-<li><strong>77 skills</strong> covering the full research lifecycle — papers, analysis,
+<li><strong>81 skills</strong> covering the full research lifecycle — papers, analysis,
     simulation, replication packages, proposals, slides, and teaching.</li>
 <li><strong>18 specialized agents</strong> — referees, proofreaders, layout auditors, code
     reviewers, a fresh-context claim verifier — each pinned to a model and effort tier.</li>
 <li><strong>40 rules</strong> — most path-scoped so they load only when relevant, a few
-    always-on — plus 11 hooks that act rather than nag, including one that refuses to let a shell
-    command quietly rewrite the settings and hook files the gates are defined in.</li>
-<li><strong>Ten gates in one command.</strong> Surface consistency, skill integrity, model
+    always-on — plus 9 hooks that act rather than nag, and permission deny rules that refuse
+    destructive git commands and reads of secret files.</li>
+<li><strong>Eleven gates in one command.</strong> Surface consistency, skill integrity, model
     currency, links, spec conformance, staleness, repo hygiene, derived counts, ledger coverage,
-    and a seeded hook battery that re-fires every guard hook against the failure it targets — run
+    a seeded hook battery that re-fires every guard hook against the failure it targets, and a
+    portability suite for Windows paths, encodings and non-ASCII file names — run
     before every commit once <code>./scripts/install-hooks.sh</code> has been run (the hook battery
     only when a hook, its settings or the battery itself is staged), and all of them in CI.</li>
+<li><strong>Codex (ChatGPT) and Antigravity too.</strong> <a href="https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/AGENTS.md"><code>AGENTS.md</code></a> tells
+    other agents what Claude Code's deny rules and hooks would have enforced, and <code>.agents/skills/</code> bridges
+    every skill one agent can run end to end. The hooks do not run for them; the pre-commit gate and
+    CI still do.</li>
 <li><strong>An audit trail by default</strong> — issues as defect memory, progress reports as
     work memory, and a qualification ledger recording which checks have actually been proven
     to detect anything.</li>

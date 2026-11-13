@@ -6,7 +6,7 @@ paths:
 
 # Per-Agent Model Routing (architect/editor split)
 
-**Match model tier to the cognitive demand of the work.** Reserve Opus for high-judgment work; route mechanical work to Haiku; default review/critique to Sonnet. Anthropic's [Apr 8 2026 "Decoupling brain from hands"](https://www.anthropic.com/engineering) endorses this pattern; Aider's architect/editor split is the canonical community shape.
+**Match model tier to the cognitive demand of the work.** Reserve Opus for high-judgment work; route mechanical work to Haiku; default review/critique to Sonnet. Aider's architect/editor split is the canonical community shape. (An earlier version cited Anthropic's "Decoupling the brain from the hands" post as endorsing this split; that post is about agent-harness design and says nothing about routing work across model tiers.)
 
 ## The 70/20/10 routing pattern
 
@@ -30,21 +30,21 @@ Set per-skill via the same field in `SKILL.md` frontmatter. Inheritance is fine 
 
 ## The effort axis (the first cost lever)
 
-Model tier is the second cost lever; **effort is the first.** Every model that supports effort runs at a level (`low / medium / high / xhigh / max`) — the current Haiku takes no effort setting — and lowering effort is cheaper than dropping a tier: reach for it first.
+Model tier is the second cost lever; **effort is the first.** Every current model tier supports effort (`low / medium / high / xhigh / max` on all four) — and lowering effort is cheaper than dropping a tier: reach for it first.
 
-Default effort differs by tier — the current defaults live in [`model-versions.md`](../references/model-versions.md) (at its 2026-09-26 verification: Opus tier **`medium`**, Sonnet and Fable tiers `high`). Two facts about the current Opus shape every pin, and both belong to that verification — re-read them when the SSoT changes:
+Default effort differs by tier — the current defaults live in [`model-versions.md`](../references/model-versions.md) (at its 2026-11-04 verification: Opus and Haiku tiers **`medium`**, Sonnet and Fable tiers `high`). Two facts about the current Opus shape every pin, and both belong to that verification — re-read them when the SSoT changes:
 
 - **Its `medium` matches or beats the prior Opus generation at `high`** on coding and knowledge work (Anthropic's own evaluations), and **at a given level it thinks more per turn** than that generation did. So pin above the default only where the extra thinking is the point.
 - **Thinking is always on**; effort is the only depth control. To get less thinking, lower effort — do not add "think less" prose. To get more, raise effort — do not add "think harder" prose.
 
 How the template pins effort:
 
-- **Mechanical work** → the Haiku tier (no effort setting on the current Haiku), or `low` / `medium` on a tier that takes one.
+- **Mechanical work** → the Haiku tier at `low` effort (`promote-memory-council` pins `effort: low`, one notch below the Haiku default of `medium`).
 - **Review and judgment on the Sonnet tier** → `high` (its default).
 - **Opus-tier gates where a false PASS is expensive** — `editor`, `domain-referee`, `methods-referee`, `claim-verifier` → `high`, deliberately one level above the default. These are the do-not-demote agents below; the extra thinking is what you are paying for.
 - **Other Opus-tier agents** (`verifier`, `quarto-critic`, `tikz-reviewer`, `sim-reviewer`, `domain-reviewer`) → `medium`. Raise one only after `medium` measurably missed issues on your material.
-- **Skills** pin `high` only for verification gates and correctness-critical computation (`/audit-reproducibility`, `/disclosure-check`, `/replication-package`, `/seven-pass-review`, `/r-package-check`, `/simulation-study`, `/diagnose`, `/power-analysis`). Writing and synthesis skills carry no pin and inherit the session. A handful of lightweight skills pin `medium` as a cost cap (`/syllabus`, `/scaffold-exercises`, `/coauthor-brief`, `/submission-disclosures`, `/data-management-plan`, `/triage-inbox`, `/capture-environment`, `/new-skill`). A skill's `effort:` *overrides* the session, so those `medium` pins also lower effort on tiers that default to `high` — intended for a cost cap, worth knowing if you run them on Sonnet or Fable.
-- **The hardest runs** (deep refactors, the toughest `/review-paper --peer`) → `xhigh`; `ultracode` (xhigh + dynamic workflows) for repo-scale autonomous tasks. Reserve `max` for the rare case where you've verified `xhigh` was insufficient. `maxEffortLevel` in settings caps every surface — a useful ceiling on a fixed grant budget.
+- **Skills** pin `high` only for verification gates and correctness-critical computation (`/audit-reproducibility`, `/disclosure-check`, `/replication-package`, `/seven-pass-review`, `/r-package-check`, `/simulation-study`, `/diagnose`, `/power-analysis`). Writing and synthesis skills carry no pin and inherit the session. A handful of lightweight skills pin `medium` as a cost cap (`/syllabus`, `/scaffold-exercises`, `/coauthor-brief`, `/submission-disclosures`, `/data-management-plan`, `/triage-inbox`, `/capture-environment`, `/new-skill`). A skill's `effort:` *overrides* the session (but not a `CLAUDE_CODE_EFFORT_LEVEL` environment variable, which overrides every skill's pin), so those `medium` pins also lower effort on tiers that default to `high` — intended for a cost cap, worth knowing if you run them on Sonnet or Fable.
+- **The hardest runs** (deep refactors, the toughest `/review-paper --peer`) → `xhigh`; the `ultracode` toggle (dynamic workflows; since Claude Code 2.1.284 it no longer forces `xhigh`) for repo-scale autonomous tasks, with `workflowSizeGuideline` to cap the fan-out. Reserve `max` for the rare case where you've verified `xhigh` was insufficient. `maxEffortLevel` in settings caps every surface — a useful ceiling on a fixed grant budget.
 
 Set per skill/agent with the `effort:` frontmatter field. Match effort to the cognitive demand the same way you match model tier — and tune effort before you swap models.
 

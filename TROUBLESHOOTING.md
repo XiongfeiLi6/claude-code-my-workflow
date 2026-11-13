@@ -22,7 +22,7 @@ Required by `/extract-tikz`. `brew install pdf2svg` (macOS) / `apt install pdf2s
 
 ### `/stata-replication` halts at "stata-mcp not registered"
 
-The Stata pipeline skill needs the [`stata-mcp`](https://github.com/SepineTam/stata-mcp) MCP server. Install once per user:
+The Stata pipeline skill needs the [`mcp-for-stata`](https://github.com/SepineTam/mcp-for-stata) (formerly `stata-mcp`) MCP server. Install once per user:
 
 ```bash
 claude mcp add stata-mcp --scope user -- uvx stata-mcp
@@ -38,9 +38,9 @@ In Manual mode Claude asks before most edits and shell commands the allow list d
 
 - **Auto mode** — the built-in starting mode on Claude Code ≥ 2.1.283 (and on Pro/Max/Team since 2026-08-14 on earlier versions): a classifier approves routine actions and blocks or asks about risky ones.
 - **Accept edits** — `Shift+Tab`, or `claude --permission-mode acceptEdits`: auto-approves file edits and common filesystem commands in the working directory.
-- **Bypass** — `claude --permission-mode bypassPermissions` skips permission prompts and safety checks (deny rules still apply). Anthropic scopes it to isolated containers and VMs, and it takes effect from the CLI flag, `--settings`, or user/managed settings — a `bypassPermissions` in a project's `.claude/settings.json` is not honoured and the session starts in Manual mode. (In VS Code, bypass is a user-settings choice: set `claudeCode.initialPermissionMode` to `bypassPermissions` and turn on `claudeCode.allowDangerouslySkipPermissions` in your VS Code *user* settings. Both are machine-scoped, so the extension ignores workspace values and the template's `.vscode/settings.json` does not change the starting mode.)
+- **Bypass** — `claude --permission-mode bypassPermissions` skips permission prompts and safety checks (deny rules still apply). Anthropic scopes it to isolated containers and VMs, and it takes effect from the CLI flag, `--settings`, or user/managed settings — a `bypassPermissions` in a project's `.claude/settings.json` is not honoured and the session starts in Manual mode. (In VS Code, bypass is a user-settings choice: set `claudeCode.initialPermissionMode` to `bypassPermissions` and turn on `claudeCode.allowDangerouslySkipPermissions` in your VS Code *user* settings — both are machine-scoped, so the extension ignores workspace values in `.vscode/settings.json`.)
 
-The template's `.claude/settings.json` ships broad allow rules (`Edit(**)`, `Write(**)`, `Bash(*)`, …) and no default mode, so in Manual mode most routine work runs unprompted. Auto mode drops the blanket `Bash(*)` rule and sends shell commands through its classifier instead. To keep restricted data off the model in every mode, add deny rules — see ["Keep restricted data off the model"](#keep-restricted-data-off-the-model) below.
+The template's `.claude/settings.json` ships broad allow rules (`Edit(**)`, `Write(**)`, `Bash(*)`, …), deny rules for destructive git commands and secret files (`.env`, `*.pem`, `*.key`, `credentials*`), and no default mode, so in Manual mode most routine work runs unprompted. Auto mode drops the blanket `Bash(*)` rule and sends shell commands through its classifier instead. To keep restricted data off the model in every mode, add deny rules — see ["Keep restricted data off the model"](#keep-restricted-data-off-the-model) below. Since v2.9.1 the settings file no longer sets `"blockWritesOutsideWorkingDirectories": true`, so Claude can add those rules itself. If you turn the block on (Claude Code ≥ 2.1.314), Claude's file tools refuse writes outside the working directories (Claude Code's own session files excepted) and every write to a Claude Code settings file, even inside the repository, and the worktree tools (`EnterWorktree`, `ExitWorktree`) leave the session. Then add deny or allow rules by editing the file yourself. A `true` in any settings file keeps the block on, and lifting it takes a restart: remove the key from every file that sets it, then restart Claude Code.
 
 ## Models and API
 
@@ -48,9 +48,9 @@ The template's `.claude/settings.json` ships broad allow rules (`Edit(**)`, `Wri
 
 The current lineup, minimum Claude Code versions, and retirement floors live in [`model-versions.md`](.claude/references/model-versions.md). Two failure shapes are common after a model launch:
 
-- **The new model is missing from `/model`.** Each model needs a minimum Claude Code version (the current Opus needs ≥ 2.1.280). Run `claude --version`; update with `claude update` or your installer (`npm install -g @anthropic-ai/claude-code@latest` for an npm install). The VS Code extension bundles its own CLI, so the terminal `claude` on your `PATH` can lag behind it.
-- **A pinned model ID fails.** Sonnet 4 and the original Opus 4 retired on 2026-06-15, and the current Haiku model's retirement floor is 2026-10-15. Find pins before they break:
-  - **Environment:** `echo $ANTHROPIC_MODEL $ANTHROPIC_DEFAULT_FABLE_MODEL $ANTHROPIC_DEFAULT_OPUS_MODEL $ANTHROPIC_DEFAULT_SONNET_MODEL $ANTHROPIC_DEFAULT_HAIKU_MODEL $CLAUDE_CODE_SUBAGENT_MODEL`.
+- **The new model is missing from `/model`.** Each model needs a minimum Claude Code version (the current Opus needs ≥ 2.1.280, the current Sonnet ≥ 2.1.284 and the current Haiku ≥ 2.1.293; the template's shipped settings need ≥ 2.1.314). Run `claude --version`; update with `claude update` or your installer (`npm install -g @anthropic-ai/claude-code@latest` for an npm install). The VS Code extension bundles its own CLI, so the terminal `claude` on your `PATH` can lag behind it.
+- **A pinned model ID fails.** Sonnet 4 and the original Opus 4 retired on 2026-06-15, and prior-generation Haiku 4.5 — succeeded by the current Haiku tier on 2026-10-07 — is still served but past its retirement floor (not sooner than 2026-10-15), so its retirement can now be announced at 60 days' notice. Find pins before they break:
+  - **Environment:** `echo $ANTHROPIC_MODEL $ANTHROPIC_DEFAULT_FABLE_MODEL $ANTHROPIC_DEFAULT_OPUS_MODEL $ANTHROPIC_DEFAULT_SONNET_MODEL $ANTHROPIC_DEFAULT_HAIKU_MODEL $CLAUDE_CODE_SUBAGENT_MODEL $CLAUDE_CODE_SUBAGENT_MODEL_FORCE $CLAUDE_CODE_EFFORT_LEVEL`. `CLAUDE_CODE_SUBAGENT_MODEL_FORCE` makes every subagent ignore its own `model:`, and `CLAUDE_CODE_EFFORT_LEVEL` overrides every skill's `effort:`.
   - **Settings:** a `model` key in `.claude/settings.json`, `.claude/settings.local.json`, or `~/.claude/settings.json`.
   - **Agents and skills:** `grep -rn "^model:" .claude/agents/ .claude/skills/` — the template pins tier aliases (`opus` / `sonnet` / `haiku`), which follow the current model automatically; a full model ID does not.
   - **CI:** any workflow that calls `claude -p --model <id>`.
@@ -104,9 +104,30 @@ Good — the pre-check caught a P3 (bare `scale=`) or P4 (missing directional ke
 
 ## Git / hooks / CI
 
+### Every `gh` command is refused, with a hook error
+
+`issue-guard` is the one hook registered with `"onFailure": "block"`, and Claude Code starts it only for `gh` commands. When it cannot run, every `gh` command is refused; other commands and edits are not affected. There are two causes; the message says which.
+
+- **`can't open file …/.claude/hooks/issue-guard.py`: the hook script is missing.** Usually a branch switch or an old checkout removed it while the session still holds the settings that point there. Restore it with `git checkout -- .claude/hooks/issue-guard.py` (or switch back with `git switch -`).
+- **`python3: command not found`, or a Microsoft Store message: no working `python3`.** On Windows, the python.org installer provides `python` and `py` but not `python3`, and the `python3` that ships with Windows opens the Store. Make `python3 --version` work in Git Bash, for example with the Microsoft Store's Python, which provides `python3`.
+
+`dirty-tree-guard` is not affected either way: its registration starts it through a one-line launcher that exits 0 when the file is missing, and it is not registered to fail closed. A missing file means merges go unchecked until `git checkout -- .claude/hooks` restores it.
+
+Before v2.9.1, two more hooks were registered this way on every Bash, Edit and Write, so either cause refused all of them ([#179](https://github.com/pedrohcgs/claude-code-my-workflow/issues/179), [#180](https://github.com/pedrohcgs/claude-code-my-workflow/issues/180)). Those hooks were removed, and the launcher patch on #180 is no longer needed.
+
+### On Windows, the guards do not see PowerShell commands
+
+Claude Code on Windows can run shell commands through two tools, Bash (Git Bash) and PowerShell. The template's guard hooks, `dirty-tree-guard` and `issue-guard`, are wired to the **Bash** tool only, and its git deny rules are `Bash(…)` rules, so a command Claude runs through PowerShell passes none of them.
+
+- **Install [Git for Windows](https://git-scm.com/downloads/win).** Without Git Bash, Claude Code uses PowerShell for every shell command, and none of the guards run at all.
+- **With Git Bash installed, the PowerShell tool is still on by default** for claude.ai and Console accounts. To keep every shell command on the guarded route, turn it off for your machine with `"env": { "CLAUDE_CODE_USE_POWERSHELL_TOOL": "0" }` in `.claude/settings.local.json`, or add `"PowerShell"` to your `permissions.deny`.
+- Widening the guards' matchers to `Bash|PowerShell` would not be enough: they read bash syntax, and PowerShell spells the same operations differently (`Remove-Item -Recurse`, not `rm -rf`).
+
+(Claude Code tools reference, "PowerShell tool", read 2026-09-27.)
+
 ### Hook script permission denied
 
-`chmod +x .claude/hooks/*.py .claude/hooks/*.sh`. `./scripts/validate-setup.sh` also reports non-executable hooks.
+`chmod +x .claude/hooks/*.sh`. The Python hooks are run as `python3 <file>`, so they need no executable bit; `./scripts/validate-setup.sh` reports only the shell hooks that lack it.
 
 ### Pre-compact hook didn't save the plan
 
@@ -154,7 +175,7 @@ Run `/permission-check` — it lists every layer's value and which one wins.
 
 ### Keep restricted data off the model
 
-Every file Claude reads is sent to the model provider. [`confidential-data.md`](.claude/rules/confidential-data.md) says restricted microdata never leaves the machine, and **deny rules hold in every permission mode, including bypass**. If your project has restricted directories, add deny rules — in `.claude/settings.json` to protect every collaborator, or `.claude/settings.local.json` for your machine only — naming the paths your data-use agreement covers:
+Every file Claude reads is sent to the model provider. [`confidential-data.md`](.claude/rules/confidential-data.md) says restricted microdata never leaves the machine, and **deny rules hold in every permission mode, including bypass**, with one exception: a *mod* (plugin code that runs inside Claude Code, 2.1.287 and later) can approve a call that a deny rule refuses or a `PreToolUse` hook blocked, unless managed settings are on the machine or the session is signed in with a Team or Enterprise account. On a restricted-data project, install no third-party mods. If your project has restricted directories, add deny rules — in `.claude/settings.json` to protect every collaborator, or `.claude/settings.local.json` for your machine only — naming the paths your data-use agreement covers:
 
 ```json
 {
@@ -191,7 +212,7 @@ The repo ships a pre-commit gate (`.githooks/pre-commit`), but git is not pointe
 
 This is **not a bug.** Per Anthropic's [permission-modes docs](https://code.claude.com/docs/en/permission-modes) (re-verified 2026-09-26), writes to *protected paths* — `.git`, `.vscode`, `.idea`, `.husky`, `.devcontainer`, `.claude` (except `.claude/worktrees`), shell rc files, `.mcp.json`, `.claude.json`, and a few others — are never auto-approved by an allow rule. What happens depends on the mode: **prompted** in Manual and Accept-edits, **routed to the classifier** in auto mode, **denied** in dontAsk, and **allowed** only in bypass (and in terminal plan-mode sessions with bypass available). When a prompt fires for the project's `.claude/` folder, it offers a session-scoped "allow Claude to edit files in this project's .claude folder" option.
 
-For batch edits under `.claude/rules/`, `.claude/references/`, `.claude/skills/`, or `.claude/agents/`, a single scripted edit through the Bash tool avoids one prompt per file. The template's own `root-of-trust-guard.py` hook **denies** shell writes into `.claude/settings*.json`, `.claude/hooks/`, and `.githooks/` — use Edit/Write there, so every change to a gate leaves a reviewable diff.
+For batch edits under `.claude/rules/`, `.claude/references/`, `.claude/skills/`, or `.claude/agents/`, a single scripted edit through the Bash tool avoids one prompt per file. Since v2.9.1 no hook refuses shell writes into `.claude/settings*.json`, `.claude/hooks/` or `.githooks/`, so read the diff of any change there before you commit it.
 
 ### VS Code: bypass mode doesn't take effect from `.vscode/settings.json`
 
@@ -215,7 +236,7 @@ Use `--peer <journal> --r2` / `--r3` to continue a prior review. The editor skip
 
 ### `/commit` fails at Step 0b with "DRIFT DETECTED"
 
-Step 0b runs `./scripts/backtest.sh`. Its surface-sync gate (`scripts/check-surface-sync.py`) found that a count claimed in the docs, or the number of rows in a `<!-- surface-sync-table -->` table, does not match what is on disk (skills / agents / rules / hooks). It lists each stale surface as `file:line  asserts N <kind> (actual: M)`. Fix every surface it flags, then re-run `./scripts/backtest.sh` (or `python3 scripts/check-surface-sync.py` alone). If a different gate is red, read that gate's own output. **Do not bypass** — the gate exists because manual `replace_all` has missed sibling phrasings three times (PRs #70/#76/#78 in v1.5.x).
+Step 0b runs `./scripts/backtest.sh`, or, when `./scripts/install-hooks.sh` has installed the git hook, leaves it to `.githooks/pre-commit`, which then refuses the commit itself with the same message. Its surface-sync gate (`scripts/check-surface-sync.py`) found that a count claimed in the docs, or the number of rows in a `<!-- surface-sync-table -->` table, does not match what is on disk (skills / agents / rules / hooks). It lists each stale surface as `file:line  asserts N <kind> (actual: M)`. Fix every surface it flags, then re-run `./scripts/backtest.sh` (or `python3 scripts/check-surface-sync.py` alone). If a different gate is red, read that gate's own output. **Do not bypass** — the gate exists because manual `replace_all` has missed sibling phrasings three times (PRs #70/#76/#78 in v1.5.x).
 
 ### Adding a new skill / agent / rule breaks the gate
 
@@ -316,6 +337,16 @@ For **short-delay polling within an active session** (e.g. "check the build ever
 ### PreCompact keeps blocking even after I approved the plan
 
 You probably have `CLAUDE_PRECOMPACT_BLOCK_ON_DRAFT=1` set in your environment. The hook blocks compaction at most **once** per DRAFT plan — subsequent compactions of the same plan proceed normally. If it's blocking repeatedly, either the plan's status line hasn't been updated from DRAFT to APPROVED/IN_PROGRESS (check the plan file header), or you've got a different DRAFT plan every time (the hook tracks by plan path). Unset the env var to disable the guard entirely: `unset CLAUDE_PRECOMPACT_BLOCK_ON_DRAFT`.
+
+### Windows / WSL: `env: bash\r: No such file or directory` after updating
+
+An existing clone that was checked out with `core.autocrlf=true` (the Git for Windows default) keeps its CRLF shell scripts after you pull v2.6: `.gitattributes` now asks for LF, but git rewrites only the files an update touches, and `git status` stays clean. Under WSL, a container or any non-MSYS bash, the unchanged `.sh` files then fail. Renormalise once, from a clean tree, in your own terminal:
+
+```bash
+git rm --cached -r -q . && git reset --hard
+```
+
+That re-checks-out every file under the current `.gitattributes` rules (LF for text, `data/` untouched). Commit or stash your work first — `reset --hard` discards uncommitted changes.
 
 ## Still stuck?
 

@@ -44,7 +44,9 @@ def n_gates():
 # two gates can never disagree about what a "skill" or a "hook" is. If you change
 # a definition there, change it here in the same commit.
 def _glob_count(pat):
-    return len(glob.glob(os.path.join(ROOT, pat)))
+    # glob.escape: a clone at "Paper [2026]" read its own path as a character class,
+    # counted 0 of everything, and failed on four true claims (#171).
+    return len(glob.glob(os.path.join(glob.escape(ROOT), pat)))
 
 def n_skills(): return _glob_count(".claude/skills/*/SKILL.md")
 def n_agents(): return _glob_count(".claude/agents/*.md")
@@ -78,8 +80,8 @@ def changelog_current_release():
     return m.group(1) if m else ""
 
 def n_hook_battery_cases():
-    # The battery prints "ALL PASS (N cases)" where N = TOTAL = PASS + FAIL —
-    # the `TOTAL=$((PASS + FAIL))` roll-up in the final summary block of
+    # The battery prints "ALL PASS (N cases)" where N = TOTAL = PASS + FAIL + UNREACH —
+    # the `TOTAL=$((PASS + FAIL + UNREACH))` roll-up in the final summary block of
     # scripts/hook-battery.sh (find it with `grep -n 'ALL PASS'`; it is cited
     # by name, not by line number, because line numbers rot as the battery
     # grows — this comment previously said "line ~276", which by round 7
@@ -109,6 +111,12 @@ def n_battery_named(letters):
     # 2026-08-23 these three numbers (17 / 13 / 2) were the ledger's own,
     # ungated: planting 99 in each left every gate green, which is the r7 defect
     # one document over.
+    #
+    # UPDATE 2026-11-06 (v2.9.1): the two guards this note is about were removed.
+    # The remaining decision hooks import nothing from each other, and a
+    # re-measurement on that date found each stub reddening exactly its own
+    # section's deny/contains cases, so for them tally and outcome coincide. The
+    # note below is kept as the reason the row is still phrased as a tally.
     #
     # NARROWED 2026-08-24, and the narrowing IS the fix. This comment used to
     # assert a premise the count does not support: "a stub allows everything, so
@@ -438,13 +446,17 @@ CHECKS = [
     # The recipe used to hard-code the battery size of the day; once the battery
     # grew it returned 0, and a maintainer following it would have concluded the
     # REQ was wrong and dropped eight gated sites out of coverage.)
-    ("battery cases (ledger)", _NUM + r' cases, exit 0',    [REQ("quality_reports/qualification/LEDGER.md", 8)], n_hook_battery_cases()),
+    # 2026-11-06 (v2.9.1): FOUR sites. The removed guards' rows and reproduction
+    # notes moved to the ledger's "Retired at v2.9.1" section with each count
+    # reading "cases at the time", which this regex does not match on purpose:
+    # history is not compared with today's battery.
+    ("battery cases (ledger)", _NUM + r' cases, exit 0',    [REQ("quality_reports/qualification/LEDGER.md", 4)], n_hook_battery_cases()),
     # The claim these three read used to be phrased "(N cases named)" — the
     # cases a stubbed run NAMES — while the value is a SECTION TALLY. The
     # phrasing is now the quantity (2026-08-24); see n_battery_named() for the
     # measurement that separated the two and why the tally is what gets gated.
-    ("battery-named root-of-trust", r'`root-of-trust-guard\.py` \((\d+) cases in its own sections\)', ["quality_reports/qualification/LEDGER.md"], n_battery_named("a")),
-    ("battery-named git-guardrails", r'`git-guardrails\.py` \((\d+) cases in its own sections\)',     ["quality_reports/qualification/LEDGER.md"], n_battery_named("bc")),
+    ("battery-named dirty-tree-guard", r'`dirty-tree-guard\.py` \((\d+) cases in its own sections\)', ["quality_reports/qualification/LEDGER.md"], n_battery_named("j")),
+    ("battery-named issue-guard", r'`issue-guard\.py` \((\d+) cases in its own sections\)',          ["quality_reports/qualification/LEDGER.md"], n_battery_named("g")),
     ("battery-named claim-reconcile", r'`claim-reconcile\.py` \((\d+) cases in its own sections\)',   ["quality_reports/qualification/LEDGER.md"], n_battery_named("d")),
     # n_patterns() was COMPUTED (and printed as "sequential 1..N") but never
     # compared against the prose, so "Nineteen patterns is a reference shelf"

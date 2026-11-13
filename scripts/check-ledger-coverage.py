@@ -27,6 +27,9 @@ Registered checks are derived LIVE from three sources of truth — the `run` lin
 `.githooks/pre-commit` entry point. Never a hardcoded list: a list here would drift
 exactly the way the ledger does, and this checker would be the last to notice.
 
+A hook command is read as `<interpreter> <script>`, or as the inline launcher
+`sh -c '<code>' <$0 name> <script>` (#179, #180), whose script is the argument after the name.
+
 Exit: 0 agreement (warnings allowed), 1 disagreement, 2 could not run.
 """
 import json, os, re, shlex, subprocess, sys
@@ -85,8 +88,18 @@ def script_of(command, where):
     interp, i = None, 0
     if os.path.basename(toks[0]) in INTERPRETERS:
         interp, i = os.path.basename(toks[0]), 1
+        flags = []
         while i < len(toks) and toks[i].startswith("-"):
+            flags.append(toks[i])
             i += 1
+        # `sh -c '<launcher>' <$0 name> <script>`: the inline hook launcher (#179, #180).
+        # The code finds a working Python and survives a missing script; what runs is the
+        # argument after the $0 name, and it only has to exist and be readable.
+        if interp in ("sh", "bash") and any(f[0] == "-" and f[1:2] != "-" and "c" in f[1:]
+                                            for f in flags):
+            if i + 2 >= len(toks):
+                raise CannotRun(f"{where}: `{interp} -c` names no script after its code and $0: {command}")
+            i += 2
     if i >= len(toks):
         raise CannotRun(f"{where}: no script path in command: {command}")
     p = expand(toks[i])
@@ -182,7 +195,9 @@ def ledger_names(known):
 
 def named_by(path, names):
     """Does `names` (basename -> {tokens}) name this path? A token with a directory must match it."""
-    rel = os.path.relpath(path, ROOT)
+    # Ledger tokens and `git ls-files` spell paths with '/'; relpath uses os.sep, so on
+    # Windows '.claude\hooks\notify.sh' matched neither and every clone failed (#151).
+    rel = os.path.relpath(path, ROOT).replace(os.sep, "/")
     return any("/" not in tok or rel.endswith(tok)
                for tok in names.get(os.path.basename(path), ()))
 
@@ -195,8 +210,11 @@ def resolve(tok):
 
 
 def tracked_files():
-    r = subprocess.run(["git", "-C", ROOT, "ls-files"], capture_output=True, text=True)
-    files = {f for f in r.stdout.split("\n") if f}
+    # -z and an explicit UTF-8 decode: plain `ls-files` C-quotes a non-ASCII name
+    # (".claude/hooks/lembrete_sess\303\243o.py"), so a tracked hook read as UNTRACKED,
+    # and text=True decodes with the Windows code page, which mangles or crashes on it.
+    r = subprocess.run(["git", "-C", ROOT, "ls-files", "-z"], capture_output=True)
+    files = {f for f in r.stdout.decode("utf-8", "surrogateescape").split("\0") if f}
     if not files:
         raise CannotRun("git ls-files returned nothing (not a git repo?) — cannot verify that "
                         "the registered checks survive a fresh clone")
@@ -204,6 +222,14 @@ def tracked_files():
 
 
 def main():
+    # The report prints em dashes on every run. A cp932 or Latin-1 stdout (a pipe on
+    # Japanese Windows, a legacy POSIX locale) cannot encode one, and the gate died
+    # with exit 1 on a console detail: print UTF-8, whatever the console.
+    for s in (sys.stdout, sys.stderr):
+        try:
+            s.reconfigure(encoding="utf-8", errors="backslashreplace")
+        except (AttributeError, ValueError):
+            pass
     try:
         checks = registered()
         qualified, debt = ledger_names({os.path.basename(p) for _, p, _, _ in checks})
@@ -213,7 +239,7 @@ def main():
         print("  A check that could not run is not a passing check.", file=sys.stderr)
         return 2
 
-    rel = lambda p: os.path.relpath(p, ROOT)
+    rel = lambda p: os.path.relpath(p, ROOT).replace(os.sep, "/")
     errs, warns = [], []
     n = lambda src: sum(1 for s, _, _, _ in checks if s == src)
     art = lambda src: ("an " if src[0] in "aeiou" else "a ") + src

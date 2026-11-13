@@ -2,6 +2,8 @@
 
 This repository is a **template** designed for academic researchers to fork and customize. Contributions back to the template should help **all** users, not just one fork.
 
+**Pull requests are open to collaborators only** (since 2026-11-06). Forks kept opening their own coursework and papers here, often without meaning to. To propose a change to the template, open an issue; if it is taken up, a maintainer makes the change or invites you as a collaborator. The steps below apply to collaborators.
+
 ## What we welcome
 
 - **Bug fixes** in shared infrastructure (skills, agents, rules, hooks, scripts).
@@ -30,8 +32,8 @@ This repository is a **template** designed for academic researchers to fork and 
    python3 scripts/quality_score.py path/to/file
    ```
 5. **Test against ≥2 domains** when adding skills/agents — show that your contribution generalizes.
-6. **Install the gate once:** `./scripts/install-hooks.sh` points `core.hooksPath` at `.githooks/`, so every commit runs the **backtest gate suite** (all ten gates — see `scripts/backtest.sh` — with the hook battery skipped when no hook, its settings or the battery itself is staged) plus the quality (≥80) check locally. CI runs the backtest suite too; quality scoring (which needs Quarto/R) stays local-only.
-7. **Keep the surfaces in sync** when adding features. Adding a skill means **adding its row to the README `<!-- surface-sync-table: skills -->` table** *and* keeping the prose counts (the "NN skills / NN rules" phrasings) in sync across `README.md`, `docs/index.html`, the guide, `templates/skill-template.md`, and `.claude/skills/commit/SKILL.md`. `./scripts/check-surface-sync.sh` enforces **both** the counts and the table rows — run it before you open a PR.
+6. **Install the gate once:** `./scripts/install-hooks.sh` points `core.hooksPath` at `.githooks/`, so every commit runs the **backtest gate suite** (all eleven gates — see `scripts/backtest.sh` — with the hook battery skipped when no hook, its settings or the battery itself is staged) plus the quality (≥80) check locally. CI runs the backtest suite too; quality scoring (which needs Quarto/R) stays local-only.
+7. **Keep the surfaces in sync** when adding features. Adding a skill means **adding its row to the README `<!-- surface-sync-table: skills -->` table** *and* keeping the prose counts (the "NN skills / NN rules" phrasings) in sync across `README.md`, `docs/index.html`, the guide, `templates/skill-template.md`, and `.claude/skills/commit/SKILL.md`. `./scripts/check-surface-sync.sh` enforces **both** the counts and the table rows — run it before you open a PR. A skill that one agent can run end to end can also be bridged for Codex and Antigravity: add it to `INCLUDE` in `scripts/sync-agent-skills.py` and run that script (see [`AGENTS.md`](../AGENTS.md)). Editing a bridged skill's `description:` means re-running it too; the backtest fails while a wrapper is out of date.
 
 ## PR style
 

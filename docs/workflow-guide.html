@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Pedro H. C. Sant’Anna">
-<meta name="dcterms.date" content="2026-09-27">
+<meta name="dcterms.date" content="2026-11-07">
 
 <title>My Claude Code Setup</title>
 <style>
@@ -2492,10 +2492,11 @@ window.Quarto = {
   <li><a href="#mixtapetools-the-rhetoric-of-decks" id="toc-mixtapetools-the-rhetoric-of-decks" class="nav-link" data-scroll-target="#mixtapetools-the-rhetoric-of-decks"><span class="header-section-number">6.4</span> MixtapeTools: The Rhetoric of Decks</a></li>
   <li><a href="#aea-data-editor-template" id="toc-aea-data-editor-template" class="nav-link" data-scroll-target="#aea-data-editor-template"><span class="header-section-number">6.5</span> AEA Data Editor Template</a></li>
   <li><a href="#autoresearch-constraint-based-autonomous-research" id="toc-autoresearch-constraint-based-autonomous-research" class="nav-link" data-scroll-target="#autoresearch-constraint-based-autonomous-research"><span class="header-section-number">6.6</span> autoresearch: Constraint-Based Autonomous Research</a></li>
-  <li><a href="#stata-mcp-mcp-server-for-stata-execution" id="toc-stata-mcp-mcp-server-for-stata-execution" class="nav-link" data-scroll-target="#stata-mcp-mcp-server-for-stata-execution"><span class="header-section-number">6.7</span> stata-mcp: MCP server for Stata execution</a></li>
-  <li><a href="#claudecodetools-the-editor-persona" id="toc-claudecodetools-the-editor-persona" class="nav-link" data-scroll-target="#claudecodetools-the-editor-persona"><span class="header-section-number">6.8</span> ClaudeCodeTools: The Editor Persona</a></li>
-  <li><a href="#anthropic-shipped-apr-2026-utilities" id="toc-anthropic-shipped-apr-2026-utilities" class="nav-link" data-scroll-target="#anthropic-shipped-apr-2026-utilities"><span class="header-section-number">6.9</span> Anthropic-Shipped Apr 2026 Utilities</a></li>
-  <li><a href="#sec-community" id="toc-sec-community" class="nav-link" data-scroll-target="#sec-community"><span class="header-section-number">6.10</span> Community Adoption</a></li>
+  <li><a href="#mcp-for-stata-formerly-stata-mcp-mcp-server-for-stata-execution" id="toc-mcp-for-stata-formerly-stata-mcp-mcp-server-for-stata-execution" class="nav-link" data-scroll-target="#mcp-for-stata-formerly-stata-mcp-mcp-server-for-stata-execution"><span class="header-section-number">6.7</span> mcp-for-stata (formerly <code>stata-mcp</code>): MCP server for Stata execution</a></li>
+  <li><a href="#claude-code-presentation-formerly-claudecodetools-the-editor-persona" id="toc-claude-code-presentation-formerly-claudecodetools-the-editor-persona" class="nav-link" data-scroll-target="#claude-code-presentation-formerly-claudecodetools-the-editor-persona"><span class="header-section-number">6.8</span> Claude-Code-Presentation (formerly <code>ClaudeCodeTools</code>): The Editor Persona</a></li>
+  <li><a href="#paul-goldsmith-pinkham-paulgp-anton-korinek-and-economics-tooling" id="toc-paul-goldsmith-pinkham-paulgp-anton-korinek-and-economics-tooling" class="nav-link" data-scroll-target="#paul-goldsmith-pinkham-paulgp-anton-korinek-and-economics-tooling"><span class="header-section-number">6.9</span> Paul Goldsmith-Pinkham (<code>paulgp</code>), Anton Korinek, and Economics Tooling</a></li>
+  <li><a href="#anthropic-shipped-apr-2026-utilities" id="toc-anthropic-shipped-apr-2026-utilities" class="nav-link" data-scroll-target="#anthropic-shipped-apr-2026-utilities"><span class="header-section-number">6.10</span> Anthropic-Shipped Apr 2026 Utilities</a></li>
+  <li><a href="#sec-community" id="toc-sec-community" class="nav-link" data-scroll-target="#sec-community"><span class="header-section-number">6.11</span> Community Adoption</a></li>
   </ul></li>
   <li><a href="#sec-customize" id="toc-sec-customize" class="nav-link" data-scroll-target="#sec-customize"><span class="header-section-number">7</span> Customizing for Your Domain</a>
   <ul class="collapse">
@@ -2565,14 +2566,14 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">September 27, 2026</p>
+      <p class="date">November 7, 2026</p>
     </div>
   </div>
   
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">October 14, 2026</p>
+      <p class="date-modified">November 13, 2026</p>
     </div>
   </div>
     
@@ -2769,7 +2770,7 @@ You see: &quot;Analysis complete. 3 tables, 4 figures.&quot;</code></pre>
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><strong>You talk, Claude orchestrates.</strong> The 18 agents, 77 skills, and 40 rules exist so you don’t have to think about them. Describe your goal, approve the plan, and let the system work.</p>
+<p><strong>You talk, Claude orchestrates.</strong> The 18 agents, 81 skills, and 40 rules exist so you don’t have to think about them. Describe your goal, approve the plan, and let the system work.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -2782,7 +2783,7 @@ You see: &quot;Analysis complete. 3 tables, 4 figures.&quot;</code></pre>
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>This guide describes the full system — 18 agents, 77 skills, 40 rules. That is the ceiling, not the floor. <strong>Start with just CLAUDE.md and 2–3 skills</strong> (<code>/compile-latex</code>, <code>/proofread</code>, <code>/commit</code>). Add rules and agents as you discover what you need. The template is designed for progressive adoption: fork it, fill in the placeholders, and start working. Everything else is there when you’re ready.</p>
+<p>This guide describes the full system — 18 agents, 81 skills, 40 rules. That is the ceiling, not the floor. <strong>Start with just CLAUDE.md and 2–3 skills</strong> (<code>/compile-latex</code>, <code>/proofread</code>, <code>/commit</code>). Add rules and agents as you discover what you need. The template is designed for progressive adoption: fork it, fill in the placeholders, and start working. Everything else is there when you’re ready.</p>
 </div>
 </div>
 <hr>
@@ -2826,7 +2827,7 @@ You see: &quot;Analysis complete. 3 tables, 4 figures.&quot;</code></pre>
 <tbody>
 <tr class="odd">
 <td><strong>Claude Code</strong></td>
-<td>The AI tool that powers this workflow</td>
+<td>The AI tool that powers this workflow — <strong>2.1.314 or later</strong> for the template’s shipped settings (an older version skips them without a warning)</td>
 <td><code>curl -fsSL https://claude.ai/install.sh | bash</code> (<a href="https://code.claude.com/docs/en/overview">docs</a>)</td>
 </tr>
 <tr class="even">
@@ -2877,6 +2878,11 @@ You see: &quot;Analysis complete. 3 tables, 4 figures.&quot;</code></pre>
 <td><code>brew install gh</code> (macOS)</td>
 </tr>
 <tr class="odd">
+<td>poppler</td>
+<td>Beamer page screenshots and log digest (<code>scripts/beamer-qa.py</code>)</td>
+<td><code>brew install poppler</code> (macOS), <code>apt install poppler-utils</code> (Debian)</td>
+</tr>
+<tr class="even">
 <td>Playwright for Python</td>
 <td>Slide overflow measured in a real browser (<code>scripts/slide-qa.py</code>)</td>
 <td><code>python3 -m venv ~/.venvs/slide-qa &amp;&amp; ~/.venvs/slide-qa/bin/pip install playwright</code>, then <code>export SLIDE_QA_PYTHON=~/.venvs/slide-qa/bin/python</code> (uses your installed Chrome)</td>
@@ -2937,7 +2943,7 @@ You see: &quot;Analysis complete. 3 tables, 4 figures.&quot;</code></pre>
 <div class="callout-body-container callout-body">
 <p><strong>“command not found: claude”:</strong> Install Claude Code first: <code>curl -fsSL https://claude.ai/install.sh | bash</code> (the native installer — no Node.js needed; only the npm route requires Node 18+).</p>
 <p><strong>Claude seems to ignore the configuration files:</strong> Make sure you ran <code>claude</code> from inside the project directory (not a parent folder). Claude reads <code>.claude/</code> and <code>CLAUDE.md</code> from the current working directory.</p>
-<p><strong>Hooks not firing (no notifications, no reminders):</strong> Check that Python 3 is installed (<code>python3 --version</code>) and hook files are executable (<code>chmod +x .claude/hooks/*</code>).</p>
+<p><strong>Hooks not firing (no notifications, no reminders):</strong> Check that Python 3 is installed (<code>python3 --version</code>) and the shell hooks are executable (<code>chmod +x .claude/hooks/*.sh</code>; the Python hooks run as <code>python3 &lt;file&gt;</code> and need no executable bit).</p>
 <p><strong>“What does plan approval look like?”</strong> Claude presents a numbered plan and asks for your input. Say “approved”, “looks good”, or “revise step 3”. That’s it — no special commands needed.</p>
 <p>For more, see <a href="#troubleshooting">Troubleshooting</a> in the Appendix.</p>
 </div>
@@ -2956,7 +2962,7 @@ You see: &quot;Analysis complete. 3 tables, 4 figures.&quot;</code></pre>
 <div id="callout-8" class="callout-8-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>The fastest way to <em>believe</em> the verification layer is to watch it catch you. From a fresh clone:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./scripts/backtest.sh</span>          <span class="co"># all ten gates green on a clean tree</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./scripts/backtest.sh</span>          <span class="co"># all eleven gates green on a clean tree</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sed</span> <span class="at">-i</span> <span class="st">&#39;&#39;</span> <span class="at">-E</span> <span class="st">&#39;s/[0-9]+ skills/99 skills/&#39;</span> README.md   <span class="co"># plant a lie (Linux: sed -i -E, no &#39;&#39;)</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ex">./scripts/backtest.sh</span>          <span class="co"># surface-sync goes RED: README claims 99 skills, disk has fewer</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> checkout <span class="at">--</span> README.md      <span class="co"># undo</span></span>
@@ -2968,6 +2974,7 @@ You see: &quot;Analysis complete. 3 tables, 4 figures.&quot;</code></pre>
 </section>
 <section id="step-1-fork-clone" class="level2" data-number="2.2">
 <h2 data-number="2.2" class="anchored" data-anchor-id="step-1-fork-clone"><span class="header-section-number">2.2</span> Step 1: Fork &amp; Clone</h2>
+<p><strong>Unpublished work? Choose before you copy.</strong> GitHub keeps a fork of a public repository public, and its visibility cannot be changed. For a paper, data or anything not yet public, click <strong>Use this template</strong> on the repository page instead, set the new repository to <strong>Private</strong>, and clone that one: <code>git clone https://github.com/YOUR_USERNAME/YOUR_REPO.git my-project</code>. Fork only for work that can be public.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fork this repo on GitHub (click &quot;Fork&quot; on the repo page), then:</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/YOUR_USERNAME/claude-code-my-workflow.git my-project</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> my-project</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -2990,6 +2997,30 @@ You see: &quot;Analysis complete. 3 tables, 4 figures.&quot;</code></pre>
 <div class="callout-body-container callout-body">
 <p>Everything in this guide works the same in any Claude Code interface. In <strong>VS Code</strong>, open the Claude Code panel (click the Claude icon in the sidebar or press Cmd+Shift+P → “Claude Code: Open”). In <strong>Claude Desktop</strong>, open your project folder and start a local session. Then paste the starter prompt below.</p>
 <p>The guide shows terminal commands because they are the most universal way to explain things, but every skill, agent, hook, and rule works identically regardless of which interface you use.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Using Codex or Antigravity instead of Claude Code?
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The template is built for Claude Code, but two other agents can use much of it. Codex — the Codex CLI, its IDE extensions, and the Codex tab of the ChatGPT desktop app — reads <a href="https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/AGENTS.md"><code>AGENTS.md</code></a> at the repository root, and both Codex and Google Antigravity read skills in the open Agent Skills format from <code>.agents/skills/</code>. That folder holds generated wrappers, one per skill that a single agent can run end to end: each has the same name and description as its Claude Code skill and sends the agent to the real instructions in <code>.claude/skills/</code>. In the ChatGPT app, type <code>@</code> to pick a skill; in the Codex CLI or an IDE extension, mention one with <code>$name</code> or list them with <code>/skills</code>; in Antigravity, type <code>/name</code>.</p>
+<p>Three things do not carry over, and <code>AGENTS.md</code> says what to do instead:</p>
+<ul>
+<li><strong>The guards.</strong> The deny rules in <code>.claude/settings.json</code> and the <code>dirty-tree-guard</code> and <code>issue-guard</code> hooks belong to Claude Code, so another agent is not stopped from running <code>git reset --hard</code> or a raw <code>gh issue create</code>. <code>AGENTS.md</code> turns each one into a rule the agent follows by hand. The git pre-commit gate (<code>./scripts/install-hooks.sh</code>) and CI apply to every agent’s commits.</li>
+<li><strong>Independent reviewers.</strong> Skills whose value is several reviewers who do not see each other’s work — <code>/review-paper --peer</code>, <code>/seven-pass-review</code>, <code>/verify-claims</code> — are not bridged: one agent playing every referee is not the same check. Where a bridged skill hands one step to a Claude Code agent, the other agent does that step where it appears, so a gate still gates. A step that needs a context that has not seen the work, such as <code>/lit-review</code>’s claim verifier, runs in a separate session. If the agent cannot start one, it marks those results <em>not independently verified</em> and tells you to repeat the check in Claude Code.</li>
+<li><strong>Claude Code’s own machinery.</strong> Skills that manage Claude Code sessions, memory or permissions are not bridged.</li>
+</ul>
+<p>Claude Code itself reads <code>CLAUDE.md</code>, not <code>AGENTS.md</code>, unless a repository has no <code>CLAUDE.md</code> or its <strong>Project instructions</strong> setting is <code>claude-md-and-agents-md</code>; leave that setting at its default here, because <code>AGENTS.md</code> tells other agents to do by hand what Claude Code’s deny rules and hooks already do. <code>scripts/sync-agent-skills.py</code> lists every skill as bridged or excluded, with the reason, and regenerates the wrappers after a skill changes; the backtest fails while a wrapper is out of date.</p>
+<p><strong>Keep reviewing agent-written changes.</strong> A pull request written with another agent once passed every backtest gate with three wrong names of real people, a cited source that did not exist, and guessed version numbers. The gates check that the repository agrees with itself, not that it is true; <code>AGENTS.md</code> asks agents to source every fact, and a second model’s review before merge is what caught the rest.</p>
 </div>
 </div>
 </div>
@@ -3016,7 +3047,7 @@ You see: &quot;Analysis complete. 3 tables, 4 figures.&quot;</code></pre>
 <h2 data-number="2.4" class="anchored" data-anchor-id="optional-manual-setup"><span class="header-section-number">2.4</span> Optional: Manual Setup</h2>
 <p>If you prefer to configure things yourself instead of letting Claude handle it:</p>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -3025,7 +3056,7 @@ You see: &quot;Analysis complete. 3 tables, 4 figures.&quot;</code></pre>
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div id="callout-12" class="callout-12-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p><strong>Customize CLAUDE.md</strong> — Open <code>CLAUDE.md</code> and replace all <code>[BRACKETED PLACEHOLDERS]</code>:</p>
 <ol type="1">
@@ -3060,7 +3091,7 @@ You see: &quot;Analysis complete. 3 tables, 4 figures.&quot;</code></pre>
 <li><strong>Rewrite <code>CLAUDE.md</code> for your project</strong> — name, folder tree, current state. It is the first file Claude reads. Its link to the template README’s skills table (<code>README.md#skills-claudeskills</code>) will not resolve in your repo; point it at your own index or drop it.</li>
 <li><strong>Tell the hygiene gate about your folders and root files.</strong> Add each top-level folder of yours (<code>paper/</code>, <code>code/</code>, …) to <code>ROOT_ALLOW_DIRS</code> in <code>scripts/check-repo-hygiene.py</code>, and each file at the root that is not already allowed (a <code>Makefile</code>, an <code>.Rproj</code>, …) to <code>ROOT_ALLOW</code>, each with a one-line reason. The layout folders (<code>output/</code>, <code>data/</code>, <code>R/</code>, <code>tests/</code>) and the common R and Python environment files (<code>DESCRIPTION</code>, <code>renv.lock</code>, <code>requirements.txt</code>, …) are allowed already.</li>
 <li><strong>Remove the two checks that read the template’s own documentation.</strong> Delete the <code>run &quot;surface-sync&quot;</code> and <code>run &quot;derived-counts&quot;</code> lines from <code>scripts/backtest.sh</code>: they count skills, gates and battery cases in the template’s README, guide and changelog, which your project does not have. Every other check applies to your work as-is.</li>
-<li><strong>Stage the copied files by name</strong> — <code>git add .claude .githooks scripts templates Preambles CLAUDE.md MEMORY.md TROUBLESHOOTING.md CHANGELOG.md quality_reports .gitignore</code>. The ledger check needs the hook files tracked, and the template’s own guard refuses a blanket <code>git add -A</code>.</li>
+<li><strong>Stage the copied files by name</strong> — <code>git add .claude .githooks scripts templates Preambles CLAUDE.md MEMORY.md TROUBLESHOOTING.md CHANGELOG.md quality_reports .gitignore</code>. The ledger check needs the hook files tracked, and the template’s deny rules refuse a blanket <code>git add -A</code>.</li>
 <li><strong>Run</strong> <code>./scripts/validate-setup.sh</code>, then <code>./scripts/install-hooks.sh</code>, then <code>./scripts/backtest.sh</code>.</li>
 </ol>
 <p>We tested these steps on a project with its own README, <code>paper/</code> and <code>code/</code> folders and a root <code>Makefile</code>. As copied, five of the suite’s checks failed. After steps 1–5, the full suite passed, the hook battery included.</p>
@@ -3413,7 +3444,7 @@ APPROVED   NEEDS WORK
 </thead>
 <tbody>
 <tr class="odd">
-<td>Backtest (10 gates)</td>
+<td>Backtest (11 gates)</td>
 <td>scripts, pre-commit + CI</td>
 <td>repo-wide consistency/currency, <strong>plus the gate layer itself</strong> — ledger coverage and hook wiring (gate 9), the guard hooks re-fired against their target failures (gate 10)</td>
 <td><strong>closed</strong> — commit blocked</td>
@@ -3429,19 +3460,19 @@ APPROVED   NEEDS WORK
 <td>score report</td>
 </tr>
 <tr class="odd">
-<td>Destructive-git guard</td>
-<td>PreToolUse hook</td>
-<td><code>git</code> commands in-session</td>
-<td><strong>closed</strong> — call blocked</td>
+<td>Destructive-git deny rules</td>
+<td>permission <code>deny</code> rules in <code>.claude/settings.json</code>, checked by Claude Code</td>
+<td><code>git reset --hard</code>, <code>git clean</code>, <code>git push --force</code>/<code>-f</code>, <code>git add -A</code>/<code>--all</code>/<code>.</code> in any argument position, a checkout or restore of the whole tree (<code>git checkout HEAD -- .</code>, <code>git restore -- .</code>) in-session, as Claude usually spells them (a guard, not a security boundary: <code>git -C . …</code> and <code>bash -c &#39;…&#39;</code> are not matched)</td>
+<td><strong>closed</strong> — call refused</td>
 <td>run it yourself in a terminal</td>
-<td>hook message</td>
+<td>the refusal in the transcript</td>
 </tr>
 <tr class="even">
-<td>Root-of-trust guard</td>
-<td>PreToolUse hook (<code>Bash</code>)</td>
-<td><em>silent shell</em> writes into <code>.claude/settings*.json</code>, <code>.claude/hooks/</code>, <code>.githooks/</code> in-session (a best-effort tripwire; <code>Edit</code>/<code>Write</code> still pass)</td>
-<td><strong>closed</strong> — call blocked</td>
-<td><code>ALLOW_ROOT_OF_TRUST_WRITE=1</code></td>
+<td>Dirty-tree guard</td>
+<td>PreToolUse hook (<code>Bash</code>, started only for <code>git merge</code>, <code>pull</code>, <code>rebase</code>)</td>
+<td>a history operation while tracked files have uncommitted changes, in the session’s directory</td>
+<td><strong>closed</strong> — call blocked; the hook itself fails open</td>
+<td><code>ALLOW_DIRTY_MERGE=1</code></td>
 <td>hook message</td>
 </tr>
 <tr class="odd">
@@ -3486,7 +3517,7 @@ APPROVED   NEEDS WORK
 </tr>
 </tbody>
 </table>
-<p>Two design rules behind this table: everything <strong>closed</strong> is deterministic (scripts, not model judgment), and model judgment is never a gate — it produces reports a human adjudicates. And deliberately, this template does <strong>not</strong> pile on session-time enforcement hooks beyond its three <code>PreToolUse</code> guards — the destructive-git guard, the root-of-trust tripwire, and the issue guard. A guard that runs on every call slows every single interaction, and the cost lands on you every minute you work; that is why the issue guard is spawned only for <code>gh</code> commands.</p>
+<p>Two design rules behind this table: everything <strong>closed</strong> is deterministic (scripts, not model judgment), and model judgment is never a gate — it produces reports a human adjudicates. And deliberately, this template keeps session-time enforcement small: native deny rules, which start no process, and two <code>PreToolUse</code> hooks that Claude Code starts only for the commands they check, the dirty-tree guard for <code>git merge</code>, <code>pull</code> and <code>rebase</code> and the issue guard for <code>gh</code>. A hook that runs on every call slows every interaction, and the cost lands on you every minute you work; v2.9.1 removed the three that did.</p>
 <section id="dont-skip-verification" class="level2" data-number="3.5">
 <h2 data-number="3.5" class="anchored" data-anchor-id="dont-skip-verification"><span class="header-section-number">3.5</span> Don’t Skip Verification</h2>
 <p>In Econ 730, verification caught unverified TikZ diagrams that would have deployed with overlapping labels, broken SVGs in Quarto slides that wouldn’t display, and R scripts with missing intercept terms that produced silently wrong estimates.</p>
@@ -3555,7 +3586,7 @@ APPROVED   NEEDS WORK
 <h3 data-number="3.6.2" class="anchored" data-anchor-id="what-happens-when-the-bound-is-missed"><span class="header-section-number">3.6.2</span> What happens when the bound is missed</h3>
 <p>A qualification bound only means something if failing it costs something. When a measured campaign misses a bound that was fixed in advance, the disposition is <strong>WITHDRAW</strong>: the thing that failed is demoted to explicit opt-in, and the bound is <strong>never widened</strong>. A bound moved after seeing the number is not a bound — it is a description of the result, and every claim that later cites it is circular. Demotion rather than deletion keeps the thing usable by someone who has read the number and accepted it, while deletion destroys the trail. The withdrawal is finished only when the failing number, the bound it missed, and the disposition are published where users read (release notes <em>and</em> the verdict artifact), the failing campaign is preserved as negative calibration evidence, and every adjacent surface is listed as affected or explicitly not.</p>
 <div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-17-contents" aria-controls="callout-17" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-18-contents" aria-controls="callout-18" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -3564,7 +3595,7 @@ APPROVED   NEEDS WORK
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-17" class="callout-17-contents callout-collapse collapse">
+<div id="callout-18" class="callout-18-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p><em>A constructed illustration, not a logged incident — the mechanism is real, the numbers are chosen to make it concrete.</em></p>
 <p>An R package for assay analysis ships an automatic baseline-correction routine as its default. The maintainers wrote the bound before running anything, and wrote what would count as missing it: over the preregistered holdout of 300 spike-in samples of known concentration, the nominal 95% intervals must cover the true concentration at <strong>94% or better</strong>, counted as missed only if the measurement falls below that by more than two standard errors, and confirmed by one pre-committed re-run on fresh seeds at the same budget before any disposition fires. The campaign runs. Measured coverage: <strong>267 of 300 = 89.0%</strong>, with a standard error of 1.8 percentage points — not a near miss, and not noise. The confirming re-run misses too.</p>
@@ -3619,9 +3650,10 @@ APPROVED   NEEDS WORK
 </tbody>
 </table>
 <p>And one command runs the mechanical half of all of it:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./scripts/backtest.sh</span>    <span class="co"># ten gates: consistency, skill integrity, currency, links, spec, staleness,</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                         <span class="co"># hygiene, derived counts, ledger coverage, hook battery</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>The final pair check the checking layer rather than the content. <strong>Ledger coverage</strong> reads the qualification ledger and the set of checks that actually run, and requires them to agree in both directions: a registered check with no ledger row fails the build, a row naming a checker that no longer exists fails the build, and a row parked under <em>Not yet qualified</em> warns — visible debt rather than silence. It also verifies that every hook registered in <code>.claude/settings.json</code> points at a file that exists, is invocable, and is tracked in git. The <strong>hook battery</strong> then fires each active guard hook with synthetic events and requires it to still go red on the failure it was written for, alongside clean controls that must stay green. Gate 9 proves a hook is wired; gate 10 proves it still acts.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./scripts/backtest.sh</span>    <span class="co"># eleven gates: consistency, skill integrity, currency, links, spec, staleness,</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                         <span class="co"># hygiene, derived counts, ledger coverage, hook battery, portability</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Gates 9 and 10 check the checking layer rather than the content. <strong>Ledger coverage</strong> reads the qualification ledger and the set of checks that actually run, and requires them to agree in both directions: a registered check with no ledger row fails the build, a row naming a checker that no longer exists fails the build, and a row parked under <em>Not yet qualified</em> warns — visible debt rather than silence. It also verifies that every hook registered in <code>.claude/settings.json</code> points at a file that exists, is invocable, and is tracked in git. The <strong>hook battery</strong> then fires each active guard hook with synthetic events and requires it to still go red on the failure it was written for, alongside clean controls that must stay green. Gate 9 proves a hook is wired; gate 10 proves it still acts.</p>
+<p>Gate 11, the <strong>portability suite</strong>, covers what differs on other people’s machines: Windows paths, code pages and line endings (simulated on Linux by loading the real modules with <code>ntpath</code> swapped in), non-ASCII and quoted file names from git, case-varied paths. Each defect it covers is pinned by a case that failed on the code before its fix.</p>
 <p>Findings themselves are machine-checked rather than described: reviewers emit a JSON array validated against <a href="https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/.claude/references/finding-schema.json"><code>finding-schema.json</code></a> by <code>scripts/validate-findings.py</code>. Every finding must cite the <strong>rule</strong> it violates (a finding citing no rule is an opinion) and give a <strong>failing case</strong> — a concrete configuration that breaks the claim, not “this could be clearer”. Finding ids are deterministic, so deduplication across review rounds is exact rather than fuzzy.</p>
 </section>
 <section id="the-five-credibility-questions" class="level3" data-number="3.6.4">
@@ -3971,8 +4003,8 @@ APPROVED   NEEDS WORK
 </tr>
 <tr class="odd">
 <td><code>/commit</code></td>
-<td>Stage + commit (quick, default); <code>full</code> adds PR + merge</td>
-<td>After any completed task; <code>full</code> at milestones</td>
+<td>Run checks and commit; external actions require separate requests</td>
+<td>When explicitly asked to commit</td>
 </tr>
 </tbody>
 </table>
@@ -3986,7 +4018,7 @@ APPROVED   NEEDS WORK
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Claude Code ships with built-in skills beyond this template’s 77 (as of Aug 2026): <code>/batch</code> orchestrates parallel refactoring across your codebase (using git worktrees for isolation), <code>/simplify</code> reviews recent changes for simplification opportunities, and <code>/debug</code> helps troubleshoot sessions. These complement the academic skills above.</p>
+<p>Claude Code ships with built-in skills beyond this template’s 81 (as of Aug 2026): <code>/batch</code> orchestrates parallel refactoring across your codebase (using git worktrees for isolation), <code>/simplify</code> reviews recent changes for simplification opportunities, and <code>/debug</code> helps troubleshoot sessions. These complement the academic skills above.</p>
 </div>
 </div>
 </section>
@@ -4053,13 +4085,13 @@ APPROVED   NEEDS WORK
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Current Anthropic lineup (re-verified 2026-09-26; expiry-gated via the model SSoT)
+<span class="screen-reader-only">Note</span>Current Anthropic lineup (re-verified 2026-11-04; expiry-gated via the model SSoT)
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The <strong>Fable tier</strong> (alias <code>fable</code>) is the top Claude Code tier — opt-in via <code>/model fable</code> or the <code>best</code> alias, built for tasks larger than a single sitting; it investigates before acting and verifies its own work more often than smaller models. It is <strong>not</strong> the default on any account type and costs a multiple of the Opus price. The <strong>Opus tier</strong> is the Claude Code default and what this template routes referees, editors, and verifiers to; its adaptive thinking is always on and it defaults to <code>medium</code> effort. <strong>Sonnet</strong> is the workhorse mid-tier; <strong>Haiku</strong> is the fast/mechanical tier. Anthropic’s own routing advice: start with the current Opus, and move to Fable when evals at a higher Opus effort still fall short.</p>
+<p>The <strong>Fable tier</strong> (alias <code>fable</code>) is the top Claude Code tier — opt-in via <code>/model fable</code> or the <code>best</code> alias, built for tasks larger than a single sitting; it investigates before acting and verifies its own work more often than smaller models. It is <strong>not</strong> the default on any account type and costs a multiple of the Opus price. The <strong>Opus tier</strong> is the Claude Code default and what this template routes referees, editors, and verifiers to; its adaptive thinking is always on and it defaults to <code>medium</code> effort. <strong>Sonnet</strong> is the workhorse mid-tier (cache reads dropped 50% to <code>\$0.10/MTok</code> on the 5.5 generation); <strong>Haiku</strong> is the fast/mechanical tier (now with a <code>1M</code> context window and configurable <code>effort</code>). Anthropic’s own routing advice: start with the current Opus, and move to Fable when evals at a higher Opus effort still fall short.</p>
 <p>Alias resolution is <strong>provider-dependent</strong>, and point versions move faster than any guide can. The single source of truth is <a href="https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/.claude/references/model-versions.md"><code>model-versions.md</code></a>, which carries the current versions, the per-provider alias table, and a <code>verified_on</code> date with an expiry — <code>scripts/check-staleness.py</code> fails the build when that expiry passes, and <code>scripts/check-model-versions.sh</code> catches any superseded version presented as current. <strong>Do not hard-code a point version here.</strong></p>
-<p><strong>Retirement watch:</strong> Sonnet 4 and the original Opus 4 retired on 2026-06-15; the current Haiku model’s retirement floor is 2026-10-15 (see the SSoT). If your environment pins a model string (<code>ANTHROPIC_MODEL</code>, <code>ANTHROPIC_DEFAULT_*_MODEL</code>, hard-coded IDs in CI), re-check it against the SSoT. The current Opus needs Claude Code ≥ 2.1.280 — run <code>claude update</code> (or <code>claude --version</code>) if <code>/model</code> does not offer it.</p>
+<p><strong>Retirement watch:</strong> Sonnet 4 and the original Opus 4 retired on 2026-06-15, the current Haiku tier shipped on 2026-10-07, and prior-generation Haiku 4.5 is still served but past its retirement floor (not sooner than 2026-10-15), so a retirement can now be announced at 60 days’ notice (see the SSoT). If your environment pins a model string (<code>ANTHROPIC_MODEL</code>, <code>ANTHROPIC_DEFAULT_*_MODEL</code>, hard-coded IDs in CI), re-check it against the SSoT. The current Opus needs Claude Code ≥ 2.1.280 — run <code>claude update</code> (or <code>claude --version</code>) if <code>/model</code> does not offer it.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled">
@@ -4212,7 +4244,7 @@ APPROVED   NEEDS WORK
 <p>Cost is invisible until you look at the monthly invoice. Three levers, in order of impact:</p>
 <p><strong>1. Prompt caching.</strong> Anthropic’s prompt cache lets repeated prefix tokens (system prompt, CLAUDE.md, large context blobs) hit a cached path at a fraction of the input price. Two things forkers should know:</p>
 <ul>
-<li><strong>The default TTL dropped from 60 min to 5 min</strong> in early 2026. A long <code>/review-paper --peer</code> pipeline that took 12 minutes between turns now starts the second turn with a cold cache. For long pipelines on API / Bedrock / Vertex / Foundry plans, the opt-in <code>ENABLE_PROMPT_CACHING_1H</code> environment variable restores 1-hour TTL. On Claude Pro / Max subscriptions, Claude Code requests the 1-hour TTL automatically at no extra cost.</li>
+<li><strong>The default TTL dropped from 60 min to 5 min</strong> in early 2026. A long <code>/review-paper --peer</code> pipeline that took 12 minutes between turns now starts the second turn with a cold cache. For long pipelines on API / Bedrock / Vertex / Foundry plans, the opt-in <code>ENABLE_PROMPT_CACHING_1H</code> environment variable restores 1-hour TTL. On Claude subscriptions within plan usage, Claude Code requests the 1-hour TTL automatically, but only for the main conversation: subagents, workflows and forks get 5 minutes unless you set <code>subagentPromptCacheTtl</code> to <code>&quot;1h&quot;</code> (Claude Code ≥ 2.1.242; <code>promptCacheTtl</code> sets the main conversation’s). That matters here, because this template’s reviewers run as subagents.</li>
 <li><strong><code>cache_miss_reason</code></strong> (Anthropic public beta, 2026-05-13) is now exposed on Messages requests. Use it to diagnose why a long-running pipeline isn’t getting cache hits (most often: a hook injected a timestamp that broke the prefix; or system-prompt drift between turns).</li>
 </ul>
 <p>The Apr 2026 <a href="https://dev.to/whoffagents/claude-prompt-caching-in-2026-the-5-minute-ttl-change-thats-costing-you-money-4363">TTL change cost analysis</a> estimates a 30–60% effective cost increase for long-running pipelines that don’t opt into the 1-hour TTL. Worth a Saturday hour to instrument your most expensive skill (<code>/review-paper --peer</code> is typically the worst offender).</p>
@@ -4232,7 +4264,7 @@ APPROVED   NEEDS WORK
 </thead>
 <tbody>
 <tr class="odd">
-<td><strong>Haiku 4.5</strong></td>
+<td><strong>Haiku tier</strong></td>
 <td>~70%</td>
 <td>Mechanical work: TikZ extraction, citation reformatting, bib validation, proofread fixes, simple file lookups</td>
 </tr>
@@ -4248,8 +4280,8 @@ APPROVED   NEEDS WORK
 </tr>
 </tbody>
 </table>
-<p>Set per-agent via <code>model:</code> in <code>.claude/agents/&lt;name&gt;.md</code> frontmatter. Typical savings vs. all-Opus in our use: <strong>50–80% on routed skills</strong>, with no quality loss observed on the mechanical tier (heuristic, not a benchmark). The community-converged ratio is documented in <a href="https://augmentcode.com">Augment Code’s routing data</a> and aligns with Aider’s architect/editor split; we cite Anthropic’s <a href="https://www.anthropic.com/engineering">Apr 8 2026 “Decoupling brain from hands”</a> as the primary-source endorsement of the pattern.</p>
-<p><strong>3. Effort budgeting.</strong> The <a href="#sec-effort">Effort Levels</a> section below covers the <code>low | medium | high | xhigh | max</code> ladder. <strong>The current Opus tier defaults to <code>medium</code></strong> — and its <code>medium</code> matches or beats the prior Opus generation at <code>high</code> (Anthropic’s evaluations), while at any given level it thinks more per turn. So: let <code>medium</code> be the default; pin <code>high</code> only on gates where a false PASS is expensive (the template does this for the editor, both referees, the claim verifier, and verification-gate or correctness-critical skills such as <code>/audit-reproducibility</code>, <code>/seven-pass-review</code>, and <code>/simulation-study</code> — the full list is in <code>model-routing.md</code>); drop to <code>low</code> for mechanical work; reach for <code>xhigh</code> only for extended exploration (deep search, big refactors, the hardest <code>/review-paper</code> runs); <code>ultracode</code> (xhigh + dynamic workflows) for repo-scale autonomous tasks. On a fixed grant budget, <code>maxEffortLevel</code> in settings caps effort everywhere.</p>
+<p>Set per-agent via <code>model:</code> in <code>.claude/agents/&lt;name&gt;.md</code> frontmatter. Typical savings vs. all-Opus in our use: <strong>50–80% on routed skills</strong>, with no quality loss observed on the mechanical tier (heuristic, not a benchmark). The community-converged ratio is documented in <a href="https://augmentcode.com">Augment Code’s routing data</a> and aligns with Aider’s architect/editor split. (An earlier version cited Anthropic’s “Decoupling the brain from the hands” post as the primary-source endorsement; that post is about agent-harness design and does not discuss routing work across model tiers.)</p>
+<p><strong>3. Effort budgeting.</strong> The <a href="#sec-effort">Effort Levels</a> section below covers the <code>low | medium | high | xhigh | max</code> ladder. <strong>The current Opus tier defaults to <code>medium</code></strong> — and its <code>medium</code> matches or beats the prior Opus generation at <code>high</code> (Anthropic’s evaluations), while at any given level it thinks more per turn. So: let <code>medium</code> be the default; pin <code>high</code> only on gates where a false PASS is expensive (the template does this for the editor, both referees, the claim verifier, and verification-gate or correctness-critical skills such as <code>/audit-reproducibility</code>, <code>/seven-pass-review</code>, and <code>/simulation-study</code> — the full list is in <code>model-routing.md</code>); drop to <code>low</code> for mechanical work; reach for <code>xhigh</code> only for extended exploration (deep search, big refactors, the hardest <code>/review-paper</code> runs); the <code>ultracode</code> toggle (dynamic workflows; since Claude Code 2.1.284 it no longer forces <code>xhigh</code>) for repo-scale autonomous tasks, with <code>workflowSizeGuideline</code> to cap the fan-out. On a fixed grant budget, <code>maxEffortLevel</code> in settings caps effort everywhere.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -4261,10 +4293,10 @@ APPROVED   NEEDS WORK
 </div>
 <div class="callout-body-container callout-body">
 <ul>
-<li><strong><code>/cost</code></strong> (Apr 2026 Week 15) — current session breakdown by model and cache hit-rate.</li>
+<li><strong><code>/cost</code></strong> (Apr 2026 Week 15) — now a shortcut that opens a tab of <code>/usage</code> (Claude Code 2.1.118 merged them).</li>
 <li><strong><code>/usage</code></strong> (Apr 2026 Week 16) — month-to-date totals + per-plan-tier remaining quota.</li>
 </ul>
-<p>Run <code>/cost</code> after any <code>/review-paper --peer</code> pipeline. If your cache hit-rate is under 60% for the second/third turn, you’re almost certainly being bitten by the 5-min TTL.</p>
+<p>Run <code>/usage</code> after any <code>/review-paper --peer</code> pipeline and read its <code>Prompt cache (main)</code> line (Claude Code ≥ 2.1.251). If the hit rate is under 60% for the second or third turn, the 5-minute TTL is the likely cause, and the referees, as subagents, are on 5 minutes even on a subscription.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-warning callout-titled">
@@ -4284,7 +4316,7 @@ APPROVED   NEEDS WORK
 </section>
 <section id="settings---permissions-and-hooks" class="level2" data-number="4.6">
 <h2 data-number="4.6" class="anchored" data-anchor-id="settings---permissions-and-hooks"><span class="header-section-number">4.6</span> Settings — Permissions and Hooks</h2>
-<p><code>.claude/settings.json</code> controls what Claude is allowed to do. The template ships a catch-all allow list rather than a curated one: seven wildcard rules, with no deny rules and no default mode. Here is the permissions block plus one of its hooks:</p>
+<p><code>.claude/settings.json</code> controls what Claude is allowed to do. The template ships a catch-all allow list rather than a curated one: seven wildcard allow rules, a deny list for destructive git commands and secret files, and no default mode. Here is the permissions block plus one of its hooks:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;permissions&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;allow&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
@@ -4296,21 +4328,62 @@ APPROVED   NEEDS WORK
 <span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;WebSearch&quot;</span><span class="ot">,</span></span>
 <span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Read(**)&quot;</span></span>
 <span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
-<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;deny&quot;</span><span class="fu">:</span> <span class="ot">[]</span></span>
-<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
-<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;hooks&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;Stop&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
-<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;hooks&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="fu">{</span></span>
-<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>          <span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="st">&quot;command&quot;</span><span class="fu">,</span></span>
-<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>          <span class="dt">&quot;command&quot;</span><span class="fu">:</span> <span class="st">&quot;python3 </span><span class="ch">\&quot;</span><span class="st">$CLAUDE_PROJECT_DIR</span><span class="ch">\&quot;</span><span class="st">/.claude/hooks/log-reminder.py&quot;</span><span class="fu">,</span></span>
-<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>          <span class="dt">&quot;timeout&quot;</span><span class="fu">:</span> <span class="dv">10</span></span>
-<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span><span class="ot">]</span></span>
-<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
-<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span></span>
-<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
-<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>In Manual mode almost nothing prompts. Auto mode drops the blanket <code>Bash(*)</code> and routes shell commands through its classifier. To tighten this, for example to keep restricted data off the model, add <code>deny</code> rules: see “Keep restricted data off the model” in <a href="https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/TROUBLESHOOTING.md#keep-restricted-data-off-the-model">TROUBLESHOOTING.md</a>.</p>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;deny&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Bash(git reset --hard *)&quot;</span><span class="ot">,</span></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Bash(git reset * --hard)&quot;</span><span class="ot">,</span></span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Bash(git reset * --hard *)&quot;</span><span class="ot">,</span></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Bash(git clean *)&quot;</span><span class="ot">,</span></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Bash(git push --force *)&quot;</span><span class="ot">,</span></span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Bash(git push * --force)&quot;</span><span class="ot">,</span></span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Bash(git push * --force *)&quot;</span><span class="ot">,</span></span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Bash(git push -f *)&quot;</span><span class="ot">,</span></span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Bash(git push * -f)&quot;</span><span class="ot">,</span></span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Bash(git push * -f *)&quot;</span><span class="ot">,</span></span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Bash(git add -A *)&quot;</span><span class="ot">,</span></span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Bash(git add * -A)&quot;</span><span class="ot">,</span></span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Bash(git add * -A *)&quot;</span><span class="ot">,</span></span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Bash(git add --all *)&quot;</span><span class="ot">,</span></span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Bash(git add * --all)&quot;</span><span class="ot">,</span></span>
+<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Bash(git add * --all *)&quot;</span><span class="ot">,</span></span>
+<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Bash(git add . *)&quot;</span><span class="ot">,</span></span>
+<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Bash(git add * .)&quot;</span><span class="ot">,</span></span>
+<span id="cb22-31"><a href="#cb22-31" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Bash(git add * . *)&quot;</span><span class="ot">,</span></span>
+<span id="cb22-32"><a href="#cb22-32" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Bash(git checkout -- . *)&quot;</span><span class="ot">,</span></span>
+<span id="cb22-33"><a href="#cb22-33" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Bash(git checkout . *)&quot;</span><span class="ot">,</span></span>
+<span id="cb22-34"><a href="#cb22-34" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Bash(git checkout * .)&quot;</span><span class="ot">,</span></span>
+<span id="cb22-35"><a href="#cb22-35" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Bash(git restore . *)&quot;</span><span class="ot">,</span></span>
+<span id="cb22-36"><a href="#cb22-36" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Bash(git restore * .)&quot;</span><span class="ot">,</span></span>
+<span id="cb22-37"><a href="#cb22-37" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Bash(git restore * . *)&quot;</span><span class="ot">,</span></span>
+<span id="cb22-38"><a href="#cb22-38" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Read(.env)&quot;</span><span class="ot">,</span></span>
+<span id="cb22-39"><a href="#cb22-39" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Read(.env.*)&quot;</span><span class="ot">,</span></span>
+<span id="cb22-40"><a href="#cb22-40" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Read(**/.env)&quot;</span><span class="ot">,</span></span>
+<span id="cb22-41"><a href="#cb22-41" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Read(**/.env.*)&quot;</span><span class="ot">,</span></span>
+<span id="cb22-42"><a href="#cb22-42" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Read(**/*.pem)&quot;</span><span class="ot">,</span></span>
+<span id="cb22-43"><a href="#cb22-43" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Read(**/*.key)&quot;</span><span class="ot">,</span></span>
+<span id="cb22-44"><a href="#cb22-44" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Read(**/credentials*)&quot;</span><span class="ot">,</span></span>
+<span id="cb22-45"><a href="#cb22-45" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Edit(.env)&quot;</span><span class="ot">,</span></span>
+<span id="cb22-46"><a href="#cb22-46" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Edit(.env.*)&quot;</span><span class="ot">,</span></span>
+<span id="cb22-47"><a href="#cb22-47" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Edit(**/.env)&quot;</span><span class="ot">,</span></span>
+<span id="cb22-48"><a href="#cb22-48" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Edit(**/.env.*)&quot;</span><span class="ot">,</span></span>
+<span id="cb22-49"><a href="#cb22-49" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Write(.env)&quot;</span><span class="ot">,</span></span>
+<span id="cb22-50"><a href="#cb22-50" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Write(.env.*)&quot;</span><span class="ot">,</span></span>
+<span id="cb22-51"><a href="#cb22-51" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Write(**/.env)&quot;</span><span class="ot">,</span></span>
+<span id="cb22-52"><a href="#cb22-52" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Write(**/.env.*)&quot;</span></span>
+<span id="cb22-53"><a href="#cb22-53" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span></span>
+<span id="cb22-54"><a href="#cb22-54" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb22-55"><a href="#cb22-55" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;hooks&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb22-56"><a href="#cb22-56" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;Stop&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb22-57"><a href="#cb22-57" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
+<span id="cb22-58"><a href="#cb22-58" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;hooks&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="fu">{</span></span>
+<span id="cb22-59"><a href="#cb22-59" aria-hidden="true" tabindex="-1"></a>          <span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="st">&quot;command&quot;</span><span class="fu">,</span></span>
+<span id="cb22-60"><a href="#cb22-60" aria-hidden="true" tabindex="-1"></a>          <span class="dt">&quot;command&quot;</span><span class="fu">:</span> <span class="st">&quot;python3 </span><span class="ch">\&quot;</span><span class="st">$CLAUDE_PROJECT_DIR</span><span class="ch">\&quot;</span><span class="st">/.claude/hooks/log-reminder.py&quot;</span><span class="fu">,</span></span>
+<span id="cb22-61"><a href="#cb22-61" aria-hidden="true" tabindex="-1"></a>          <span class="dt">&quot;timeout&quot;</span><span class="fu">:</span> <span class="dv">10</span></span>
+<span id="cb22-62"><a href="#cb22-62" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span><span class="ot">]</span></span>
+<span id="cb22-63"><a href="#cb22-63" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb22-64"><a href="#cb22-64" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span></span>
+<span id="cb22-65"><a href="#cb22-65" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb22-66"><a href="#cb22-66" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>In Manual mode almost nothing prompts. Auto mode drops the blanket <code>Bash(*)</code> and routes shell commands through its classifier. The deny rules hold in every mode; the push rules leave <code>--force-with-lease</code> allowed, and what the git rules do not catch is in <a href="#hooks---automated-enforcement">Hooks</a>. To tighten this further, for example to keep restricted data off the model, add more <code>deny</code> rules: see “Keep restricted data off the model” in <a href="https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/TROUBLESHOOTING.md#keep-restricted-data-off-the-model">TROUBLESHOOTING.md</a>.</p>
 <p><strong>Permission modes.</strong> Claude Code has six permission modes that control how much autonomy Claude gets:</p>
 <table class="caption-top table">
 <colgroup>
@@ -4362,7 +4435,7 @@ APPROVED   NEEDS WORK
 <td><strong>Bypass</strong></td>
 <td><code>bypassPermissions</code></td>
 <td>Skips <strong>all</strong> permission prompts and safety checks (deny rules still apply) — including writes to protected paths (<code>.git</code>, <code>.vscode</code>, <code>.idea</code>, <code>.husky</code>, <code>.claude</code>). Anthropic’s docs advise reserving it for isolated environments</td>
-<td>CI/CD, headless scripts, and — eyes open — trusted-repo daily driving: nothing prompts, so pair it with plan-first and the shipped <code>git-guardrails</code> hook — which narrows the common accidents rather than replacing the prompt you turned off</td>
+<td>CI/CD, headless scripts, and — eyes open — trusted-repo daily driving: nothing prompts, so pair it with plan-first and the shipped deny rules, which still apply in bypass and narrow the common accidents rather than replacing the prompt you turned off</td>
 </tr>
 </tbody>
 </table>
@@ -4452,7 +4525,7 @@ APPROVED   NEEDS WORK
 </div>
 <div class="callout-body-container callout-body">
 <p>Approving a plan via <code>ExitPlanMode</code> hands the session to the mode set at the approval prompt — current Claude Code versions present explicit choices there (approve into auto mode, approve with manual edit review, keep planning); on a bypass setup the approved plan proceeds without per-tool prompts. Once there, any subsequent tool call (Edit, Write, Bash) executes under the full allowlist in your <code>settings.json</code>, not a scope derived from the plan. A mistaken implementation can still edit unrelated files or run destructive shell commands with no second checkpoint.</p>
-<p>Treat this flow as a convenience pattern, not a security control. If you need a hard enforcement boundary, set <code>permissions.defaultMode: &quot;default&quot;</code> (Manual — the template’s <code>.claude/settings.json</code> sets no default mode, so on Claude Code ≥ 2.1.283 sessions start in auto) and remove the template’s wildcard <code>Bash(*)</code>, <code>Edit(**)</code> and <code>Write(**)</code> allows, or add <code>ask</code>/<code>deny</code> rules for high-risk tools, so each one prompts individually. In VS Code, also delete the two bypass keys from <code>.vscode/settings.json</code>. Alternatively, run the whole session in <code>plan</code> mode and copy actions out manually.</p>
+<p>Treat this flow as a convenience pattern, not a security control. If you need a hard enforcement boundary, set <code>permissions.defaultMode: &quot;default&quot;</code> (Manual — the template’s <code>.claude/settings.json</code> sets no default mode, so on Claude Code ≥ 2.1.283 sessions start in auto) and remove the template’s wildcard <code>Bash(*)</code>, <code>Edit(**)</code> and <code>Write(**)</code> allows, or add <code>ask</code>/<code>deny</code> rules for high-risk tools, so each one prompts individually. Alternatively, run the whole session in <code>plan</code> mode and copy actions out manually.</p>
 </div>
 </div>
 <p>The flow:</p>
@@ -4558,8 +4631,8 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 </table>
 <p><strong>Also new since mid-2026</strong> (Claude Code release notes, Jun–Sep 2026):</p>
 <ul>
-<li><strong>Subagents run in the background, and fork mode is on by default</strong> in interactive sessions — Claude keeps working while subagents run, and <code>/fork</code> copies the conversation into a background session. A fork <em>inherits the conversation</em>, so reviews that must be independent (claim verification, referees) use fresh-context subagents, never a fork.</li>
-<li><strong>Output styles:</strong> <code>/output-style</code> switches how Claude writes. <strong>Concise</strong> leads with the result and skips preamble; <strong>Learning</strong> leaves parts for you to write — a good fit next to <code>/scaffold-exercises</code> for teaching.</li>
+<li><strong>Subagents run in the background, and fork mode is on by default</strong> — in interactive sessions and, since Claude Code 2.1.302, in <code>claude -p</code>, the Agent SDK, the desktop app and VS Code (<code>CLAUDE_CODE_FORK_SUBAGENT=0</code> turns forks off for a headless review run) — Claude keeps working while subagents run, and <code>/fork</code> copies the conversation into a background session. A fork <em>inherits the conversation</em>, so reviews that must be independent (claim verification, referees) use fresh-context subagents, never a fork.</li>
+<li><strong>Output styles:</strong> <code>/output-style</code> switches how Claude writes. <strong>Concise</strong> leads with the result and skips preamble; <strong>Learning</strong> leaves parts for you to write — a good fit next to <code>/scaffold-exercises</code> for teaching. <strong>Explanatory</strong> adds short <em>Insight</em> notes on its choices. <strong>Proactive</strong> starts implementing at once and does not enter plan mode unless you ask for a plan, which works against this template’s plan-first habit; keep it for small, well-specified work.</li>
 <li><strong><code>/skill-doctor</code></strong> shows each skill’s context cost and usage; <strong><code>claude plugin eval</code></strong> scores a plugin against test cases versus a no-plugin baseline.</li>
 <li><strong>Deadline-safe updates:</strong> <code>&quot;autoUpdatesChannel&quot;: &quot;stable&quot;</code> (and <code>minimumVersion</code>) in <code>~/.claude/settings.json</code> — see TROUBLESHOOTING; <code>maxEffortLevel</code> caps effort for a fixed budget.</li>
 </ul>
@@ -4634,8 +4707,8 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 <li><strong>Per-session:</strong> Type <code>/effort high</code> for a demanding session (the current Opus default is <code>medium</code>) or <code>/effort xhigh</code> for the hardest runs. Typing <code>/effort</code> on its own opens an <strong>interactive slider</strong> (Apr 2026 Week 16).</li>
 <li><strong>Per-skill:</strong> Add <code>effort: high</code> to skill frontmatter (see <a href="#skill-frontmatter">Skill Frontmatter Reference</a>)</li>
 <li><strong>Keyboard toggle:</strong> <code>Option+T</code> (Mac) / <code>Alt+T</code> (Windows/Linux) toggles thinking on models where it can be switched off; on the current Opus and Fable tiers thinking is always on, so <code>/effort</code> is the control</li>
-<li><strong>In prompts:</strong> on always-thinking tiers, raise <code>/effort</code> for a hard turn rather than relying on a keyword such as <code>ultrathink</code>; phrases like “think hard” are treated as regular instructions and do <em>not</em> allocate extra thinking</li>
-<li><strong>Environment variable:</strong> <code>CLAUDE_CODE_EFFORT_LEVEL=high</code> for all sessions</li>
+<li><strong>In prompts:</strong> <code>ultrathink</code> in a terminal prompt runs that one turn at <code>xhigh</code> on the current Opus, Sonnet, Haiku and Fable tiers (Claude Code ≥ 2.1.311; <code>CLAUDE_CODE_DISABLE_ULTRATHINK</code> turns it off). Other phrases like “think hard” are treated as regular instructions and do <em>not</em> allocate extra thinking</li>
+<li><strong>Environment variable:</strong> <code>CLAUDE_CODE_SUBAGENT_EFFORT=medium</code> (Claude Code ≥ 2.1.316) sets the effort for subagents that name none. Avoid <code>CLAUDE_CODE_EFFORT_LEVEL</code> as a session default: it overrides every skill’s <code>effort:</code> pin, so the template’s <code>high</code> gates and <code>medium</code> cost caps collapse to one level. Use <code>/effort</code> or the <code>effortLevel</code> setting instead</li>
 <li><strong>Hooks can read it:</strong> As of Apr 2026 Week 19, hook input includes <code>effort.level</code> and <code>$CLAUDE_EFFORT</code> is set in Bash subprocess env — useful for skipping expensive verification on low-effort runs</li>
 </ul>
 <div class="callout callout-style-default callout-tip callout-titled">
@@ -4648,7 +4721,7 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Effort levels compose with model selection for fine-grained cost control. For example, <code>Sonnet + high effort</code> costs less than <code>Opus + high effort</code> and may produce comparable results for bounded tasks like formatting, and the Haiku tier (which takes no effort setting) is cheaper still. Use <code>Opus + max</code> only for tasks that genuinely require deep multi-step reasoning — complex proofs, intricate data pipeline debugging, or comprehensive paper critique.</p>
+<p>Effort levels compose with model selection for fine-grained cost control. For example, <code>Sonnet + high effort</code> costs less than <code>Opus + high effort</code> and may produce comparable results for bounded tasks like formatting, while <code>Haiku + low effort</code> (configurable on the current Haiku tier, where <code>promote-memory-council</code> pins <code>effort: low</code>) is cheaper still. Use <code>Opus + max</code> only for tasks that genuinely require deep multi-step reasoning — complex proofs, intricate data pipeline debugging, or comprehensive paper critique.</p>
 </div>
 </div>
 </section>
@@ -4789,7 +4862,7 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 <section id="hooks---automated-enforcement" class="level3" data-number="4.8.5">
 <h3 data-number="4.8.5" class="anchored" data-anchor-id="hooks---automated-enforcement"><span class="header-section-number">4.8.5</span> Hooks — Automated Enforcement</h3>
 <p>The session log reminder above is one example of a broader pattern: using <strong>hooks</strong> to enforce rules that Claude might otherwise forget during long sessions. Rules live in context and can be compressed away. Hooks live in <code>.claude/settings.json</code> and fire every time, regardless of context state.</p>
-<p>The template includes 11 hooks for logging, notifications, context survival, git safety, issue tracking, and protection of the configuration that defines the gates (plus a real git pre-commit hook, <code>.githooks/pre-commit</code>, installed via <code>./scripts/install-hooks.sh</code>):</p>
+<p>The template includes 9 hooks for logging, notifications, context survival, git safety, and issue tracking (plus a real git pre-commit hook, <code>.githooks/pre-commit</code>, installed via <code>./scripts/install-hooks.sh</code>). Destructive git commands are refused by permission deny rules rather than by a hook:</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 23%">
@@ -4830,50 +4903,50 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 <td>Hands a fresh session the newest checkpoint written in the last 7 days; used up only once you type a prompt (<code>CLAUDE_HANDOFF=off</code> to skip)</td>
 </tr>
 <tr class="even">
-<td>Context monitor</td>
-<td><code>PostToolUse[Bash|Agent|Task]</code></td>
-<td>Progressive warnings at 40%/55%/65%/80%/90% context</td>
+<td>Dirty-tree guard</td>
+<td><code>PreToolUse[Bash]</code>, started only for <code>git merge</code>, <code>git pull</code> and <code>git rebase</code> (<code>&quot;if&quot;: &quot;Bash(git merge *)&quot;</code> and the like)</td>
+<td>Refuses the operation while tracked files have uncommitted changes; untracked files do not count, <code>--abort</code>/<code>--continue</code>/<code>--skip</code>/<code>--quit</code>/<code>--edit-todo</code> pass, and <code>ALLOW_DIRTY_MERGE=1</code> overrides</td>
 </tr>
 <tr class="odd">
-<td>Git guardrails</td>
-<td><code>PreToolUse[Bash|Write|Edit|MultiEdit]</code></td>
-<td>Blocks destructive git (<code>reset --hard</code>, <code>clean -f</code>, <code>push --force</code>, <code>add -A</code>), and refuses a merge, rebase, or pull while the tree is dirty — including chains that would clean it first; on <code>Write</code>/<code>Edit</code>/<code>MultiEdit</code> of code files (<code>.R</code>, <code>.Rmd</code>, <code>.qmd</code>, <code>.do</code>, <code>.py</code>) it warns on hardcoded machine paths (<code>/Users/…</code>, <code>/home/…</code>), and denies them when <code>CLAUDE_STRICT_PATHS=1</code></td>
-</tr>
-<tr class="even">
 <td>Claim reconcile</td>
 <td><code>PostToolUse[Write|Edit|MultiEdit]</code></td>
 <td>Flags stale numeric claims when analysis scripts change</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Issue guard</td>
-<td><code>PreToolUse[Bash]</code>, spawned only for <code>gh</code> commands (<code>&quot;if&quot;: &quot;Bash(gh *)&quot;</code>)</td>
+<td><code>PreToolUse[Bash]</code>, spawned only for <code>gh</code> commands (<code>&quot;if&quot;: &quot;Bash(gh *)&quot;</code>, and <code>Bash(gh.exe *)</code> for Windows)</td>
 <td>Denies a new GitHub issue created without the duplicate check (<code>gh issue create</code>/<code>new</code>, or a REST or GraphQL create) and points to <code>scripts/file-issue.py</code>, which searches open and closed issues first</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Open issues (opt-in)</td>
 <td><code>SessionStart[startup]</code></td>
 <td>With <code>CLAUDE_ISSUES_AT_START=1</code>, lists the open issues’ numbers and titles — by the owner and collaborators only — so a session starts knowing the to-do list; off by default</td>
 </tr>
-<tr class="odd">
-<td>Root-of-trust guard</td>
-<td><code>PreToolUse[Bash]</code></td>
-<td>A tripwire, not a lock: denies <em>silent shell</em> writes into <code>.claude/settings*.json</code>, <code>.claude/hooks/</code>, and <code>.githooks/</code> — the files that define every other gate — and applies the destructive-git deny list to <code>bash -c</code> / <code>env -S</code> payloads. <code>Edit</code>/<code>Write</code>, a branch switch, or a bug in the hook can still replace them</td>
-</tr>
 </tbody>
 </table>
-<p>Two of these deserve a note, because both encode a lesson rather than a preference. <strong>Git guardrails</strong> refuses a merge, rebase, or pull while the working tree is dirty: the operation either aborts mid-way or quietly folds uncommitted work into the result, and neither outcome announces itself. Stash with a label first, or set <code>ALLOW_DIRTY_MERGE=1</code> if you mean it. <code>--abort</code> and <code>--continue</code> are exempt outright — they are how you get <em>out</em> of a dirty in-progress operation. <code>--autostash</code> is not: it is allowed only when <code>git status --porcelain</code> reports no untracked entry, because <code>git stash</code> does not stash untracked files, so an autostash over a <code>??</code> line leaves that line exactly where it was.</p>
-<p>It refuses <strong>even when the same command line would have cleaned the tree first</strong> — <code>git stash push -m wip &amp;&amp; git merge</code> is denied, and you run the two steps separately instead. That looks pedantic until you see what the alternative cost. The check originally tried to <em>predict</em>, from the text of a chained command, whether the tree would still be dirty by the time the merge ran. Round after round of adversarial review found one more thing the prediction got wrong — stash flags, then stash subcommands, then intervening segments, then output redirection, then command substitution, and finally the plain fact that <code>git stash</code> does not stash untracked files at all, so even a correctly-parsed “this cleans the tree” was sometimes false. The rule now reads the tree as it <em>actually is</em> and refuses.</p>
-<p>The reading has to be earned, though, and that is <strong>rule 0: standalone or nothing.</strong> A <code>PreToolUse</code> hook decides before bash runs the line, so a reading taken now says nothing about the tree the op will actually start from — <code>printf &#39;\n# note\n&#39; &gt;&gt; analysis.R &amp;&amp; git merge main</code> reads clean at hook time and executes dirty. So an identified merge, rebase, or pull reaches the tree reading only as a <em>standalone simple command</em>. A second shell segment, a pipeline, a redirection, a command or process substitution in its arguments, a grouping, a <code>cd</code>, or a variable assignment on the same line is denied outright, without the tree being read at all. That closes every write-then-op ordering by construction instead of by enumeration, and it also denies ordinary trailing conveniences — <code>git pull | tail -5</code>, <code>git pull &gt; log 2&gt;&amp;1</code>, <code>git merge x &amp;&amp; npm install</code>. <strong>Deleting the prediction took the whole class of defect with it</strong> — at the cost of one extra tool call, with its own hook cycle and agent round trip.</p>
-<p>The hook did not end up smaller, and the reason is the useful part of the lesson. What replaced the prediction was <em>parsing</em> — working out which part of a command line is a git invocation, and whether a flag is really a flag or just a word inside a message. That is a harder-looking job that is nonetheless <strong>finite and checkable</strong>: shell grammar can be read correctly, and when the reading is wrong a test says so. Predicting what a command will <em>do</em> to the working tree has no such floor. Trading an unbounded problem for a bounded one is worth paying code for; the mistake was ever being on the unbounded side.</p>
-<p>What it still cannot see is written down rather than implied away. Its docstring enumerates the forms it has been probed against — a <code>git merge</code> carried inside <code>bash -c</code>, an interpreter, an alias, a script, or a Makefile; and a write by <strong>another process</strong> in the milliseconds between the reading and git starting — and then says plainly that the list reports where the parser <em>has been probed</em>, not where it is complete. One form sits under that catch-all rather than on the list, and is worth naming because it is easy to assume covered: an op hidden <em>inside</em> a command substitution — <code>echo $(git merge main)</code>, <code>x=$(git merge main)</code>, the backtick spelling — never reaches the parser as a segment at all, so the hook is <strong>silent</strong> on it where the bare spelling denies (measured against the shipped hook on a dirty fixture, 2026-08-23). Rule 0 denies a substitution in an <em>identified</em> op’s arguments; one that <em>carries</em> the op is never identified, which is a different thing. A <code>cd</code> into a different repository was on the docstring’s list until rule 0 arrived and denied it, along with every other multi-segment form — which is also what closes the case of the same command line doing the dirtying. The second hook — the file is <code>root-of-trust-guard.py</code>, and the honest description is a <strong>silent-shell-write tripwire</strong> — exists because the settings file and the hook directory decide whether any other gate runs at all: a shell one-liner can disable every gate in the repo in a single redirect, and nothing in the transcript looks unusual afterwards. Reads pass, and <code>Edit</code> / <code>Write</code> stay allowed so a change to a gate arrives as a reviewable diff rather than an invisible overwrite; the hatch is <code>ALLOW_ROOT_OF_TRUST_WRITE=1</code>.</p>
-<p>Because that hook already unwraps <code>bash -c</code> and <code>env -S</code> payloads to find writes hidden inside them, it now hands the unwrapped payload to git-guardrails’ <em>own</em> destructive-git deny list as well — imported, not copied, so the two hooks cannot drift apart on what counts as destructive. That closes a gap the two of them had left open between each other: <code>bash -c &#39;git reset --hard&#39;</code> and <code>bash -c &#39;git clean -fdx&#39;</code> named no protected path for the first hook to test and looked like one opaque word to the second, so neither denied them, while the unwrapped spellings had been denied all along. The clean-tree check is <em>not</em> shared, so <code>bash -c &#39;git merge main&#39;</code> on a dirty tree is still seen by neither.</p>
-<p>Now the part the name gets wrong. A repo-local, mutable, fail-open textual scan is not a root of trust, and the file name is a filename rather than a claim. The scan reads the command line as text, so it catches the direct forms — redirects, <code>tee</code>, <code>cp</code>/<code>mv</code>/<code>rm</code>, in-place edits — and the payload carriers it knows about, including behind common wrappers. It cannot see inside an interpreter it does not read (<code>python3 -c</code>, <code>perl -e</code>), a path piped into a deleter, or an execution form nobody has enumerated yet. More to the point, the files it watches stay replaceable through four channels the template deliberately allows, none of which trips it: an <code>Edit</code> / <code>Write</code> / <code>MultiEdit</code> on those same files — including one that deletes the hook’s own registration from <code>.claude/settings.json</code>; an ordinary <code>git switch</code> onto a branch whose tree carries different hooks; a clean merge or pull that imports the same change; and a bug in the hook itself, which fails open and becomes a no-op.</p>
-<p>So state its value exactly: <strong>it changes the channel a modification arrives through — a reviewable diff instead of an invisible overwrite — and nothing more.</strong> It is not a lock, and in a fresh fork there may be no other control behind it: a visible diff is retrospective visibility rather than authorisation, choosing <code>bypassPermissions</code> is a posture rather than a control, and a machine-wide hook in <code>~/.claude/hooks/</code> is optional and lives outside the repository. If you want a real one, it has to sit outside the worktree — a non-empty <code>deny</code> list in the permission system, or a machine-level hook — and it has to cover <code>Edit</code>/<code>Write</code> and branch transitions too. Note also what the audit trail is not: the transcript records that a loss happened, and <code>git reflog</code> / <code>ORIG_HEAD</code> recover a moved commit pointer, but neither holds the bytes of an uncommitted edit, an untracked file, or an ignored one — which is exactly what <code>reset --hard</code> and <code>clean -fdx</code> destroy. A guard whose advertised coverage exceeds its actual coverage is worse than none, because you stop looking.</p>
-<p>There is a further lesson here, and it is the one most likely to transfer to whatever you are guarding. A path can be written many ways that all reach the same file — a glob, a different case on a case-insensitive filesystem, a quote or a backslash sitting inside the name, a variable, a command substitution. Successive review rounds each turned up another one. That is simply what a text scan over shell syntax is: useful for the direct forms, and not a closed set. So the practical advice is not to give up on the guard — it still costs an accident a denial — but to be honest in the docstring about which forms it has actually been tested against, and to say that there are others. If you need a guarantee rather than a speed bump, the mechanism has to stop being a text scan: a real <code>deny</code> rule in the permission system, or a wrapper the operation cannot go around.</p>
-<p>One distinction inside that is worth keeping, because it changes what a fix can even do. Most of those forms are just <strong>text</strong> — the information is in the command line, so a scanner can be taught to read it, and another round of parsing is a reasonable answer. A symbolic link is not: it is a fact about the filesystem, and reading the command line cannot recover it. A link named anything at all, pointing at the directory you protect, is invisible to a text scan while the shell writes straight through it. That one is written down as out of reach rather than chased — and when you build your own guard, the same question tells you which gaps are worth more parsing and which mean the mechanism is the wrong shape for the guarantee you wanted.</p>
+<p>One of these deserves a note, because it encodes a lesson rather than a preference. The <strong>dirty-tree guard</strong> refuses a merge, rebase, or pull while tracked files have uncommitted changes: the operation either aborts mid-way or quietly folds uncommitted work into the result, and neither outcome announces itself. Commit, or stash with a label, then run the operation as its own command; set <code>ALLOW_DIRTY_MERGE=1</code> if you mean it. <code>--abort</code> and <code>--continue</code> pass, because they are how you get <em>out</em> of a dirty in-progress operation. Only the issue guard is registered with <code>&quot;onFailure&quot;: &quot;block&quot;</code> (Claude Code ≥ 2.1.295), so a missing <code>python3</code> refuses <code>gh</code> commands and no longer blocks Bash, Edit and Write. The dirty-tree guard has no such setting and fails open.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-31-contents" aria-controls="callout-31" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>What the deny rules and the dirty-tree guard catch, and what they miss
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-31" class="callout-31-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>Denied natively.</strong> The <code>deny</code> list in <code>.claude/settings.json</code> (shown in <a href="#settings---permissions-and-hooks">Settings</a>) is checked by Claude Code itself, so it starts no process and adds no delay. It refuses <code>git reset --hard</code>, every <code>git clean</code> (dry runs included), <code>git push --force</code> and <code>-f</code> (<code>--force-with-lease</code> still runs), <code>git add -A</code>, <code>--all</code> and <code>.</code> wherever they appear among the arguments, and a checkout or restore of the whole tree (<code>git checkout .</code>, <code>git checkout -- .</code>, <code>git checkout HEAD -- .</code>, <code>git restore .</code>, <code>git restore -- .</code>; also <code>git restore --staged .</code>, which only unstages). It also refuses reads and edits of <code>.env</code> files, including a Bash command that reads or writes a <code>.env</code> path, and reads of <code>*.pem</code>, <code>*.key</code> and <code>credentials*</code> files. Per the Claude Code permissions docs (read 2026-11-06), a deny rule applies to every subcommand of a compound command, including one inside a subshell, a command substitution or a control-flow body; it strips wrappers such as <code>timeout</code>, <code>nice</code>, <code>nohup</code> and leading <code>VAR=</code> assignments; and it holds in every permission mode. Each rule was checked live on 2026-11-06 in a scratch repository, including <code>(git reset --hard)</code> and <code>echo &quot;$(git reset --hard)&quot;</code>, the forms issue #172 recorded the old hook missing. <code>git reset --soft</code>, <code>git add &lt;named files&gt;</code>, <code>git restore --staged &lt;file&gt;</code> and <code>git checkout -- &lt;file&gt;</code> still run.</p>
+<p><strong>The dirty-tree check.</strong> Claude Code starts <code>dirty-tree-guard.py</code> only for a command that contains <code>git merge</code>, <code>git pull</code> or <code>git rebase</code>, and, by the <code>if</code> filter’s documented fallback, for any command containing <code>$(…)</code>, backticks or <code>$VAR</code>. So the hook first checks that a real merge, pull or rebase is present, reading the command the way the shell splits it: quoted text, comments and heredoc bodies are not commands, and <code>--abort</code> or <code>--continue</code> inside a message is not a resume step. A one-line launcher in the registration skips the hook if its file is missing, so a missing file refuses nothing. The hook runs <code>git status --porcelain --untracked-files=no</code> in the session’s directory and refuses if a tracked file has uncommitted changes. Untracked files do not count, because git itself refuses a merge that would overwrite one. The hook reads the tree before the command line runs, so <code>git stash &amp;&amp; git merge</code> on a dirty tree is refused too: run the two as separate commands.</p>
+<p><strong>What neither catches.</strong> A deny rule does not match a rewritten spelling: <code>git -C . push --force</code>, <code>git -c x=y push</code>, <code>git &#39;push&#39;</code>, <code>/usr/bin/git</code>, or a command inside <code>bash -c &#39;…&#39;</code>. The docs call Bash deny rules a guard on the invocation Claude usually produces, not a security boundary. The dirty-tree guard reads the session’s directory, so it misses a repository reached by <code>cd elsewhere &amp;&amp;</code> or <code>git -C</code>, and it does not look inside <code>bash -c</code>, an alias, a script or a Makefile. It fails open: if git cannot answer or the hook has a bug, the command runs. Nothing refuses a write into <code>.claude/settings*.json</code>, <code>.claude/hooks/</code> or <code>.githooks/</code>: no hook watches them, and the template no longer sets <code>blockWritesOutsideWorkingDirectories</code>. And none of this recovers anything: <code>git reflog</code> restores a moved commit pointer, but not an uncommitted edit or an untracked file, which is what <code>reset --hard</code> and <code>clean</code> destroy.</p>
+<p><strong>Restoring a removed hook.</strong> v2.9.1 removed <code>git-guardrails.py</code>, <code>root-of-trust-guard.py</code> and <code>context-monitor.py</code>. They ran on every Bash call, and together they slowed work and refused too often. To bring one back, copy it from the <code>v2.9.0</code> tag (<code>git show v2.9.0:.claude/hooks/git-guardrails.py &gt; .claude/hooks/git-guardrails.py</code>) and register it again in <code>.claude/settings.json</code> the way it was at that tag (<code>git show v2.9.0:.claude/settings.json</code>).</p>
+</div>
+</div>
+</div>
 <p>Verification and Beamer-Quarto sync are enforced via auto-loaded rules, which are the right tool for nuanced judgment. Hooks are reserved for enforcement that <em>must</em> survive context compression.</p>
 <div class="callout callout-style-default callout-warning callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-30-contents" aria-controls="callout-30" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-32-contents" aria-controls="callout-32" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -4882,13 +4955,13 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-30" class="callout-30-contents callout-collapse collapse">
+<div id="callout-32" class="callout-32-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p><em>A constructed illustration, not a logged incident — the failure mode is real, the scenario is invented to make it concrete.</em></p>
 <p>Picture a lab’s shared template that registers a guard hook to refuse writes to its instrument-calibration files. Someone reorganises the hooks directory and updates <code>settings.json</code> to match, but types <code>.claude/hooks/calibration_guard.py</code> where the file on disk is <code>calibration-guard.py</code>.</p>
 <p>What is lost is the <em>guarding</em>, and the symptom that replaces it is never legible as <em>a hook is misconfigured</em>. Which symptom you get depends on how the hook was registered, and both are bad in their own way. This template registers all but one of its hooks as <code>python3 &lt;path&gt;</code>; a path Python cannot open exits <strong>2</strong>, and exit 2 from a <code>PreToolUse</code> hook means BLOCK (the handler table below states that contract). So a typo on one of the guards would deny <em>every</em> matching call, and the reason handed back is an interpreter error about a missing file — the loudest possible failure, and still not one a reader parses as a settings typo. Registered as a bare path instead, the missing file exits 127 (126 if it exists but is not executable): a non-blocking error that scrolls past while the session continues, tools are allowed, and the only thing that changed is the one thing nobody was watching. That is the lab’s case. The guard is in the settings file, in the README, and in the onboarding doc. It is not in the process. Weeks later a calibration file is overwritten by an agent that the hook had been written to stop.</p>
 <p>Gate 9, ledger coverage, is the check that would have caught it: it opens every hook registered in <code>.claude/settings.json</code> and requires the file to exist, be invocable, and be tracked in git. Nothing else in the repo reads the settings file against the disk, so <strong>a hook can be wired to nothing while every gate in the suite stays green</strong> — the failure has no detector of its own. That is what Gate 9 is worth: a mistyped path fails the build the moment it is committed, instead of waiting for the day the guard was supposed to fire.</p>
-<p>But a wired hook is not yet a working hook. A guard can keep its path, keep firing, and stop denying — an over-broad exception, a regex loosened during a debugging session, an early <code>return allow</code> left in. Gate 10, the hook battery, drives each active guard with synthetic events and requires it to still go red on the failure it was written for, and to stay green on the clean controls. 312 cases, and it finishes in seconds.</p>
+<p>But a wired hook is not yet a working hook. A guard can keep its path, keep firing, and stop denying — an over-broad exception, a regex loosened during a debugging session, an early <code>return allow</code> left in. Gate 10, the hook battery, drives each active guard with synthetic events and requires it to still go red on the failure it was written for, and to stay green on the clean controls. 123 cases, and it finishes in seconds.</p>
 </div>
 </div>
 </div>
@@ -4970,6 +5043,7 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
                                     • Reads saved state
                                     • Prints context summary
                                     • Claude knows where it left off</code></pre>
+<p><code>pre-compact.py</code> also prints the plan, the next task and the recent decisions to stdout, which Claude Code uses as instructions for the compaction summary itself, so they survive inside the summary as well as through the restore hook. Both label them as historical records to check against the current files, not as instructions. Long idle sessions can be compacted too (<code>idleCompaction: false</code> turns that off).</p>
 </section>
 <section id="what-gets-saved" class="level4" data-number="4.8.6.2">
 <h4 data-number="4.8.6.2" class="anchored" data-anchor-id="what-gets-saved"><span class="header-section-number">4.8.6.2</span> What Gets Saved</h4>
@@ -5012,40 +5086,8 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 </section>
 <section id="context-monitoring" class="level4" data-number="4.8.6.3">
 <h4 data-number="4.8.6.3" class="anchored" data-anchor-id="context-monitoring"><span class="header-section-number">4.8.6.3</span> Context Monitoring</h4>
-<p>The <code>context-monitor.py</code> hook tracks approximate context usage and provides progressive warnings:</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 37%">
-<col style="width: 31%">
-<col style="width: 31%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Threshold</th>
-<th>Message</th>
-<th>Purpose</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>40%, 55%, 65%</td>
-<td>Suggest <code>/learn</code></td>
-<td>Capture non-obvious discoveries before compaction</td>
-</tr>
-<tr class="even">
-<td>80%</td>
-<td>Info message</td>
-<td>Auto-compact approaching, no rush</td>
-</tr>
-<tr class="odd">
-<td>90%</td>
-<td>Caution</td>
-<td>Complete current task with full quality</td>
-</tr>
-</tbody>
-</table>
-<p>Use <code>/context-status</code> to check current session health at any time.</p>
-<p>Note: the monitor estimates context from transcript size (falling back to a tool-call count), so warnings may appear earlier or later than actual compaction; the status line prefers Claude Code’s own <code>context_window.used_percentage</code> where available.</p>
+<p>Claude Code reports context use itself. The status line shows <code>ctx NN%</code> from Claude Code’s own <code>context_window.used_percentage</code>, and shows nothing while that field is empty early in a session. The built-in <code>/context</code> command shows the exact breakdown, and <code>/context-status</code> adds the active plan, the newest session log and whether the compaction hooks are configured.</p>
+<p>Until v2.9.1 a <code>context-monitor.py</code> hook estimated the percentage after every Bash call and printed nudges at set thresholds. It was removed with the other per-command hooks.</p>
 </section>
 <section id="recovery-after-compaction" class="level4" data-number="4.8.6.4">
 <h4 data-number="4.8.6.4" class="anchored" data-anchor-id="recovery-after-compaction"><span class="header-section-number">4.8.6.4</span> Recovery After Compaction</h4>
@@ -5198,7 +5240,7 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 <p><strong>During implementation</strong> — append to the log as you work. Every time a design decision is made, a problem is discovered, or the approach deviates from the plan, write a 1-3 line entry immediately. This is the most important behavior: context gets compressed as the session progresses, and decisions that live only in the conversation will be lost.</p>
 <p><strong>At session end</strong> — add a final section with what was accomplished, open questions, and unresolved issues.</p>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-33-contents" aria-controls="callout-33" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-35-contents" aria-controls="callout-35" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -5207,7 +5249,7 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-33" class="callout-33-contents callout-collapse collapse">
+<div id="callout-35" class="callout-35-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p><strong>Git records what; session logs record why.</strong> A commit message says “Update Lecture 5 TikZ diagrams.” A session log says “Redesigned the TWFE decomposition diagram because the DA challenge revealed students couldn’t trace the path from weights to bias. Considered a table format but chose a flow diagram because it shows directionality.”</p>
 <p><strong>Incremental logging is the key.</strong> A 4-hour session that only logs at the start and end loses everything in the middle. Appending decisions as they happen means auto-compression can never erase them — they are already on disk.</p>
@@ -5216,7 +5258,7 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 </div>
 <p>Claude writes all three log entries automatically — no need to ask.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-34-contents" aria-controls="callout-34" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-36-contents" aria-controls="callout-36" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -5225,7 +5267,7 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-34" class="callout-34-contents callout-collapse collapse">
+<div id="callout-36" class="callout-36-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>For multi-project academics, start each week by asking Claude to read all session logs from the past week and synthesize a status report with priorities and open questions. The session log infrastructure already captures what you need — the weekly review is just a synthesis prompt: <em>“Read all session logs from this week. Summarize: what was accomplished, what’s blocked, what should I prioritize next?”</em></p>
 </div>
@@ -5343,7 +5385,7 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 </ul>
 <p>The difference: when you invoke a skill directly, it runs its specific workflow. The orchestrator runtime lives <em>inside</em> each skill — there is no repo-wide orchestrator that activates on its own or chains skills together. A skill is always user- or skill-initiated; nothing fires the runtime unattended.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-35-contents" aria-controls="callout-35" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-37-contents" aria-controls="callout-37" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -5352,7 +5394,7 @@ Orchestrator executes the plan end-to-end --- no prompts.</code></pre>
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-35" class="callout-35-contents callout-collapse collapse">
+<div id="callout-37" class="callout-37-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p><strong>Natural-language task</strong> → Claude picks a skill: “Translate Lecture 5 to Quarto” → Claude invokes <code>/translate-to-quarto</code>, and that skill runs the orchestrator pattern (translate → verify → review → fix → score) internally.</p>
 <p><strong>Explicit skill call:</strong> <code>/qa-quarto Lecture5</code> — you specifically want the adversarial critic-fixer loop, nothing else.</p>
@@ -5471,7 +5513,7 @@ Phase 4: Only then extend
 </ol>
 <p><code>STALE</code> widened to match: a claim goes stale when the source script, the output file, <strong>or any declared <code>appears_in</code> path</strong> is modified after <code>last_verified_on</code>. A touched display is as much a reason to re-check as a touched script — it is the edit that puts two artifacts out of step. Three surfaces act on this: the claim-reconcile hook nudges when a display is edited, <code>nightly-repro-check</code> marks display-touches STALE, and <code>/commit</code> triggers the passport check on display diffs rather than only on script diffs.</p>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-38-contents" aria-controls="callout-38" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-40-contents" aria-controls="callout-40" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -5480,7 +5522,7 @@ Phase 4: Only then extend
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-38" class="callout-38-contents callout-collapse collapse">
+<div id="callout-40" class="callout-40-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p><em>A constructed illustration, not a logged incident — the mechanism is real, the scenario is invented to make it concrete.</em></p>
 <p>A structural-biology group revises a methods paper. A reviewer asks for a different background correction; the pipeline is rerun, and the reported binding-affinity shift moves from 0.42 to 0.38 log units. The manuscript and the supplement are both generated from the output files, so both update on the next build. The vertical audit is entirely green: every number in the paper traces to the script and line that produced it, within tolerance.</p>
@@ -5548,7 +5590,7 @@ Phase 4: QUALITY GATE
   • General enough to be reusable?</code></pre>
 <section id="when-to-use-learn" class="level4" data-number="5.7.2.1">
 <h4 data-number="5.7.2.1" class="anchored" data-anchor-id="when-to-use-learn"><span class="header-section-number">5.7.2.1</span> When to Use /learn</h4>
-<p>The context monitor suggests <code>/learn</code> at 40%, 55%, and 65% context usage. Consider extracting a skill when you encounter:</p>
+<p>Run <code>/learn</code> before compaction, while the discovery is still in context; the status line’s <code>ctx</code> reading tells you how close that is. Consider extracting a skill when you encounter:</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -5635,7 +5677,7 @@ Phase 4: QUALITY GATE
 <li>Cognitive load issues</li>
 </ul>
 <div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-40-contents" aria-controls="callout-40" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-42-contents" aria-controls="callout-42" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -5644,7 +5686,7 @@ Phase 4: QUALITY GATE
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-40" class="callout-40-contents callout-collapse collapse">
+<div id="callout-42" class="callout-42-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>A stronger variant: when Claude reviews its own work in the same conversation, it suffers <strong>confirmation bias</strong> — it has internalized its own reasoning and will systematically find the work acceptable. The fix: spawn a new agent via the <code>Agent</code> tool with NO access to the original conversation. Give it only the artifact and a critique prompt. The fresh agent has no sunk cost in the work and will be ruthless.</p>
 <blockquote class="blockquote">
@@ -5659,7 +5701,7 @@ Phase 4: QUALITY GATE
 <p>A forked reviewer is independent in <em>context</em>. It is not independent in <em>filesystem</em>. It still holds the repository checkout, and that checkout contains the previous round’s review reports, the judge’s verdict, the passport recording every number the paper claims, the ledger of what each checker has been shown to detect, and the render stamp saying what the current build came from. Telling an agent to “review this independently” while it can <code>grep</code> for the answer is an honour system with a search tool attached.</p>
 <p><a href="https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/.claude/rules/review-fencing.md"><code>review-fencing.md</code></a> (v2.5.1, path-scoped to the artifacts and answer keys a fenced run touches — <code>*.tex</code>, <code>*.qmd</code>, <code>master_supporting_docs/</code>, the qualification ledger, passports, the replication and specification logs, and audit reports — plus the <code>claim-verifier</code> agent) states the rule as a question to ask before dispatch: what would this reviewer’s <em>environment</em> reveal if it looked — and then remove that, rather than instructing it not to look. In practice that means a copy of the artifact placed outside the checkout under a neutral filename (<code>artifact-a.tex</code>, not <code>paper_round3_after_referee_fixes.tex</code> — a filename announcing the round has already reported what was found last time), prior verdicts withheld, and the reviewer’s own reading recorded before it is shown anyone else’s findings. Fencing is for reviews whose output is about to be <strong>compared</strong> against something; an in-repo review is right when the repository context is the point, as in cross-artifact traversal from paper to table to output to script.</p>
 <div class="callout callout-style-default callout-warning callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-41-contents" aria-controls="callout-41" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-43-contents" aria-controls="callout-43" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -5668,7 +5710,7 @@ Phase 4: QUALITY GATE
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-41" class="callout-41-contents callout-collapse collapse">
+<div id="callout-43" class="callout-43-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p><em>A constructed illustration, not a logged incident — the failure mode is real, the scenario is invented to make it concrete.</em></p>
 <p><code>-0.07314</code>, in nine seconds. Correct to the last printed digit. That is what a team qualifying its reproduction agent got back from a positive control — reproduce a pinned coefficient from a published analysis and report it.</p>
@@ -5757,7 +5799,7 @@ Phase 4: QUALITY GATE
 <p><a href="https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/templates/executor-contract.md"><code>templates/executor-contract.md</code></a> is the shape of a dispatchable task: the <strong>goal</strong>, the <strong>acceptance bar</strong> that decides done, the exact <strong>paths</strong> to touch, the <strong>gates</strong> the work must pass, the <strong>output contract</strong> it must return, and the mechanisms it is allowed to <strong>refuse</strong>. An agent that does not know the bar will report success, because from inside the task there is nothing else to report.</p>
 <p><a href="https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/templates/screening-rubric.md"><code>templates/screening-rubric.md</code></a> covers the other case — deciding which candidates survive, whether they are papers, datasets, specifications, or findings. It makes the <strong>default verdict a declared decision rather than a constant</strong>: a precision-first shortlist defaults to EXCLUDE, so a candidate is out unless a written criterion admits it, while a recall-first sweep must not, because a wrong exclusion leaves no trace for anything downstream to catch. Either way the evidence is recorded per candidate. It ends in an adjudication table and a dispatcher spot-check of a few decisions, because the person who wrote the rubric is the only one who can tell whether it was applied or merely cited. And a fan-out is adjudicated as a whole wave — bank every return, reconcile them together, then decide — rather than acting on whichever agent finished first.</p>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-42-contents" aria-controls="callout-42" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-44-contents" aria-controls="callout-44" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -5766,7 +5808,7 @@ Phase 4: QUALITY GATE
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-42" class="callout-42-contents callout-collapse collapse">
+<div id="callout-44" class="callout-44-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p><em>A constructed illustration, not a logged incident — the failure mode is real, the scenario is invented to make it concrete.</em></p>
 <p>A doctoral student delegates a first-pass screen of twenty candidate papers for a methods review: <em>“read each one and tell me which are relevant to measurement error in self-reported exposure.”</em> The agents come back fast and agreeable. Nineteen are marked relevant. The summaries are fluent, each one names a plausible connection, and the shortlist is useless — it is the original list with one paper missing.</p>
@@ -5992,7 +6034,7 @@ Decision point (1-2 hours):
                            work backwards)</code></pre>
 <p><strong>Enter mid-pipeline.</strong> You do not have to start from ideation. If you already have data, start with <code>/data-analysis</code> and work backwards to the research question. If you already have a draft, start with <code>/review-paper</code>. The skills are modular — use what you need, skip what you don’t.</p>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-45-contents" aria-controls="callout-45" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-47-contents" aria-controls="callout-47" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -6001,7 +6043,7 @@ Decision point (1-2 hours):
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-45" class="callout-45-contents callout-collapse collapse">
+<div id="callout-47" class="callout-47-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>For a production-grade paper pipeline, a dedicated fork takes these same skills and wraps them in full research infrastructure: 6 worker-critic agent pairs plus specialized agents (data-engineer, referees, verifier), simulated blind peer review, weighted aggregate scoring, journal targeting, and R&amp;R response routing. If your primary output is research papers, see <a href="#sec-ecosystem">The Ecosystem</a> for details.</p>
 </div>
@@ -6025,7 +6067,7 @@ Decision point (1-2 hours):
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-47-contents" aria-controls="callout-47" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-49-contents" aria-controls="callout-49" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -6034,7 +6076,7 @@ Decision point (1-2 hours):
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-47" class="callout-47-contents callout-collapse collapse">
+<div id="callout-49" class="callout-49-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Strong statisticians hit these six walls more than any others; each has a one-line diagnosis:</p>
 <ol type="1">
@@ -6043,7 +6085,7 @@ Decision point (1-2 hours):
 <li><strong>“What is staged?”</strong> — <code>git status</code>; only the green (staged) files enter the next commit.</li>
 <li><strong>“Why did <code>git checkout main</code> fail?”</strong> — a branch can be checked out in only ONE worktree at a time; <code>cd</code> back to the primary worktree instead.</li>
 <li><strong>“Why does <code>git branch -d</code> refuse after my squash merge?”</strong> — a squash merge copies the changes but not the ancestry, so git can’t see the branch as merged; use <code>-D</code> once the squash commit is in.</li>
-<li><strong>“How do I undo without <code>reset --hard</code>?”</strong> — <code>git checkout -- &lt;file&gt;</code> for one file, <code>git stash</code> to shelve everything; the template’s git guard blocks the destructive forms for exactly this reason.</li>
+<li><strong>“How do I undo without <code>reset --hard</code>?”</strong> — <code>git checkout -- &lt;file&gt;</code> for one file, <code>git stash</code> to shelve everything; the template’s deny rules block the destructive forms for exactly this reason.</li>
 </ol>
 </div>
 </div>
@@ -6092,8 +6134,8 @@ Decision point (1-2 hours):
 <h4 data-number="5.9.4.2" class="anchored" data-anchor-id="the-workflow"><span class="header-section-number">5.9.4.2</span> The Workflow</h4>
 <pre><code>1. CREATE WORKTREE
    echo &quot;.worktrees/&quot; &gt;&gt; .git/info/exclude   # once per clone, BEFORE the first worktree:
-                                             # otherwise porcelain always shows `?? .worktrees/`,
-                                             # no stash clears it, and every merge below is denied
+                                             # otherwise the primary&#39;s status always
+                                             # shows `?? .worktrees/`
    git worktree add .worktrees/lecture-06-quarto -b quarto/lecture-06
    cd .worktrees/lecture-06-quarto
          ↓
@@ -6107,9 +6149,9 @@ Decision point (1-2 hours):
 4. SYNC TO MAIN (when ready)
    cd ../..                # back to the primary worktree (main is checked out THERE;
                            # `git checkout main` inside the secondary worktree fails)
-   git status --porcelain  # git-guardrails denies a merge into a dirty tree, and
-                           # &quot;kept working on main&quot; is the whole point of a worktree,
-                           # so expect this NOT to be empty — clear it first
+   git status --porcelain  # dirty-tree-guard refuses a merge while tracked files have
+                           # uncommitted changes, and &quot;kept working on main&quot; is the
+                           # whole point of a worktree, so expect this NOT to be empty
    git stash push -u -m &quot;pre-merge: in-flight edits&quot;   # skip if porcelain was empty
    git merge --squash quarto/lecture-06
    git commit -m &quot;feat: add Lecture 6 Quarto version&quot;
@@ -6139,21 +6181,16 @@ Decision point (1-2 hours):
 <span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb41-16"><a href="#cb41-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Squash-merge into main</span></span>
 <span id="cb41-17"><a href="#cb41-17" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> <span class="pp">[</span><span class="ss">primary</span><span class="pp">-</span><span class="ss">worktree</span><span class="pp">]</span>         <span class="co"># main lives in the primary worktree</span></span>
-<span id="cb41-18"><a href="#cb41-18" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> status <span class="at">--porcelain</span>        <span class="co"># empty, or the merge is denied — clear it first (below)</span></span>
+<span id="cb41-18"><a href="#cb41-18" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> status <span class="at">--porcelain</span>        <span class="co"># a tracked change here means the merge is refused — clear it first (below)</span></span>
 <span id="cb41-19"><a href="#cb41-19" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> merge <span class="at">--squash</span> <span class="pp">[</span><span class="ss">branch</span><span class="pp">-</span><span class="ss">name</span><span class="pp">]</span></span>
 <span id="cb41-20"><a href="#cb41-20" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">&quot;feat: description of changes&quot;</span></span>
 <span id="cb41-21"><a href="#cb41-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-22"><a href="#cb41-22" aria-hidden="true" tabindex="-1"></a><span class="co"># ...if the primary worktree is dirty, either stash around the merge:</span></span>
+<span id="cb41-22"><a href="#cb41-22" aria-hidden="true" tabindex="-1"></a><span class="co"># ...if the primary worktree is dirty, stash around the merge, one command at a time:</span></span>
 <span id="cb41-23"><a href="#cb41-23" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash push <span class="at">-u</span> <span class="at">-m</span> <span class="st">&quot;pre-merge: in-flight edits&quot;</span>   <span class="co"># -u, or untracked files stay behind</span></span>
 <span id="cb41-24"><a href="#cb41-24" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> merge <span class="at">--squash</span> <span class="pp">[</span><span class="ss">branch</span><span class="pp">-</span><span class="ss">name</span><span class="pp">]</span></span>
 <span id="cb41-25"><a href="#cb41-25" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">&quot;feat: description of changes&quot;</span></span>
-<span id="cb41-26"><a href="#cb41-26" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash pop</span>
-<span id="cb41-27"><a href="#cb41-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-28"><a href="#cb41-28" aria-hidden="true" tabindex="-1"></a><span class="co"># ...or, ONLY if porcelain shows no `??` lines, let git stash the tracked changes:</span></span>
-<span id="cb41-29"><a href="#cb41-29" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> status <span class="at">--porcelain</span>        <span class="co"># no `??` entries, or --autostash is denied too</span></span>
-<span id="cb41-30"><a href="#cb41-30" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> merge <span class="at">--squash</span> <span class="at">--autostash</span> <span class="pp">[</span><span class="ss">branch</span><span class="pp">-</span><span class="ss">name</span><span class="pp">]</span></span>
-<span id="cb41-31"><a href="#cb41-31" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">&quot;feat: description of changes&quot;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><strong>The primary worktree is normally dirty when you reach the sync step, and that is the pattern working, not failing.</strong> You used a worktree so you could keep editing on <code>main</code> while the other branch ran; those edits are still sitting there. The <code>git-guardrails</code> hook denies <code>git merge</code> on a non-empty <code>git status --porcelain</code>, so the merge is refused exactly when the pattern did its job. Clear the tree first — stash with a label, merge, pop. That sequence clears in-flight edits whether they are tracked or untracked, which is why it is the recipe above rather than the fallback. It cannot clear the worktree directory itself: a worktree nested at <code>.worktrees/</code> shows in the primary’s porcelain as <code>?? .worktrees/</code>, <code>git stash push -u</code> skips it (<em>“Ignoring path .worktrees/lecture-06-quarto/”</em>), and the merge is then denied — which is why step 1 excludes <code>.worktrees/</code> before it creates the worktree. <code>--autostash</code> is the shorter route on a tree whose dirt is <em>only tracked</em>: the hook reads porcelain and allows it when there is no <code>??</code> entry, and denies it when there is, because <code>git stash</code> does not stash untracked files — so an autostash over a <code>??</code> line would start the merge on the same dirty tree the check exists to refuse. Two consequences follow. When porcelain is free of <code>??</code> lines, <code>--autostash</code> is allowed and the merge result comes back <em>staged</em> while your restored in-flight edits are <em>unstaged</em>, so the plain <code>git commit</code> above records the merge and leaves your work alone. When porcelain shows any <code>??</code> line — the ordinary case for a worktree you have been editing in — use the explicit <code>-u</code> stash; git’s own behaviour agrees, since a branch that adds a file at a path you are holding untracked aborts with <em>“untracked working tree files would be overwritten”</em> after the autostash has already been taken. Both forms have to be <strong>standalone</strong> commands either way: chaining the stash and the merge onto one line is denied under rule 0, whichever route you pick.</p>
+<span id="cb41-26"><a href="#cb41-26" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash pop</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>The primary worktree is normally dirty when you reach the sync step, and that is the pattern working, not failing.</strong> You used a worktree so you could keep editing on <code>main</code> while the other branch ran; those edits are still sitting there. The <code>dirty-tree-guard</code> hook refuses <code>git merge</code> while tracked files have uncommitted changes, so the merge is refused exactly when the pattern did its job. Clear the tree first: stash with a label, merge, pop. Untracked files do not trigger the refusal, but <code>-u</code> stashes them as well, so a branch that adds a file at a path you hold untracked does not stop the merge with git’s <em>“untracked working tree files would be overwritten”</em>. Run the stash and the merge as separate commands. The hook reads the tree before the command line runs, so <code>git stash push -u … &amp;&amp; git merge …</code> is still refused while tracked files are dirty, and so is <code>git merge --autostash</code>.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -6289,7 +6326,7 @@ Decision point (1-2 hours):
 <section id="pre-submission-checklist" class="level4" data-number="5.10.1.3">
 <h4 data-number="5.10.1.3" class="anchored" data-anchor-id="pre-submission-checklist"><span class="header-section-number">5.10.1.3</span> Pre-Submission Checklist</h4>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-49-contents" aria-controls="callout-49" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-51-contents" aria-controls="callout-51" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -6298,7 +6335,7 @@ Decision point (1-2 hours):
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-49" class="callout-49-contents callout-collapse collapse">
+<div id="callout-51" class="callout-51-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p><strong>Documentation:</strong></p>
 <ul class="task-list">
@@ -6347,7 +6384,7 @@ Decision point (1-2 hours):
 └── output/                 # Tables, figures, logs, sessionInfo.txt</code></pre>
 <p>These standards do not load on their own. <code>replication-protocol.md</code> is path-scoped to R scripts (<code>scripts/**/*.R</code>, <code>Figures/**/*.R</code>); it covers the replication-first phases, the tolerance thresholds and the <code>passport.yaml</code> claims provenance, but not the checklist or directory structure above. To build the deposit, ask Claude to <em>“prepare a replication package”</em> or run <a href="#all-skills"><code>/replication-package</code></a>. It writes the README and captures the environment first, then calls <code>/audit-reproducibility</code> and stops on any FAIL; only then does it assemble the rest of the DCAS tree under <code>replication_package/</code> (<code>data/</code>, <code>code/</code>, <code>output/</code>) and write a <code>DCAS_checklist.md</code> that marks each item PASS / FAIL / <code>[FILL]</code>.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-50-contents" aria-controls="callout-50" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-52-contents" aria-controls="callout-52" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -6356,7 +6393,7 @@ Decision point (1-2 hours):
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-50" class="callout-50-contents callout-collapse collapse">
+<div id="callout-52" class="callout-52-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>A key principle that maps directly to this workflow: <strong>separate scientific reasoning from computational execution.</strong> Humans design diagnostic templates (what to measure); AI handles execution (how to run it).</p>
 <p>This is the template-executor architecture — and you are already using it:</p>
@@ -6452,7 +6489,7 @@ Decision point (1-2 hours):
 <h4 data-number="5.10.2.4" class="anchored" data-anchor-id="how-existing-agents-support-this"><span class="header-section-number">5.10.2.4</span> How Existing Agents Support This</h4>
 <p>The <code>/slide-excellence</code> skill already invokes the pedagogy-reviewer and slide-auditor, which enforce many of these principles automatically. To enforce <em>all</em> of them — including title-as-assertion and MB/MC smoothness — customize the <strong>domain-reviewer</strong> agent (<code>.claude/agents/domain-reviewer.md</code>) with rhetoric-of-decks lenses. <code>/slide-excellence</code> then applies them through its substance-review agent whenever you run it on a deck (<code>/seven-pass-review</code> also uses domain-reviewer, for its methods lens).</p>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-51-contents" aria-controls="callout-51" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-53-contents" aria-controls="callout-53" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -6461,7 +6498,7 @@ Decision point (1-2 hours):
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-51" class="callout-51-contents callout-collapse collapse">
+<div id="callout-53" class="callout-53-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>For the complete philosophical treatment — from Aristotle’s three modes of persuasion through neuroaesthetics and the Netflix analogy — see <a href="https://github.com/scunning1975/MixtapeTools/tree/main/presentations">The Rhetoric of Decks</a>. The repository includes a full essay, example Beamer decks with professional color palettes, a <code>theme_rhetoric()</code> ggplot2 theme, and a tested deck generation prompt for Claude Code.</p>
 </div>
@@ -6812,7 +6849,7 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 <p>clo-author reorients the entire workflow from slides to <strong>research papers</strong>. The paper (<code>Paper/main.tex</code>) becomes the single source of truth; talks and supplements derive from it. The key architectural innovation is <strong>adversarial worker-critic agent pairs</strong>: every creative agent is paired with a dedicated critic agent, with strict separation of powers (critics never create, creators never self-score).</p>
 <p><strong>What it adds:</strong></p>
 <ul>
-<li><strong>17 specialized agents</strong> organized as 6 worker-critic pairs (Librarian, Explorer, Strategist, Coder, Writer, Storyteller — each with a dedicated critic) plus standalone agents (data-engineer, domain-referee, methods-referee, orchestrator, verifier)</li>
+<li><strong>25 specialized agents and 18 skills</strong> organized around adversarial worker-critic pairs (Librarian, Explorer, Strategist, Coder, Writer, Storyteller — each with a dedicated critic) plus standalone referees, data-engineer, orchestrator, and verifier</li>
 <li><strong>Phase-based severity gradient</strong> — critics are encouraging during Discovery, constructive during Strategy, strict during Execution, and adversarial during Peer Review</li>
 <li><strong>Weighted aggregate scoring</strong> with component minimums: Literature 10%, Data 10%, Identification 25%, Code 15%, Paper 25%, Polish 10%, Replication 5%. Submission gate (≥ 95) requires every component independently ≥ 80</li>
 <li><strong>Simulated blind peer review</strong> — two independent Referee agents plus an Editor making an editorial decision (Accept / Minor / Major / Reject)</li>
@@ -6827,17 +6864,18 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>clo-author v26.05 (May 2026)
+<span class="screen-reader-only">Note</span>clo-author 26.09 (October 2026 — “Rebuilt for Opus 5.5: scripts enforce the gates”)
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>clo-author has shipped substantial post-v4 architecture. The current release (v26.05, 2026-05-10) adds:</p>
+<p>clo-author’s current release (26.09, 2026-10-15; building on the v26.05 MAS v2 / skill-centric restructure and self-contained HTML dashboard) expands to <strong>25 agents and 18 skills</strong> and adds:</p>
 <ul>
-<li><strong>MAS v2</strong> — second-generation multi-agent system with clearer worker/critic boundaries and phase-aware severity gradients</li>
-<li><strong>Skill-Centric Restructure</strong> — repository reorganised around 13 skills + 18 agents (up from 17 in the v4.x line)</li>
-<li><strong>HTML Dashboard</strong> — self-contained visual interface for tracking pipeline state across phases (no server required)</li>
+<li><strong>Script-enforced gates + <code>&quot;onFailure&quot;: &quot;block&quot;</code></strong> — deterministic scripts and fail-closed <code>PreToolUse</code> hook handlers enforce submission invariants rather than relying on prompt reminders</li>
+<li><strong><code>/coherence</code></strong> — combined deterministic + reasoning audit checking internal consistency across manuscript sections, tables, and appendix claims</li>
+<li><strong><code>/explain</code> (Understanding Gate <code>INV-26</code>)</strong> — 5-question author comprehension check so researchers can explain and defend every AI-written pipeline step in a seminar or referee report (adapted here as <a href="#sec-appendix"><code>/coauthor-brief --quiz</code></a>)</li>
+<li><strong><code>/deepread</code> and <code>/paper-format</code></strong> — deep technical paper reading and journal-format verification (<code>INV-23/24/25</code>)</li>
 </ul>
-<p>Patterns like <code>/checkpoint</code> (originally adapted with permission from clo-author v4.2.0) trace to the earlier line; if you’re forking clo-author directly today, you get the MAS v2 / skill-centric layout.</p>
+<p>Patterns like <code>/checkpoint</code> (originally adapted with permission from clo-author v4.2.0) and <code>/review-paper --peer</code> trace to this collaboration; if you’re forking clo-author directly today, you get the 26.09 layout.</p>
 </div>
 </div>
 </section>
@@ -6875,14 +6913,15 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 <section id="mixtapetools-the-rhetoric-of-decks" class="level2" data-number="6.4">
 <h2 data-number="6.4" class="anchored" data-anchor-id="mixtapetools-the-rhetoric-of-decks"><span class="header-section-number">6.4</span> MixtapeTools: The Rhetoric of Decks</h2>
 <p><strong>Repository:</strong> <a href="https://github.com/scunning1975/MixtapeTools">scunning1975/MixtapeTools</a> <strong>Author:</strong> Scott Cunningham (Baylor University), author of <em>Causal Inference: The Mixtape</em></p>
-<p>MixtapeTools provides the philosophical and practical framework for academic presentation design (see Pattern 14). Beyond the Rhetoric of Decks, it includes:</p>
+<p>MixtapeTools provides the philosophical and practical framework for academic presentation design (see Pattern 14) and empirical replication auditing. Beyond the Rhetoric of Decks, it includes:</p>
 <ul>
-<li><strong>Referee 2</strong> — a systematic 5-audit adversarial protocol for reviewing and replicating empirical work</li>
+<li><strong>Referee 2</strong> — a systematic 5-audit adversarial protocol for reviewing and replicating empirical work; one of its audits is an R ↔︎ Stata ↔︎ Python cross-language replication</li>
+<li><strong>Blindspot</strong> — a “peripheral vision” audit of empirical output</li>
 <li><strong>Deck generation prompt</strong> — a tested, customizable multi-agent prompt for creating Beamer decks (builder → rhetoric reviewer → graphics specialist)</li>
 <li><strong>Example decks</strong> with professional color palettes, custom ggplot2 themes (<code>theme_rhetoric()</code>), and complete Beamer templates</li>
 <li><strong>Zero-warning compilation standard</strong> — even 0.5pt overfull hbox must be fixed</li>
 </ul>
-<p><strong>When to use it:</strong> You want to make your presentations genuinely beautiful and rhetorically effective, or you want a tested deck generation workflow for Claude Code.</p>
+<p><strong>When to use it:</strong> You want to make your presentations genuinely beautiful and rhetorically effective, or you want a tested deck generation and cross-language replication audit workflow for Claude Code.</p>
 </section>
 <section id="aea-data-editor-template" class="level2" data-number="6.5">
 <h2 data-number="6.5" class="anchored" data-anchor-id="aea-data-editor-template"><span class="header-section-number">6.5</span> AEA Data Editor Template</h2>
@@ -6916,17 +6955,17 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 <span id="cb47-13"><a href="#cb47-13" aria-hidden="true" tabindex="-1"></a><span class="fu">## Success Metric</span></span>
 <span id="cb47-14"><a href="#cb47-14" aria-hidden="true" tabindex="-1"></a>RMSE of ATT estimate. Lower is better. Report coverage rate alongside.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="stata-mcp-mcp-server-for-stata-execution" class="level2" data-number="6.7">
-<h2 data-number="6.7" class="anchored" data-anchor-id="stata-mcp-mcp-server-for-stata-execution"><span class="header-section-number">6.7</span> stata-mcp: MCP server for Stata execution</h2>
-<p><strong>Repository:</strong> <a href="https://github.com/SepineTam/stata-mcp">SepineTam/stata-mcp</a> <strong>Author:</strong> SepineTam (171+ stars, 91 releases, v1.17.3 as of May 2026)</p>
-<p>A mature MCP server that lets Claude Code execute Stata <code>.do</code> files via a command-guarded interface — refuses destructive shell ops (<code>!/shell/erase</code> etc.), monitors RAM, and pairs with the Stata Language Server. <strong>Install once per user:</strong> <code>claude mcp add stata-mcp --scope user -- uvx stata-mcp</code> (requires <code>uv</code> and a local Stata install).</p>
+<section id="mcp-for-stata-formerly-stata-mcp-mcp-server-for-stata-execution" class="level2" data-number="6.7">
+<h2 data-number="6.7" class="anchored" data-anchor-id="mcp-for-stata-formerly-stata-mcp-mcp-server-for-stata-execution"><span class="header-section-number">6.7</span> mcp-for-stata (formerly <code>stata-mcp</code>): MCP server for Stata execution</h2>
+<p><strong>Repository:</strong> <a href="https://github.com/SepineTam/mcp-for-stata">SepineTam/mcp-for-stata</a> <strong>Author:</strong> Song Tan (<code>SepineTam</code>; 274+ stars, v1.25.2 as of Oct 2026)</p>
+<p>A mature MCP server that lets Claude Code execute Stata <code>.do</code> files via a command-guarded interface — refuses destructive shell ops (<code>!/shell/erase</code> etc.), monitors RAM, and pairs with the Stata Language Server. <em>(Note: Lu Han (Bank of Canada) maintains a separate VS Code/MCP extension at <a href="https://github.com/hanlulong/stata-mcp"><code>hanlulong/stata-mcp</code></a>; either can drive Stata <code>.do</code> pipelines, and <code>templates/mcp.example.json</code> shows the <code>uvx</code> wiring.)</em> <strong>Install once per user:</strong> <code>claude mcp add stata-mcp --scope user -- uvx stata-mcp</code> (requires <code>uv</code> and a local Stata install).</p>
 <p><strong>Why it matters for this template:</strong> v1.9.0 added <a href="#sec-appendix"><code>/stata-replication</code></a> for Stata-first projects, which depends on this MCP server. R-first projects (the original template focus) continue to use <a href="#sec-appendix"><code>/data-analysis</code></a>; the two skills are parallel — same pipeline shape, different source language. AEA submissions where the original replication package is in Stata are the canonical use case.</p>
 <p>For end-to-end Stata workflows, see <a href="https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/.claude/rules/stata-code-conventions.md"><code>.claude/rules/stata-code-conventions.md</code></a> (header scaffold, numbered pipeline, esttab tables, clustering discipline, AEA Data Editor compliance).</p>
 </section>
-<section id="claudecodetools-the-editor-persona" class="level2" data-number="6.8">
-<h2 data-number="6.8" class="anchored" data-anchor-id="claudecodetools-the-editor-persona"><span class="header-section-number">6.8</span> ClaudeCodeTools: The Editor Persona</h2>
-<p><strong>Repository:</strong> <a href="https://github.com/aspi6246/ClaudeCodeTools">aspi6246/ClaudeCodeTools</a></p>
-<p>A collection of Claude Code personas, including “The Editor” — a deeply structured academic paper reviewer that runs seven sequential audit passes (see <a href="#pattern-15-sequential-audits">Pattern 15</a>). Notable features:</p>
+<section id="claude-code-presentation-formerly-claudecodetools-the-editor-persona" class="level2" data-number="6.8">
+<h2 data-number="6.8" class="anchored" data-anchor-id="claude-code-presentation-formerly-claudecodetools-the-editor-persona"><span class="header-section-number">6.8</span> Claude-Code-Presentation (formerly <code>ClaudeCodeTools</code>): The Editor Persona</h2>
+<p><strong>Repository:</strong> <a href="https://github.com/aspi6246/Claude-Code-Presentation">aspi6246/Claude-Code-Presentation</a> <strong>Author:</strong> Alessandro Spina (University of Technology Sydney)</p>
+<p>A collection of Claude Code personas and academic presentation materials, including “The Editor” — a deeply structured academic paper reviewer that runs seven sequential audit passes (see <a href="#pattern-15-sequential-audits">Pattern 15</a>). Notable features:</p>
 <ul>
 <li><strong>R&amp;R mode</strong> — tracks referee reports and cross-references each concern against revisions</li>
 <li><strong>Blunt, specific feedback</strong> — “This paragraph is incoherent” not “might benefit from clarity”</li>
@@ -6934,8 +6973,24 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 </ul>
 <p><strong>When to use it:</strong> You want a structured pre-submission paper review, or you’re responding to referee reports and need systematic tracking of which concerns have been addressed.</p>
 </section>
-<section id="anthropic-shipped-apr-2026-utilities" class="level2" data-number="6.9">
-<h2 data-number="6.9" class="anchored" data-anchor-id="anthropic-shipped-apr-2026-utilities"><span class="header-section-number">6.9</span> Anthropic-Shipped Apr 2026 Utilities</h2>
+<section id="paul-goldsmith-pinkham-paulgp-anton-korinek-and-economics-tooling" class="level2" data-number="6.9">
+<h2 data-number="6.9" class="anchored" data-anchor-id="paul-goldsmith-pinkham-paulgp-anton-korinek-and-economics-tooling"><span class="header-section-number">6.9</span> Paul Goldsmith-Pinkham (<code>paulgp</code>), Anton Korinek, and Economics Tooling</h2>
+<p>Several economists have published open-source building blocks and methodological guides that complement this repository:</p>
+<ul>
+<li><strong>Paul Goldsmith-Pinkham (Yale University, <a href="https://paulgp.substack.com"><em>A Causal Affair</em></a>):</strong>
+<ul>
+<li><strong><a href="https://github.com/paulgp/claude-container"><code>paulgp/claude-container</code></a></strong> — Dockerized container environment for running Claude Code in <code>bypassPermissions</code> mode safely isolated from your host filesystem (the container pattern Anthropic recommends when you want zero permission prompts without host exposure).</li>
+<li><strong><a href="https://github.com/paulgp/exhibit-review"><code>paulgp/exhibit-review</code></a> and <a href="https://github.com/paulgp/margin"><code>paulgp/margin</code></a></strong> — lightweight tools for spatial review of paper tables/figures and source-first manuscript annotation.</li>
+<li><strong>DuckDB + Parquet for large administrative panels</strong> — converting multi-gigabyte CSV/DTA extracts to partitioned Parquet and querying out-of-core via <code>duckdb</code> in R (<code>duckplyr</code>/<code>arrow</code>) or Python (<code>duckdb</code>/<code>polars</code>) before passing summary objects to estimation scripts, keeping raw microdata out of memory and out of LLM context.</li>
+</ul></li>
+<li><strong>Anton Korinek (University of Virginia &amp; NBER):</strong> <em>“Generative AI for Economic Research”</em> (<em>Journal of Economic Literature</em>) and <em>“AI Agents for Economic Research”</em> (NBER Working Paper series) — the canonical disciplinary references tracing the progression from single-turn chatbots (System 1) to reasoning models (System 2) to multi-agent verification workflows.</li>
+<li><strong><a href="https://github.com/paulgp/econ-ai-detector"><code>paulgp/econ-ai-detector</code></a></strong> (MIT) — an open detector of AI-generated text in economics working papers, built alongside Goldsmith-Pinkham’s Pangram study of NBER papers; a free way to <em>measure</em>, in the sense of <code>writing-with-ai.md</code>, not a score to write towards.</li>
+<li><strong><a href="https://github.com/posit-dev/skills"><code>posit-dev/skills</code></a></strong> (Posit, MIT) — skills for R packages, Quarto and accessibility; its <code>alt-text</code> skill writes figure alt text for Quarto documents.</li>
+<li><strong><a href="https://github.com/hanlulong/awesome-ai-for-economists"><code>hanlulong/awesome-ai-for-economists</code></a></strong> (Lu Han, Bank of Canada; 700+ stars) — curated directory of AI workflows, MCP servers, literature tools, and replication utilities across economics (where this repository is also indexed).</li>
+</ul>
+</section>
+<section id="anthropic-shipped-apr-2026-utilities" class="level2" data-number="6.10">
+<h2 data-number="6.10" class="anchored" data-anchor-id="anthropic-shipped-apr-2026-utilities"><span class="header-section-number">6.10</span> Anthropic-Shipped Apr 2026 Utilities</h2>
 <p>These are first-party Claude Code commands you can invoke directly without forking anything. Worth knowing because they fill gaps this template intentionally doesn’t try to fill:</p>
 <ul>
 <li><strong><code>/team-onboarding</code></strong> (Week 15) — packages your local Claude Code setup (CLAUDE.md, skills, agents, hooks, settings) into a replayable guide. Useful for lab groups: a PI configures the workflow once, the rest of the lab runs <code>/team-onboarding</code> and inherits a working copy. Complements but doesn’t replace this template’s “fork + customize” model.</li>
@@ -6949,9 +7004,9 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 </ul>
 <p>These are external to this template — invoke directly, no installation needed. Mention them as off-ramps when this template’s scope doesn’t fit.</p>
 </section>
-<section id="sec-community" class="level2" data-number="6.10">
-<h2 data-number="6.10" class="anchored" data-anchor-id="sec-community"><span class="header-section-number">6.10</span> Community Adoption</h2>
-<p>Research groups across multiple disciplines have forked and adapted this workflow for their own projects — <strong>15+ research groups at the March 2026 survey</strong>; the repository has since passed <strong>2,900 forks</strong> and 1,500 stars (GitHub, 2026-08-24). A fork is not a research group — the survey figure and the fork count measure different things, and only the first was checked by hand:</p>
+<section id="sec-community" class="level2" data-number="6.11">
+<h2 data-number="6.11" class="anchored" data-anchor-id="sec-community"><span class="header-section-number">6.11</span> Community Adoption</h2>
+<p>Research groups across multiple disciplines have forked and adapted this workflow for their own projects — <strong>15+ research groups at the March 2026 survey</strong>; the repository has since passed <strong>3,145 forks</strong> and 1,680 stars (GitHub, 2026-11-04). A fork is not a research group — the survey figure and the fork count measure different things, and only the first was checked by hand:</p>
 <ul>
 <li><strong>Economics</strong> — China innovation policy, mental health and layoffs, AIGC and stock prices, capital/labor shares in healthcare</li>
 <li><strong>Energy</strong> — Nepal and global energy economics, PV module reliability</li>
@@ -7026,7 +7081,7 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 </section>
 <section id="sec-create-skills" class="level2" data-number="7.4">
 <h2 data-number="7.4" class="anchored" data-anchor-id="sec-create-skills"><span class="header-section-number">7.4</span> Step 4: Creating Custom Skills</h2>
-<p>The guide includes 77 <a href="#skills---reusable-slash-commands">skills</a> for common academic tasks. But if you have repetitive workflows specific to your domain, you can create your own.</p>
+<p>The guide includes 81 <a href="#skills---reusable-slash-commands">skills</a> for common academic tasks. But if you have repetitive workflows specific to your domain, you can create your own.</p>
 <section id="when-to-create-a-skill" class="level3" data-number="7.4.1">
 <h3 data-number="7.4.1" class="anchored" data-anchor-id="when-to-create-a-skill"><span class="header-section-number">7.4.1</span> When to Create a Skill</h3>
 <p>Create a skill when: - You repeatedly explain the same 3+ step workflow to Claude - You need domain-specific quality checks (citation style, notation consistency, lab protocols) - You enforce field-specific output formats (thesis structure, journal templates) - You coordinate multi-tool workflows (data → analysis → manuscript)</p>
@@ -7125,26 +7180,31 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 <td><code>fork</code></td>
 </tr>
 <tr class="odd">
+<td><code>background</code></td>
+<td>With <code>context: fork</code>, <code>false</code> waits for the forked skill’s result instead of running it in the background (the default)</td>
+<td><code>false</code></td>
+</tr>
+<tr class="even">
 <td><code>agent</code></td>
 <td>Link to an agent definition in <code>.claude/agents/</code></td>
 <td><code>proofreader</code></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>hooks</code></td>
 <td>Skill-specific hooks (same syntax as settings.json)</td>
 <td><code>{PreToolUse: [...]}</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>model</code></td>
 <td>Force a specific model</td>
 <td><code>haiku</code></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>disable-model-invocation</code></td>
 <td>Prevent Claude from auto-triggering</td>
 <td><code>true</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>user-invocable</code></td>
 <td>Whether it appears in the <code>/</code> menu</td>
 <td><code>true</code> (default)</td>
@@ -7263,7 +7323,7 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 <li><label><input type="checkbox">Has a “Use when:” clause naming 2–4 situations.</label></li>
 <li><label><input type="checkbox">Includes at least one verbatim phrasing a user might literally type.</label></li>
 <li><label><input type="checkbox">Disambiguates from any sibling skills in the same domain.</label></li>
-<li><label><input type="checkbox">Fits in roughly 2–4 lines (longer descriptions get truncated in Claude’s skill index).</label></li>
+<li><label><input type="checkbox">Fits in roughly 2–4 lines. The skill listing truncates a description at 1,536 characters, and a long list of skills can be shortened further; <code>skillOverrides</code> can list a rarely used skill by name only (<code>&quot;name-only&quot;</code>).</label></li>
 </ul>
 </section>
 <section id="domain-specific-examples" class="level3" data-number="7.4.6">
@@ -7350,7 +7410,7 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 <li><strong>Use <code>CLAUDE.local.md</code> for personal overrides.</strong> This file is automatically gitignored and loaded alongside <code>CLAUDE.md</code>. Put machine-specific paths, personal preferences, and local tool versions here — they won’t pollute the shared repo.</li>
 </ol>
 <div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-58-contents" aria-controls="callout-58" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-60-contents" aria-controls="callout-60" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -7359,12 +7419,18 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-58" class="callout-58-contents callout-collapse collapse">
+<div id="callout-60" class="callout-60-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>For capabilities beyond file editing and shell commands — web search during literature review, database queries for replication, or reference manager integration (Zotero, Mendeley) — Claude Code supports <a href="https://modelcontextprotocol.io">MCP servers</a>. Add them with <code>claude mcp add</code> (use <code>--scope project</code> to write a shared <code>.mcp.json</code> at the repo root, or <code>--scope user</code> to make a server available in all your projects; the default <code>local</code> scope keeps it private to you in this project). Start with skills and agents first; add MCP when you need external integrations.</p>
+<p>For capabilities beyond file editing and shell commands — live statistical sessions, economic data retrieval, package documentation lookup, or reference manager integration (Zotero) — Claude Code supports <a href="https://modelcontextprotocol.io">MCP servers</a>. Add them with <code>claude mcp add</code> (use <code>--scope project</code> to write a shared <code>.mcp.json</code> at the repo root, or <code>--scope user</code> to make a server available across all your projects; the default <code>local</code> scope keeps it private to you in this project). A ready-to-copy starter config is in <a href="https://github.com/pedrohcgs/claude-code-my-workflow/blob/main/templates/mcp.example.json"><code>templates/mcp.example.json</code></a>:</p>
+<ul>
+<li><strong>Statistical sessions:</strong> <a href="https://github.com/SepineTam/mcp-for-stata"><code>SepineTam/mcp-for-stata</code></a> (<code>uvx stata-mcp</code>) for command-guarded Stata execution; Posit’s <strong><a href="https://posit-dev.github.io/mcptools/"><code>mcptools</code></a></strong> (<code>Rscript -e &quot;mcptools::mcp_server()&quot;</code>) to connect Claude Code directly to a live R session in RStudio or Positron.</li>
+<li><strong>Economic &amp; public data APIs:</strong> Official/community MCP servers for <strong>FRED</strong> (Federal Reserve Economic Data), <strong>World Bank Data360</strong>, and the <strong>U.S. Census Bureau Data API</strong> let <code>/data-analysis</code> pull series metadata and public extracts reproducibly (always save the raw pull via an R/Python/Stata script rather than pasting MCP output straight into a table).</li>
+<li><strong>Documentation &amp; literature:</strong> <strong><a href="https://github.com/upstash/context7">Context7</a></strong> (see <code>templates/mcp.example.json</code>) for version-accurate R/Python package docs (<code>fixest</code>, <code>did</code>, <code>ggplot2</code>, <code>polars</code>, <code>pyfixest</code>).</li>
+</ul>
+<p>Start with skills and agents first; add MCP servers when you need external integrations, and never attach write-enabled third-party MCP servers to a restricted-data project.</p>
 <section id="extending-with-plugins" class="level2" data-number="7.6">
 <h2 data-number="7.6" class="anchored" data-anchor-id="extending-with-plugins"><span class="header-section-number">7.6</span> Extending with Plugins</h2>
-<p>Claude Code supports <strong>plugins</strong> — bundled collections of skills, agents, hooks, and MCP servers that can be installed from git repositories. Use <code>/plugin</code> to browse and manage plugins (it has a Discover tab for finding new ones). Plugins are a newer extension point; start with skills and rules (which you control entirely) before adopting third-party plugins. <strong>Read before you install:</strong> a skill, agent, hook or plugin from another repository is instructions your session will carry out. Under this template’s broad allow rules (<code>Bash(*)</code>, <code>WebFetch(*)</code>) it can reach your files or the network without a prompt, and a hook runs without being invoked at all. Read every file first, and add nothing unread to a restricted-data project.</p>
+<p>Claude Code supports <strong>plugins</strong> — bundled collections of skills, agents, hooks, and MCP servers that can be installed from git repositories. Use <code>/plugin</code> to browse and manage plugins (it has a Discover tab for finding new ones). Plugins are a newer extension point; start with skills and rules (which you control entirely) before adopting third-party plugins. <strong>Read before you install:</strong> a skill, agent, hook or plugin from another repository is instructions your session will carry out. Under this template’s broad allow rules (<code>Bash(*)</code>, <code>WebFetch(*)</code>) it can reach your files or the network without a prompt, and a hook runs without being invoked at all. Read every file first, and add nothing unread to a restricted-data project. <strong>Mods are different again:</strong> since Claude Code 2.1.287 a plugin can ship a <em>mod</em>, code that runs inside Claude Code and can approve a tool call that a deny rule refused or a <code>PreToolUse</code> hook blocked, this template’s guards included, unless managed settings are on the machine or you sign in with a Team or Enterprise account. Install no third-party mods in a restricted-data project.</p>
 </section>
 </div>
 </div>
@@ -7600,209 +7666,309 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 <td>Bibliography validation</td>
 </tr>
 <tr class="odd">
+<td><code>/verify</code></td>
+<td><code>.claude/skills/verify/</code></td>
+<td>The gates before a commit: backtest plus quality score on staged files; Claude Code tells Claude to run it before committing (2.1.286+), a reminder next to the enforcing pre-commit hook</td>
+</tr>
+<tr class="even">
 <td><code>/devils-advocate</code></td>
 <td><code>.claude/skills/devils-advocate/</code></td>
 <td>Design challenge questions</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/create-lecture</code></td>
 <td><code>.claude/skills/create-lecture/</code></td>
 <td>Full lecture creation</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/commit</code></td>
 <td><code>.claude/skills/commit/</code></td>
 <td>Run the gates and commit; <code>--pr</code> pushes and opens a pull request; never merges</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/lit-review</code></td>
 <td><code>.claude/skills/lit-review/</code></td>
 <td>Literature search and synthesis</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/research-ideation</code></td>
 <td><code>.claude/skills/research-ideation/</code></td>
 <td>Research questions and strategies</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/interview-me</code></td>
 <td><code>.claude/skills/interview-me/</code></td>
 <td>Interactive research interview</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/review-paper</code></td>
 <td><code>.claude/skills/review-paper/</code></td>
 <td>Manuscript review</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/respond-to-referees</code></td>
 <td><code>.claude/skills/respond-to-referees/</code></td>
 <td>R&amp;R cross-reference and response draft</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/data-analysis</code></td>
 <td><code>.claude/skills/data-analysis/</code></td>
 <td>End-to-end R analysis</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/audit-reproducibility</code></td>
 <td><code>.claude/skills/audit-reproducibility/</code></td>
 <td>Enforce replication tolerance thresholds on paper ↔︎ code</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/learn</code></td>
 <td><code>.claude/skills/learn/</code></td>
 <td>Extract discoveries into persistent skills</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/context-status</code></td>
 <td><code>.claude/skills/context-status/</code></td>
 <td>Show session health and context usage</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/deep-audit</code></td>
 <td><code>.claude/skills/deep-audit/</code></td>
 <td>Adversarial audit of a theory, proof, paper, codebase or set of claims (decompose, independent skeptics, a separate judge per finding, fix, re-verify); the repo-consistency audit is one application, in <code>references/repo-infrastructure-audit.md</code></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/seven-pass-review</code></td>
 <td><code>.claude/skills/seven-pass-review/</code></td>
 <td>Seven-pass adversarial manuscript review (parallel forked subagents)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/permission-check</code></td>
 <td><code>.claude/skills/permission-check/</code></td>
 <td>Diagnose permission layers (6-tier stack)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/verify-claims</code></td>
 <td><code>.claude/skills/verify-claims/</code></td>
 <td>Chain-of-Verification fact-check on any draft (v1.7.0)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/checkpoint</code></td>
 <td><code>.claude/skills/checkpoint/</code></td>
 <td>Structured session-handoff snapshot — companion to narrative session logs (v1.8.0)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/preregister</code></td>
 <td><code>.claude/skills/preregister/</code></td>
 <td>Generate a preregistration document (OSF / AsPredicted / AEA RCT Registry) from a research spec (v1.8.0)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/humanize</code></td>
 <td><code>.claude/skills/humanize/</code></td>
 <td>Detect AI-voice tells in academic prose (read-only audit; no rewrite) (v1.9.0)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/compress-session</code></td>
 <td><code>.claude/skills/compress-session/</code></td>
 <td>Distil the current session into a structured note (decisions, files, open questions, next actions, discarded-as-noise) before auto-compaction (v1.9.0)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/promote-memory</code></td>
 <td><code>.claude/skills/promote-memory/</code></td>
 <td>Five-critic council that votes on whether candidate <code>[LEARN]</code> entries should be promoted from native auto memory to MEMORY.md (v1.9.0)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/stata-replication</code></td>
 <td><code>.claude/skills/stata-replication/</code></td>
 <td>End-to-end Stata pipeline scaffold + execution via the <code>stata-mcp</code> MCP server (mirrors <code>/data-analysis</code> for R-first projects; v1.9.0)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/simulation-study</code></td>
 <td><code>.claude/skills/simulation-study/</code></td>
 <td>Reproducible Monte Carlo study — DGP, estimator grid, seeded reps, bias/RMSE/coverage/size/power with Monte Carlo SEs (v1.10.0)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/r-package-check</code></td>
 <td><code>.claude/skills/r-package-check/</code></td>
 <td>R package release gate — <code>devtools::document()</code> + tests + <code>R CMD check --as-cran</code> + CRAN-policy triage (v1.10.0)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/replication-package</code></td>
 <td><code>.claude/skills/replication-package/</code></td>
 <td>Assemble a submission-ready DCAS / openICPSR replication package; calls <code>/audit-reproducibility</code> and blocks on FAIL (v2.0)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/challenge</code></td>
 <td><code>.claude/skills/challenge/</code></td>
 <td>Stress-test a finding against the choices you didn’t make — specification curve over the discrete forks, then named sensitivity statistics (E-value, Cinelli–Hazlett RV, Oster δ) against the identifying assumption</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/capture-environment</code></td>
 <td><code>.claude/skills/capture-environment/</code></td>
 <td>Snapshot the computational environment (renv.lock / sessionInfo / requirements.txt / uv.lock + optional Dockerfile + seeds) (v2.0)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/power-analysis</code></td>
 <td><code>.claude/skills/power-analysis/</code></td>
 <td>Power / required-N / MDE for study design (RCT, clustered/ICC, multi-arm, or simulation-based) + a methods paragraph for <code>/preregister</code> (v2.0)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/disclosure-check</code></td>
 <td><code>.claude/skills/disclosure-check/</code></td>
 <td>Pre-screen restricted-data outputs for SDL violations (small cells, dominance, PII); gates on any CRITICAL (v2.0)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/grant-proposal</code></td>
 <td><code>.claude/skills/grant-proposal/</code></td>
 <td>Scaffold a grant proposal (NSF/NIH/ERC/foundation) from an <code>/interview-me</code> spec; delegates DMP + facilities; aims↔︎methods↔︎budget coherence pass (v2.0)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/data-management-plan</code></td>
 <td><code>.claude/skills/data-management-plan/</code></td>
 <td>Draft a funder-compliant Data Management Plan (NSF/NIH 2023/ERC/Horizon) (v2.0)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/coauthor-brief</code></td>
 <td><code>.claude/skills/coauthor-brief/</code></td>
 <td>Generate a collaborator handoff brief: git delta, per-artifact state, open questions, reproduce-locally + restricted-data steps (v2.0)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/triage-inbox</code></td>
 <td><code>.claude/skills/triage-inbox/</code></td>
 <td>Triage academic email + calendar (Gmail/Calendar MCP) into a prioritized digest + referee-obligations tracker; human-gated actions only (v2.0)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/issues</code></td>
 <td><code>.claude/skills/issues/</code></td>
 <td>File findings as GitHub issues (deduplicated against open and closed ones), list what is open, and close an issue with a comment on what was tried and how it was fixed; posts nothing without a yes (v2.6)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/syllabus</code></td>
 <td><code>.claude/skills/syllabus/</code></td>
 <td>Build a course syllabus from a topic/reading list (schedule, objectives, assessment + rubric, per-week <code>/create-lecture</code> work-list) (v2.0)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/teach-from-paper</code></td>
 <td><code>.claude/skills/teach-from-paper/</code></td>
 <td>Turn a paper into a lecture outline, teachable results, slide skeleton (→ <code>/create-lecture</code>), discussion questions, exercise brief (v2.0)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/respond-to-eval</code></td>
 <td><code>.claude/skills/respond-to-eval/</code></td>
 <td>Turn student course evaluations into a classified teaching-improvement plan (Keep/Change/Investigate/Out-of-scope) (v2.0)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/scaffold-exercises</code></td>
 <td><code>.claude/skills/scaffold-exercises/</code></td>
 <td>Scaffold a graded problem set (analytical/empirical/coding) with worked solutions; clean student set + separate solution key (v2.0)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/new-skill</code></td>
 <td><code>.claude/skills/new-skill/</code></td>
 <td>Scaffold a convention-compliant skill (interview → write <code>SKILL.md</code> with gate-passing frontmatter) (v2.0)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/diagnose</code></td>
 <td><code>.claude/skills/diagnose/</code></td>
 <td>Root-cause a wrong or failing empirical result — reproduce → minimise → hypothesise → instrument (bisect) → fix; <code>--no-fix</code> localizes without editing (v2.0)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/submission-disclosures</code></td>
 <td><code>.claude/skills/submission-disclosures/</code></td>
 <td>Submission-time disclosure block: journal-matched AI-use, CRediT roles, conflict-of-interest, and data-availability statements (v2.1)</td>
+</tr>
+<tr class="odd">
+<td><code>/audit-analysis</code></td>
+<td><code>.claude/skills/audit-analysis/</code></td>
+<td>Curated academic workflow; read the skill for scope</td>
+</tr>
+<tr class="even">
+<td><code>/audit-estimator</code></td>
+<td><code>.claude/skills/audit-estimator/</code></td>
+<td>Curated academic workflow; read the skill for scope</td>
+</tr>
+<tr class="odd">
+<td><code>/context-audit</code></td>
+<td><code>.claude/skills/context-audit/</code></td>
+<td>Curated academic workflow; read the skill for scope</td>
+</tr>
+<tr class="even">
+<td><code>/explain-diff</code></td>
+<td><code>.claude/skills/explain-diff/</code></td>
+<td>Curated academic workflow; read the skill for scope</td>
+</tr>
+<tr class="odd">
+<td><code>/explorable-beamer</code></td>
+<td><code>.claude/skills/explorable-beamer/</code></td>
+<td>Curated academic workflow; read the skill for scope</td>
+</tr>
+<tr class="even">
+<td><code>/explorable-deck</code></td>
+<td><code>.claude/skills/explorable-deck/</code></td>
+<td>Curated academic workflow; read the skill for scope</td>
+</tr>
+<tr class="odd">
+<td><code>/explorable-pptx</code></td>
+<td><code>.claude/skills/explorable-pptx/</code></td>
+<td>Curated academic workflow; read the skill for scope</td>
+</tr>
+<tr class="even">
+<td><code>/paper-version</code></td>
+<td><code>.claude/skills/paper-version/</code></td>
+<td>Curated academic workflow; read the skill for scope</td>
+</tr>
+<tr class="odd">
+<td><code>/pdf-to-markdown</code></td>
+<td><code>.claude/skills/pdf-to-markdown/</code></td>
+<td>Curated academic workflow; read the skill for scope</td>
+</tr>
+<tr class="even">
+<td><code>/question-quality</code></td>
+<td><code>.claude/skills/question-quality/</code></td>
+<td>Curated academic workflow; read the skill for scope</td>
+</tr>
+<tr class="odd">
+<td><code>/replicate-paper</code></td>
+<td><code>.claude/skills/replicate-paper/</code></td>
+<td>Curated academic workflow; read the skill for scope</td>
+</tr>
+<tr class="even">
+<td><code>/review-grant</code></td>
+<td><code>.claude/skills/review-grant/</code></td>
+<td>Curated academic workflow; read the skill for scope</td>
+</tr>
+<tr class="odd">
+<td><code>/review-pap</code></td>
+<td><code>.claude/skills/review-pap/</code></td>
+<td>Curated academic workflow; read the skill for scope</td>
+</tr>
+<tr class="even">
+<td><code>/review-paper-checks</code></td>
+<td><code>.claude/skills/review-paper-checks/</code></td>
+<td>Curated academic workflow; read the skill for scope</td>
+</tr>
+<tr class="odd">
+<td><code>/review-paper-code</code></td>
+<td><code>.claude/skills/review-paper-code/</code></td>
+<td>Curated academic workflow; read the skill for scope</td>
+</tr>
+<tr class="even">
+<td><code>/review-paper-full</code></td>
+<td><code>.claude/skills/review-paper-full/</code></td>
+<td>Curated academic workflow; read the skill for scope</td>
+</tr>
+<tr class="odd">
+<td><code>/review-paper-light</code></td>
+<td><code>.claude/skills/review-paper-light/</code></td>
+<td>Curated academic workflow; read the skill for scope</td>
+</tr>
+<tr class="even">
+<td><code>/stata</code></td>
+<td><code>.claude/skills/stata/</code></td>
+<td>Curated academic workflow; read the skill for scope</td>
+</tr>
+<tr class="odd">
+<td><code>/text-classify</code></td>
+<td><code>.claude/skills/text-classify/</code></td>
+<td>Curated academic workflow; read the skill for scope</td>
 </tr>
 </tbody>
 </table>
@@ -8071,34 +8237,24 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 <td><code>.claude/hooks/session-handoff.py</code> — hands a fresh session the newest <code>/checkpoint</code> or <code>/compress-session</code> file written in the last 7 days; it counts as delivered at the session’s first prompt, never in headless runs; <code>CLAUDE_HANDOFF=off</code> opts out</td>
 </tr>
 <tr class="even">
-<td>Context monitor</td>
-<td>PostToolUse[Bash|Agent|Task] (command)</td>
-<td><code>.claude/hooks/context-monitor.py</code></td>
+<td>Dirty-tree guard</td>
+<td>PreToolUse[Bash], only for <code>git merge</code> / <code>pull</code> / <code>rebase</code> (<code>if: Bash(git merge *)</code> and the like) (command)</td>
+<td><code>.claude/hooks/dirty-tree-guard.py</code> — refuses the operation while tracked files have uncommitted changes; untracked files do not count; fails open (<code>ALLOW_DIRTY_MERGE=1</code>)</td>
 </tr>
 <tr class="odd">
-<td>Git guardrails</td>
-<td>PreToolUse (command)</td>
-<td><code>.claude/hooks/git-guardrails.py</code> — blocks <code>reset --hard</code> / <code>clean -f</code> / <code>push --force</code> / <code>add -A</code>; refuses merge / rebase / pull on a dirty tree, including chains that would clean it first (<code>ALLOW_DIRTY_MERGE=1</code>)</td>
-</tr>
-<tr class="even">
 <td>Claim reconcile</td>
 <td>PostToolUse (command)</td>
 <td><code>.claude/hooks/claim-reconcile.py</code> — flags stale numeric claims when scripts change, including edits to a declared <code>appears_in</code> display</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Issue guard</td>
-<td>PreToolUse[Bash], only for <code>gh</code> commands (<code>if: Bash(gh *)</code>) (command)</td>
+<td>PreToolUse[Bash], only for <code>gh</code> commands (<code>if: Bash(gh *)</code> and <code>Bash(gh.exe *)</code>) (command)</td>
 <td><code>.claude/hooks/issue-guard.py</code> — denies a raw <code>gh issue create</code>/<code>new</code>, or a REST/GraphQL issue create, and points to <code>scripts/file-issue.py</code>, which checks for duplicates first</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Open issues (opt-in)</td>
 <td>SessionStart[startup] (command)</td>
 <td><code>.claude/hooks/open-issues.py</code> — with <code>CLAUDE_ISSUES_AT_START=1</code>, lists open issues’ numbers and titles (owner and collaborators only) at startup; off by default</td>
-</tr>
-<tr class="odd">
-<td>Root-of-trust guard</td>
-<td>PreToolUse (command)</td>
-<td><code>.claude/hooks/root-of-trust-guard.py</code> — best-effort tripwire against <em>silent</em> shell writes to <code>.claude/settings*.json</code>, <code>.claude/hooks/</code>, <code>.githooks/</code>, plus the destructive-git deny list applied to <code>bash -c</code> / <code>env -S</code> payloads; reads and <code>Edit</code>/<code>Write</code> still pass, so it changes the channel rather than locking the files (<code>ALLOW_ROOT_OF_TRUST_WRITE=1</code>)</td>
 </tr>
 </tbody>
 </table>
@@ -8184,7 +8340,7 @@ research_spec_&lt;topic&gt;.md  ──────→  YYYY-MM-DD_&lt;slug&gt;.m
 </section>
 <section id="hooks-not-firing" class="level3" data-number="8.5.3">
 <h3 data-number="8.5.3" class="anchored" data-anchor-id="hooks-not-firing"><span class="header-section-number">8.5.3</span> Hooks Not Firing</h3>
-<p><strong>Symptom:</strong> No context warnings, no auto-written session log, no git guardrails firing.</p>
+<p><strong>Symptom:</strong> No notifications, no auto-written session log, no dirty-tree or issue guard firing.</p>
 <p><strong>Fix:</strong> 1. Check hooks are configured: <code>cat .claude/settings.json | grep hooks</code> 2. Ensure Python 3 is available: <code>which python3</code> 3. Check hook file permissions: <code>ls -la .claude/hooks/</code></p>
 </section>
 <section id="claude-ignores-rules" class="level3" data-number="8.5.4">
