@@ -80,9 +80,13 @@ stop after two consecutive rounds add no new CONFIRMED defect, two-strikes escal
   radius is knowable ([`/blast-radius`](../skills/blast-radius/SKILL.md) applies to proofs too).
 - A **companion verifier script** for every computational claim, stating what it does **not**
   check.
-- **Lean formalization where feasible** — heavy, but it exists and it is the only gate that
-  cannot be argued with. For most econometric theory, the realistic target is formalizing the
-  combinatorial or finite-dimensional core, not the whole asymptotic argument.
+- **Lean formalization where feasible** — check the formal statement, assumptions and
+  axioms, admitted results and dependency closure, then explain how the theorem maps to
+  the paper. Separate fully formalized claims from assumed representations, numerical
+  certificates and unformalized bridges (such as changes of variables). Successful
+  compilation certifies a formal derivation under its premises; it does not establish
+  that those premises or that statement match the intended economic claim. Record the
+  verified scope and remaining human checks.
 - **A human gate before any public claim.** The external oracle
   ([`external-oracle-process.md`](external-oracle-process.md)) is the natural confirmation
   referee for a finished draft — after in-house audit, never instead of it.

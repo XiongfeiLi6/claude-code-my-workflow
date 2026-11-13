@@ -8,6 +8,13 @@ If you have forked this template, see the **Upgrading** section at the bottom fo
 
 ## v2.9.2-fork.1 — 2026-11-13
 
+Made Git-fetch copying the startup default, including private repository creation,
+and shortened the generic Pedro-inspired starter prompt. Removed obsolete helper
+setup instructions. Preserved shared writing/exhibit styles. PDF extraction now
+retains references and appendices unless trimming is requested; formal-proof
+guidance states its verified scope. See [the source review](docs/ACADEMIC_WORKFLOW_REVIEW.md)
+for researched recommendations and repository inspection limits.
+
 Integrated Pedro through fe707746 and Backman through 4c1aef5. Added optional
 explorable Quarto, Beamer and PowerPoint skills, preserving project-selected formats.
 PowerPoint export failures now leave the user's application running. Commit, push,

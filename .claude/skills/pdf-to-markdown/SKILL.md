@@ -14,6 +14,14 @@ Convert a PDF file to readable markdown text. Handles large PDFs efficiently.
 
 - `$ARGUMENTS[0]` — Path to the PDF file (required)
 
+## Select coverage from the request
+
+Default to the complete document, including references, appendices and supplements.
+For a specified page range, extract that range. Use main-text-only trimming only
+when the user requests it; a request to read or review a paper does not imply it.
+Record source filename, total pages, selected pages and omissions. Preserve the
+original PDF and any existing extracted file; use a distinct output name when needed.
+
 ## Choose the method first
 
 Before reading anything, check whether `pdftotext` (part of poppler) is available:
@@ -22,8 +30,8 @@ Before reading anything, check whether `pdftotext` (part of poppler) is availabl
 which pdftotext
 ```
 
-- **If available** → use the **pdftotext path** below. It is 10–100× faster than the Read tool, uses no model context for the text content, and doesn't suffer from stream idle timeouts. **Always prefer this for PDFs longer than ~30 pages.**
-- **If not available** → fall back to the **Read-tool path**. Warn the user that large PDFs (>40 pages) may hit stream idle timeouts when run in subagents (~12 min cap). Prefer running in the main conversation for large files.
+- **If available** → use the **pdftotext path** below. It extracts text mechanically without rendering every page. Inspect the actual PDF pages when equations, tables, figures or layout are important; extracted text alone can lose structure.
+- **If not available** → fall back to the **Read-tool path**. Use the available PDF reader in bounded page ranges and report unreadable pages. Runtime limits depend on the installed tools; do not assume fixed timeout limits.
 
 ## Resolve the path and get page count
 
@@ -32,19 +40,23 @@ which pdftotext
 
 ## Method A — pdftotext (preferred)
 
-Extract the full PDF to text in one shot, then trim at references/appendix and add page markers. `pdftotext` emits a form-feed character (`\f`) at every page break — use that for pagination.
+For an explicit page range, add `-f FIRST -l LAST` to `pdftotext` and set the marker start to FIRST. Otherwise extract the full PDF to text in one shot, retain all sections and add page markers. Trim only for an explicit main-text-only request. `pdftotext` emits a form-feed character (`\f`) at every page break — use that for pagination.
 
 Reference implementation (bash + awk):
 
 ```bash
+set -e
+set -o noclobber  # Preserve any existing output; choose another OUT path if needed
 PDF="$1"
 OUT="${PDF%.pdf}.md"
 TITLE=$(basename "${PDF%.pdf}")
+MAIN_TEXT_ONLY=0  # Set to 1 only for an explicit main-text-only request
 TMPTXT=$(mktemp)
+trap 'rm -f "$TMPTXT"' EXIT
 
 pdftotext -layout "$PDF" "$TMPTXT"
 
-awk -v title="$TITLE" '
+awk -v title="$TITLE" -v main_text_only="$MAIN_TEXT_ONLY" '
 BEGIN {
     print "# " title
     print ""
@@ -71,7 +83,7 @@ BEGIN {
     sub(/^[ \t]+/, "", stripped)
     sub(/[ \t]+$/, "", stripped)
 
-    if (length(stripped) > 0) {
+    if (main_text_only && length(stripped) > 0) {
         # References / Bibliography — standalone word, optionally numbered, short, no prose punctuation
         if (length(stripped) < 50 && stripped !~ /[(),;]/) {
             if (stripped ~ /^([0-9]+\.?[ \t]+)?(References|REFERENCES|Bibliography|BIBLIOGRAPHY)$/) exit
@@ -102,29 +114,24 @@ rm -f "$TMPTXT"
 echo "Wrote $OUT ($(wc -l < "$OUT") lines)"
 ```
 
-After running, **sanity-check the output**:
-
-```bash
-# Should print nothing if trimming worked
-grep -cE "^[[:space:]]*(References|Bibliography|REFERENCES|BIBLIOGRAPHY)[[:space:]]*$" "$OUT"
-
-# Eyeball last few lines — should be prose/conclusion, not body-of-table or mid-paragraph
-tail -5 "$OUT"
-```
-
-If the tail looks truncated mid-paragraph, the heading detection likely fired on a false positive. If the tail shows references or appendix content, the detection missed the heading — inspect the PDF text around that area and extend the regex.
+After extraction, compare coverage with the selected pages and inspect the beginning,
+end and relevant dense pages. In full-document mode, references and appendices must
+remain. In main-text-only mode, inspect the proposed cut point in the original PDF;
+heading detection can match a contents entry or body text. Do not claim complete
+coverage when pages were omitted or text extraction failed. The example markers
+label nominal 20-page chunks; report the actual final page separately.
 
 ## Method B — Read tool (fallback when pdftotext unavailable)
 
-1. Read the PDF in chunks of up to 20 pages at a time using the Read tool's `pages` parameter: 1-20, 21-40, 41-60, etc.
-2. Focus on the **MAIN TEXT ONLY**. Stop including content once you hit "References", "Bibliography", "Works Cited", or an appendix section. If references appear mid-chunk, keep everything before them and drop the rest.
+1. Read the selected pages in bounded chunks supported by the available PDF reader, preserving page numbers.
+2. Include references and appendices by default. Stop at the confirmed main-text boundary only when that scope was explicitly requested.
 3. Compile output:
    - Save alongside the PDF with a `.md` extension.
    - Header: `# [Original Filename]`
    - Page markers between chunks: `---\n## Pages X-Y\n---`
    - Preserve extracted text as-is.
 
-**Warning:** The Read tool is slow for large PDFs (roughly 30–60 seconds per 20-page chunk). A 60-page paper can take 3–4 minutes, and sub-agents have a ~13-minute stream idle timeout that this can hit. When running a batch of conversions, run them sequentially in the main conversation or use Method A.
+Use a local OCR tool if scanned pages have no usable text and it is available. Do not upload documents to an external conversion service without authorization. Check important equations, tables and figures against rendered pages.
 
 ## Heading-detection pitfalls (hard-won lessons)
 
@@ -143,7 +150,7 @@ Tell the user:
 - Method used (pdftotext vs Read tool)
 - Total pages processed
 - Output file path and final line count
-- Where trimming occurred (last section / page number included)
+- Selected scope and any exclusions; the confirmed trim point only if trimming was requested
 - Any pages that were unreadable or empty
 
 For batch conversions, print a summary table and note any files whose trim point looks suspicious (very short output, or output ending mid-sentence).

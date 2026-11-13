@@ -320,7 +320,7 @@ This workflow is designed as a **single hub for an entire research program** —
 | `/explain-diff` *(fork: Backman)* | Explain a code change as a standalone HTML page with a quiz |
 | `/issues` (v2.6) | GitHub issues as the project's to-do list and memory — files each confirmed finding as its own issue after checking open and closed issues for a duplicate, lists what is open for the work at hand, and closes an issue with a comment recording what was wrong, what was tried, and how it was fixed; shows every draft and posts nothing without a yes; warns before posting to a public repository |
 
-Codex is a plugin, not a skill in this repo: `/codex:review`, `/codex:rescue` and the rest come from OpenAI's official Claude Code plugin (`codex@openai-codex`, installed at user scope). The community `oil-oil` skill was removed 2026-09-28.
+Codex is a plugin, not a skill in this repo: `/codex:review`, `/codex:rescue` and the rest come from OpenAI's official Claude Code plugin (`codex@openai-codex`, installed at user scope).
 
 ### Research Workflow
 
@@ -492,3 +492,5 @@ See the [guide's ecosystem section](https://psantanna.com/claude-code-my-workflo
 ## License
 
 MIT License. See [LICENSE](LICENSE).
+
+Research and proposed improvements: [Backman, Andrews and Matray review](docs/ACADEMIC_WORKFLOW_REVIEW.md).
